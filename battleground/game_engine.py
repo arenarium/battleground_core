@@ -10,6 +10,12 @@ class GameEngine(object):
         self.scores = [0]*num_players
         self.current_player = 0
 
+    def get_game_name():
+        """
+        return the name of this game (i.e. game type)
+        """
+        raise NotImplementedError()
+
     def reset(self):
         """
         Initialize the game to the starting point
