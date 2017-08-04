@@ -10,7 +10,22 @@ NUM_DICE = 7
 class DiceGame(GameEngine):
 
     def __init__(self,state=None):
-
+        """
+        state should be a dict with the following elements:
+         (appologies for the js notation)
+    state =     {
+      rollable: new Array(len).fill(1),
+      bunnies: new Array(len).fill(0),
+      hutches: new Array(len).fill(0),
+      movable: new Array(len).fill(1),
+      currentPlayer: 0,
+      scores: {0:0},
+      extraBunnies: 0,
+      message: "",
+      allowedMoves: {"roll":1,"stay":0,"reset":0},
+      boardValue: 0
+    }
+        """
         self.state=state
         self.num_players = 2
 
