@@ -4,9 +4,38 @@ A platform for light-weight multi-player online games. Easy creation of games, u
 
 To get started all you need to do is write a simple python script that describes your game or NPC logic. Examples to follow.
 
+## requirements:
+- Vagrant
+
+
+## Getting Started With Development
+We reccomend you set up a virtual machine using [Vagrant](https://www.vagrantup.com/) and the provided Vagrantfile. Once you have Vagrant (and its requirements) installed you can open a terminal and in the project folder run
+
+```
+vagrant up
+```
+
+this will provision a virtual machine and install all the dependencies for battleground in the virtual machine. Once this completes you can run
+
+```
+vagrant ssh
+```
+
+to connect to the virtual machine. Your default path in the virtual machine is /vagrant, this folder is linked with the project folder on the host machine: any changes made in the virtual machine here will also change the corresponding file on the host machine.
+
+when you're done, stop the virtual machine.
+
+```
+vagrant halt
+```
+
 
 ## Unit tests
 to run tests:
 ```
 PYTHONPATH=. pytest
 ```
+
+## Developing your own games and NPCs
+
+...More to come.

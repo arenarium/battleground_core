@@ -7,6 +7,8 @@ class BasicGameEngine(GameEngine):
         super().__init__(num_players)
         self.reset()
 
+    def get_game_name(self):
+        return "basic game"
 
     def reset(self):
         """
