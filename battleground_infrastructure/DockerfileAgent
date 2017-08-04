@@ -1,0 +1,7 @@
+from python:3.3
+
+RUN pip install pika
+
+ENV PYTHONPATH "$PYTHONPATH:/custom_pylib"
+
+ADD agentmq /custom_pylib

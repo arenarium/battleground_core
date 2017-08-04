@@ -1,0 +1,37 @@
+version: '3'
+services:
+  rabbitmq:
+    hostname: "my-rabbit"
+    ports:
+    - "8080:15672"
+    image: rabbitmq:3-management 
+  agent1:
+    build: 
+        context: .
+        dockerfile: DockerfileAgent
+    tty: true
+    links:
+    - rabbitmq
+    volumes:
+      - /home/viglia/Documents/programmazione/git/battleground/battleground_infrastructure/agent1_g.py:/script/agent1_g.py
+    command: python /script/agent1_g.py
+  agent2:
+    build: 
+        context: .
+        dockerfile: DockerfileAgent
+    tty: true
+    links:
+    - rabbitmq
+    volumes:
+      - /home/viglia/Documents/programmazione/git/battleground/battleground_infrastructure/agent2_g.py:/script/agent2_g.py
+    command: python /script/agent2_g.py
+  referee:
+    build:
+        context: .
+        dockerfile: DockerfileReferee
+    tty: true
+    links:
+    - rabbitmq
+    volumes:
+      - /home/viglia/Documents/programmazione/git/battleground/battleground_infrastructure/refereeg.py:/script/refereeg.py
+    command: python /script/refereeg.py
