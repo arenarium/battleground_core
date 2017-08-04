@@ -21,11 +21,11 @@ def test_player():
     assert "value" in move.keys()
 
 def test_game():
-    players = []
+    players = {}
     for i in range(3):
-        players.append(basic_agent.BasicAgent())
+        players[i]=basic_agent.BasicAgent()
     engine = BasicGameEngine(num_players=3)
-    runner = GameRunner(engine,players)
+    runner = GameRunner(engine,players,save=False)
     scores = runner.run_game()
     print(engine.get_state())
     assert len(scores)==3

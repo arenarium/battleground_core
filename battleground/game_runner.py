@@ -2,11 +2,13 @@ from .persistence import game_data
 
 class GameRunner(object):
 
-    def __init__(self, game_engine, players):
+    def __init__(self, game_engine, players,save=True):
         self.game_engine = game_engine
-        self.players = players
+        self.players = list(players.values())
+        self.player_ids = list(players.keys())
         self.game_states= []
         self.game_moves =[]
+        self.save=save
 
     def run_game(self):
         self.game_engine.reset()
@@ -26,9 +28,8 @@ class GameRunner(object):
 
             player_index = self.game_engine.get_current_player()
 
-        player_ids = [p.get_name() for p in self.players]
-        game_data.save_game_history(game_engine.get_game_name(),player_ids,self.states)
-
+        if self.save:
+            game_data.save_game_history(self.game_engine.get_game_name(),self.player_ids,self.game_states)
         return self.game_engine.scores
 
     def broadcast(self,state):

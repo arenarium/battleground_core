@@ -10,7 +10,7 @@ class GameEngine(object):
         self.scores = [0]*num_players
         self.current_player = 0
 
-    def get_game_name():
+    def get_game_name(self):
         """
         return the name of this game (i.e. game type)
         """
