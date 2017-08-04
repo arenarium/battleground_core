@@ -30,6 +30,8 @@ Vagrant.configure("2") do |config|
   # via 127.0.0.1 to disable public access
   config.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 7777, host: 7777, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 5984, host: 5984, host_ip: "127.0.0.1"
+
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -70,8 +72,11 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
 
-  config.vm.provision "docker",
-    images: ["python:3-slim"] #images need not be pulled here, this is just an example
+  #couchdb instance for testing
+  config.vm.provision "docker" do |d|
+    d.run "couchdb",
+      args: "-p 5984:5984"
+  end
 
   config.vm.provision "shell", path: "bootstrap.sh"
 
