@@ -23,7 +23,7 @@ class GameRunner(object):
             self.game_moves.append(move)
 
             state = self.game_engine.get_state()
-            sate["last_move"]:move
+            state["last_move"]=move
             self.game_states.append(state)
             self.broadcast(state)
 
