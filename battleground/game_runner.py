@@ -23,13 +23,16 @@ class GameRunner(object):
             self.game_moves.append(move)
 
             state = self.game_engine.get_state()
+            sate["last_move"]:move
             self.game_states.append(state)
             self.broadcast(state)
 
             player_index = self.game_engine.get_current_player()
 
         if self.save:
-            game_data.save_game_history(self.game_engine.get_game_name(),self.player_ids,self.game_states)
+            game_data.save_game_history(self.game_engine.get_game_name(),
+                                        self.player_ids,
+                                        self.game_states)
         return self.game_engine.scores
 
     def broadcast(self,state):
