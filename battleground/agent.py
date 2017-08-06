@@ -1,7 +1,7 @@
 
 class Agent(object):
 
-    def __init__(self):
+    def __init__(self,**kwargs):
         pass
 
     def move(self,state):
