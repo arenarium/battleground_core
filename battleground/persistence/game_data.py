@@ -61,3 +61,11 @@ def load_game_history(game_id,db=None):
         game_state=data[key]["game_state"]
         data[key]["game_state"] = json.loads(game_state)
     return data
+
+def get_games_list(db=None):
+    if db is None:
+        db = get_db()
+    map_fun = '''function(doc) {emit([doc.game_id,doc.game_type])}'''
+    result = db.query(map_fun,'_count', group=True)
+    data =  [(r.key,r.value) for r in result[:]]
+    return data

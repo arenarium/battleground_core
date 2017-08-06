@@ -59,5 +59,13 @@ def test_save_game_history(db):
         assert state == sequence_states[i]
 
 
+def test_game_list(db):
+    data = game_data.get_games_list(db)
+    assert len(data)>0
+    assert len(data[0])==2
+    assert len(data[0][0])==2
+    assert data[0][1]%1 == 0 # is int
+
+
 if __name__ == "__main__":
     test_connection()
