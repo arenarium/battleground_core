@@ -9,4 +9,5 @@ sudo chsh -s /bin/zsh ubuntu
 sudo echo "
 source ~/python3/bin/activate
 cd /vagrant
+export PYTHONPATH=$PYTHONPATH:/vagrant
 " >> .zshrc

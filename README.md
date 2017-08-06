@@ -48,7 +48,7 @@ vagrant halt
 ### Unit tests
 to run tests:
 ```
-PYTHONPATH=. pytest
+pytest
 ```
 
 ## Developing your own games and NPCs
