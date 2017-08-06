@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  uwsgi:
+    image: uwsgi:latest
+    build:
+      context: .
+      dockerfile: ui/api/Dockerfile
+    # volumes:
+    #   - ./backend/public:/usr/src/app/public
+
+  frontend:
+    image: nginx:1.13-alpine
+    volumes:
+      - ./ui/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - uwsgi
+    ports:
+      - 7777:80
