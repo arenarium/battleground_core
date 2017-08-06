@@ -1,4 +1,5 @@
 from battleground.dynamic_agent import DynamicAgent
+from games.basic_game.basic_agent import BasicAgent
 
 
 def test_dynamic_agent():
@@ -11,4 +12,5 @@ def test_dynamic_agent():
 
     da = DynamicAgent(**config)
 
+    assert isinstance(da.agent_instance,BasicAgent)
     assert isinstance(da.move(None),dict)

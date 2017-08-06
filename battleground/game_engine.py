@@ -5,7 +5,7 @@ Should implement these functions.
 
 class GameEngine(object):
 
-    def __init__(self,num_players):
+    def __init__(self,num_players,**kwargs):
         self.num_players = num_players
         self.scores = [0]*num_players
         self.current_player = 0
