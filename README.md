@@ -4,9 +4,24 @@ A platform for light-weight multi-player online games. Easy creation of games, u
 
 To get started all you need to do is write a simple python script that describes your game or NPC logic. Examples to follow.
 
-## requirements:
+### requirements:
 - Vagrant
 
+## Running a game
+which game should be played and what players and NPCs should be included can be configured in
+```
+config/basic_config.json
+```
+
+this configuration in executed by running
+```
+python start.py
+```
+
+or, if you want to use a different config file:
+```
+python start.py --config path/to/configfile.json
+```
 
 ## Getting Started With Development
 We reccomend you set up a virtual machine using [Vagrant](https://www.vagrantup.com/) and the provided Vagrantfile. Once you have Vagrant (and its requirements) installed you can open a terminal and in the project folder run
@@ -30,7 +45,7 @@ vagrant halt
 ```
 
 
-## Unit tests
+### Unit tests
 to run tests:
 ```
 PYTHONPATH=. pytest
