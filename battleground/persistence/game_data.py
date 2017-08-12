@@ -3,6 +3,7 @@ from couchdb.client import Server
 import json
 from os import environ
 
+
 def get_server():
     if "COUCHDB_HOST" in environ:
         host = environ["COUCHDB_HOST"]
@@ -10,6 +11,7 @@ def get_server():
     else:
         s=Server()
     return s
+
 
 def get_db(name=None,server=None):
     if name is None:
@@ -22,9 +24,11 @@ def get_db(name=None,server=None):
         db = server.create(name)
     return db
 
+
 def get_new_id():
     doc_id = uuid4().hex
     return doc_id
+
 
 def save_game_state(game_id, sequence,game_type, player_ids, game_state,db=None):
     if db is None:
@@ -66,6 +70,7 @@ def load_game_history(game_id,db=None):
         game_state=data[key]["game_state"]
         data[key]["game_state"] = json.loads(game_state)
     return data
+
 
 def get_games_list(db=None):
     if db is None:
