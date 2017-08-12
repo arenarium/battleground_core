@@ -31,6 +31,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 80, host: 80, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 5984, host: 5984, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1"
 
 
   # Create a private network, which allows host-only access to the machine
@@ -73,10 +74,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
 
   #couchdb instance for testing
-  config.vm.provision "docker" do |d|
-    d.run "couchdb",
-      args: "-p 5984:5984"
-  end
+  # config.vm.provision "docker" do |d|
+  #   d.run "couchdb",
+  #     args: "-p 5984:5984"
+  # end
 
   config.vm.provision "shell", path: "bootstrap.sh"
 

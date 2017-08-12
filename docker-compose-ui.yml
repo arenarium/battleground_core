@@ -1,11 +1,22 @@
 version: '3'
 
 services:
+  couchdb:
+    image: couchdb:1.6
+    volumes:
+      - /data:/usr/local/var/lib/couchdb
+    ports:
+      - 5984:5984
+
   uwsgi:
     image: uwsgi:latest
     build:
       context: .
       dockerfile: ui/api/Dockerfile
+    depends_on:
+      - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984
     # volumes:
     #   - ./backend/public:/usr/src/app/public
 
@@ -16,4 +27,4 @@ services:
     depends_on:
       - uwsgi
     ports:
-      - 80:80
+      - 8888:80
