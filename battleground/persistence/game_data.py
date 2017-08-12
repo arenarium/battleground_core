@@ -1,9 +1,14 @@
 from uuid import uuid4
 from couchdb.client import Server
 import json
+from os import environ
 
 def get_server():
-    s = Server()
+    if "COUCHDB_HOST" in environ:
+        host = environ["COUCHDB_HOST"]
+        s = Server(host)
+    else:
+        s=Server()
     return s
 
 def get_db(name=None,server=None):
