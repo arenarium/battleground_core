@@ -13,7 +13,12 @@ which game should be played and what players and NPCs should be included can be 
 config/basic_config.json
 ```
 
-this configuration in executed by running
+To run this configuration, start the database server (if you have not yet done so):
+```
+docker-compose -f docker-compose-ui.yml up -d
+```
+
+then start the site runner:
 ```
 python start.py
 ```
@@ -46,6 +51,12 @@ vagrant halt
 
 
 ### Unit tests
+
+start the database server (if you have not yet done so):
+```
+docker-compose -f docker-compose-ui.yml up -d
+```
+
 to run tests:
 ```
 pytest
