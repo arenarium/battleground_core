@@ -35,11 +35,11 @@ def test_save_state(db):
     loaded_states = game_data.load_game_history(game_id,db=db)
     assert len(loaded_states)==1
 
-    assert state_id in loaded_states
+    assert state_id == loaded_states[0]["_id"]
 
     for key,value in test_state.items():
-        assert isinstance(loaded_states[state_id]["game_state"],dict)
-        assert loaded_states[state_id]["game_state"][key] == value
+        assert isinstance(loaded_states[0]["game_state"],dict)
+        assert loaded_states[0]["game_state"][key] == value
 
 
 def test_save_game_history(db):
@@ -53,10 +53,10 @@ def test_save_game_history(db):
 
     assert len(loaded_states)==10
 
-    sequence_states = {s["sequence"]:s["game_state"] for s in loaded_states.values()}
+    #sequence_states = loaded_states#{s["sequence"]:s["game_state"] for s in loaded_states.values()}
 
     for i,state in enumerate(test_states):
-        assert state == sequence_states[i]
+        assert state == loaded_states[i]["game_state"]
 
 
 def test_game_list(db):

@@ -66,10 +66,13 @@ def load_game_history(game_id,db=None):
         db = get_db()
     result = db.query(map_fun)
     data =  {r.id:r.value for r in result[[game_id]]}
+    states_in_sequence = [None]*len(data)
     for key,value in data.items():
+        doc = data[key].copy()
         game_state=data[key]["game_state"]
-        data[key]["game_state"] = json.loads(game_state)
-    return data
+        doc["game_state"] = json.loads(game_state)
+        states_in_sequence[doc["sequence"]] = doc
+    return states_in_sequence
 
 
 def get_games_list(db=None):
