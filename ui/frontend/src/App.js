@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Header from "./components/Header"
+import Welcome from "./components/Welcome"
+import About from "./components/About"
+import GameList from "./components/GameList"
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom'
+
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+        <Router>
+          <div>
+            <Header/>
+            <Route exact path="/" component={Welcome}/>
+            <Route  path="/about" component={About}/>
+            <Route  exact path="/games" component={GameList}/>
+            <Route  path="/games/:gameID/:stateIndex" component={GameList}>
+              {/* <GameList/> */}
+            </Route>
+          </div>
+      </Router>
+    </div>
+
+  );
+}
 }
 
 export default App;
