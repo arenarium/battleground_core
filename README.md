@@ -18,7 +18,7 @@ To run this configuration, start the database server (if you have not yet done s
 docker-compose -f docker-compose-ui.yml up -d
 ```
 
-then start the site runner:
+then start the awesome site runner:
 ```
 python start.py
 ```
