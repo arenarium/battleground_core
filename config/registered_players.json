@@ -1,0 +1,29 @@
+{
+  "basic_1":{
+    "game_type":"basic_game",
+    "owner":"core",
+    "name":"basic_1",
+    "local_path":"games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "basic_2":{
+    "game_type":"basic_game",
+    "owner":"core",
+    "name":"basic_2",
+    "local_path":"games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "basic_3":{
+    "game_type":"basic_game",
+    "owner":"core",
+    "name":"basic_3",
+    "local_path":"games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
+    "remote_path":null,
+    "settings":{}
+  }
+}

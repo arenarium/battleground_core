@@ -7,12 +7,14 @@ from .game_runner import GameRunner
 import time
 
 
-def parse_config(config_file):
+def parse_config(config):
+    if isinstance(config,dict):
+        return config
     try:
-        with open(config_file,"r") as f:
+        with open(config,"r") as f:
             data = json.load(f)
     except:
-        data = json.loads(config_file)
+        data = json.loads(config)
     return data
 
 
@@ -35,8 +37,8 @@ def get_game_engine(num_players,game_config):
     return engine_instance
 
 
-def start_session(config_file,save=True,game_delay=None):
-    config_data = parse_config(config_file)
+def start_session(config,save=True,game_delay=None):
+    config_data = parse_config(config)
     players = get_players(config_data["players"])
     all_scores = []
     for i in range(config_data["num_games"]):
