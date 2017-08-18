@@ -6,12 +6,13 @@ from battleground.game_runner import GameRunner
 
 
 def test_engine():
-    bge = BasicGameEngine(num_players=2)
+    bge = BasicGameEngine(num_players=2, name="bg")
     assert len(bge.scores)==2
     assert bge.get_current_player()==0
     bge.move({"value":200})
     assert bge.get_current_player()!=0
     assert isinstance(bge.get_state(),dict)
+    assert bge.get_game_name() == "bg"
 
 
 def test_player():
@@ -20,11 +21,12 @@ def test_player():
     assert isinstance(move,dict)
     assert "value" in move.keys()
 
+
 def test_game():
     players = {}
     for i in range(3):
         players[i]=basic_agent.BasicAgent()
-    engine = BasicGameEngine(num_players=3)
+    engine = BasicGameEngine(num_players=3, name="bg")
     runner = GameRunner(engine,players,save=False)
     scores = runner.run_game()
     print(engine.get_state())

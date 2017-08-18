@@ -42,6 +42,7 @@ def test_get_players():
 
 def test_get_engine():
     game_config={
+        "name":"bg",
         "type":"basic_game",
         "local_path":"games.basic_game.basic_game_engine",
         "class_name":"BasicGameEngine",
@@ -49,6 +50,7 @@ def test_get_engine():
       }
     engine = site_runner.get_game_engine(2,game_config)
     assert isinstance(engine,BasicGameEngine)
+    assert engine.get_game_name() == game_config["name"]
 
 def test_run_session():
     scores = site_runner.start_session(config_data_file,save=False,game_delay=0)

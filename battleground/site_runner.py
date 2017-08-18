@@ -33,7 +33,9 @@ def get_game_engine(num_players,game_config):
         if name==game_config["class_name"] and inspect.isclass(obj):
             engine_class = obj
             break
-    engine_instance = engine_class(num_players =num_players, **game_config["settings"])
+    engine_instance = engine_class(num_players =num_players,
+                                   name = game_config["name"],
+                                   **game_config["settings"])
     return engine_instance
 
 

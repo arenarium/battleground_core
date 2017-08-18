@@ -26,6 +26,7 @@ def generate_dynamic_config():
 
     game_id = random.choice(list(registered_games.keys()))
     game_spec = registered_games[game_id]
+    game_spec["name"] = game_id
 
     players = get_dynamic_players(game_spec["type"],3)
 
