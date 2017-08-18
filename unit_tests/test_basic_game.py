@@ -31,3 +31,14 @@ def test_game():
     assert len(scores)==3
     assert all([x>=0 for x in scores])
     assert engine.turn > 1
+
+    for i,state in enumerate(runner.game_states):
+        for key in ["game_state","player_ids","last_move"]:
+            assert key in state
+
+        assert isinstance(state["game_state"],dict)
+        assert isinstance(state["player_ids"],list)
+        if i==0:
+            assert state["last_move"] is None
+        else:
+            assert isinstance(state["last_move"],dict)

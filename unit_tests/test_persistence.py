@@ -6,6 +6,8 @@ import random
 
 @pytest.fixture(scope="module")
 def db():
+    """temporary database for testing"""
+
     s = game_data.get_server()
     db = game_data.get_db("test_db",s)
     yield db
@@ -18,6 +20,8 @@ def test_connection():
     assert isinstance(version,str)
 
 def test_game_id():
+    """generate a unique ID"""
+
     id1 = game_data.get_new_id()
     assert isinstance(id1,str)
     assert len(id1)==32
@@ -27,27 +31,34 @@ def test_game_id():
     assert id1 != id2
 
 def test_save_state(db):
-    test_state = {"k_a":"v_a","k_b":2,"k_c":None}
+    """save a single game state"""
+
+    test_state = {"game_state":{"k_a":"v_a","k_b":2,"k_c":None},
+                  "last_move":{"move":"a move"}}
     game_id = game_data.get_new_id()
-    state_id = game_data.save_game_state(game_id, 0,"test_game", [0,1,2,3],test_state,db=db)
+    state_id = game_data.save_game_state(game_id, 0,"test_game",test_state,db=db)
     assert isinstance(state_id,str)
     assert len(state_id)==32
     loaded_states = game_data.load_game_history(game_id,db=db)
     assert len(loaded_states)==1
 
     assert state_id == loaded_states[0]["_id"]
-
     for key,value in test_state.items():
-        assert isinstance(loaded_states[0]["game_state"],dict)
-        assert loaded_states[0]["game_state"][key] == value
+        assert isinstance(loaded_states[0][key],dict)
+        for key2,value2 in value.items():
+            assert loaded_states[0][key][key2] == value2
+
 
 
 def test_save_game_history(db):
+    """save a sequence of game states"""
+
     test_states = []
     for i in range(10):
-        test_states.append({"k_a":random.randint(0,1000)})
+        test_states.append({"game_state":{"k_a":random.randint(0,1000)},
+                           "last_move":{"k_move":random.randint(0,1000)}})
 
-    game_id = game_data.save_game_history("test_game",[0,1,2,3],test_states,db=db)
+    game_id = game_data.save_game_history("test_game",test_states,db=db)
 
     loaded_states = game_data.load_game_history(game_id,db=db)
 
@@ -56,10 +67,13 @@ def test_save_game_history(db):
     #sequence_states = loaded_states#{s["sequence"]:s["game_state"] for s in loaded_states.values()}
 
     for i,state in enumerate(test_states):
-        assert state == loaded_states[i]["game_state"]
+        assert state["game_state"] == loaded_states[i]["game_state"]
+        assert state["last_move"] == loaded_states[i]["last_move"]
 
 
 def test_game_list(db):
+    """get list of games"""
+
     data = game_data.get_games_list(db)
     assert len(data)>0
     assert len(data[0])==2

@@ -6,24 +6,26 @@ class GameRunner(object):
         self.game_engine = game_engine
         self.players = list(players.values())
         self.player_ids = list(players.keys())
-        self.game_states= []
-        self.game_moves =[]
+        self.game_states = []
         self.save=save
 
     def run_game(self):
         self.game_engine.reset()
         state = self.game_engine.get_state()
-        self.game_states.append(state)
+        self.game_states.append({"game_state":state,
+                                 "last_move":None,
+                                 "player_ids": self.player_ids
+                                 })
 
         player_index = self.game_engine.get_current_player()
 
         while not self.game_engine.game_over():
             move = self.players[player_index].move(state)
             self.game_engine.move(move)
-            self.game_moves.append(move)
-
-            state = self.game_engine.get_state()
-            state["last_move"]=move
+            state ={}
+            state["game_state"] = self.game_engine.get_state().copy()
+            state["last_move"] = move
+            state["player_ids"] = self.player_ids
             self.game_states.append(state)
             self.broadcast(state)
 
@@ -31,7 +33,6 @@ class GameRunner(object):
 
         if self.save:
             game_data.save_game_history(self.game_engine.get_game_name(),
-                                        self.player_ids,
                                         self.game_states)
         return self.game_engine.scores
 
