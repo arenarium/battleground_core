@@ -9,12 +9,6 @@ var request = require('request');
 class GameList extends Component {
   constructor(props){
     super(props)
-    // this.state = {
-    //   page=props.page,
-    //   gameID = props.gameID,
-    //   stateIndex = props.stateIndex
-    //  }
-    // this.endDragHandler = this.endDragHandler.bind(this)
     this.state = {
       gameStates:null,
       gameArray:null,

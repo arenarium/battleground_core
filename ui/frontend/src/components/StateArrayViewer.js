@@ -16,12 +16,13 @@ class StateArrayViewer extends Component {
   render() {
     var content
     if (this.props.states != null){
-      var stateString = JSON.stringify(this.props.states[this.props.stateIndex-1], null, 4)
+      let currentState = this.props.states[this.props.stateIndex-1]
+      let currentGameState = currentState["game_state"]
+      let currentLastMove = currentState["last_move"]
+      var gameStateString = JSON.stringify(currentGameState, null, 4)
+      var lastMoveString = JSON.stringify(currentLastMove, null, 4)
       content = (
         <div>
-          {/* <MyPagination
-            numItems={this.props.states.length}
-          newActivePage={this.props.stateIndex}/> */}
           <Pagination
             prev
             next
@@ -33,7 +34,10 @@ class StateArrayViewer extends Component {
             maxButtons={5}
             activePage={this.props.stateIndex}
             onSelect= {this.props.onStateSelect} />
-          <pre>{stateString}</pre>
+          <p>Last Move:</p>
+          <pre>{lastMoveString}</pre>
+          <p>Game State</p>
+          <pre>{gameStateString}</pre>
         </div>)
         }else {
           content = (<p>Select a game to view.</p>)
