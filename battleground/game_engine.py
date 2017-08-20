@@ -3,16 +3,27 @@ This is an interface for the game engine class.On the engine for a specific game
 Should implement these functions.
 """
 
-class GameEngine(object):
 
-    def __init__(self,num_players):
+class GameEngine(object):
+    def __init__(self, num_players):
         self.num_players = num_players
-        self.scores = [0]*num_players
+        self.scores = [0] * num_players
         self.current_player = 0
 
     def get_game_name(self):
         """
         return the name of this game (i.e. game type)
+        """
+        raise NotImplementedError()
+
+    def get_state(self):
+        raise NotImplementedError()
+
+    def get_current_player(self):
+        """
+        This will be used by the game runner to determine which player should
+        make the next move
+        (only turn-based games!)
         """
         raise NotImplementedError()
 
@@ -22,9 +33,10 @@ class GameEngine(object):
         """
         raise NotImplementedError()
 
-    def move(self,move):
+    def move(self, move):
         """
-        Do you move on behalf of the current player
+        Do a move on behalf of the current player
+        (only turn-based games!)
         """
         raise NotImplementedError()
 
@@ -32,14 +44,4 @@ class GameEngine(object):
         """
         Check if the game is over
         """
-        raise NotImplementedError()
-
-    def get_current_player(self):
-        """
-        This will be used by the game runner to determine which player should
-        make the next move
-        """
-        raise NotImplementedError()
-
-    def get_state(self):
         raise NotImplementedError()

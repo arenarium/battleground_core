@@ -3,155 +3,279 @@ game self.state is a set of player scores, plus a board self.state
 board self.state is the set of dice self.states plus the current player
 """
 import random
+import copy
 from battleground.game_engine import GameEngine
 
 NUM_DICE = 7
 
-class DiceGame(GameEngine):
 
-    def __init__(self,state=None):
+class DiceGame(GameEngine):
+    def __init__(self, state=None):
         """
         state should be a dict with the following elements:
-         (appologies for the js notation)
-    state =     {
-      rollable: new Array(len).fill(1),
-      bunnies: new Array(len).fill(0),
-      hutches: new Array(len).fill(0),
-      movable: new Array(len).fill(1),
-      currentPlayer: 0,
-      scores: {0:0},
-      extraBunnies: 0,
-      message: "",
-      allowedMoves: {"roll":1,"stay":0,"reset":0},
-      boardValue: 0
-    }
-        """
-        self.state=state
-        self.num_players = 2
-
-    def set_state(self,state):
-        """
-        set the game state
+        state = {
+          "rollables": [1]*dice_game.NUM_DICE,
+          "bunnies": [0]*dice_game.NUM_DICE,
+          "hutches": [0]*dice_game.NUM_DICE,
+          "movables": [1]*dice_game.NUM_DICE,
+          "currentPlayer": 0,
+          "scores": {0:0},
+          "extraBunnies": 0,
+          "message": "",
+          "allowedMoves": {"roll":0,"stay":0,"reset":0,"moveBunny":1,"moveHutch":1},
+          "boardValue": 0
+        }
         """
         self.state = state
+        self.num_players = 2
+
+    def get_game_name(self):
+        """
+        :returns (char) the name of this game (i.e. game type)
+        """
+        return "Bunnies"
+
+    def get_state(self):
+        """
+        :returns self.state
+        """
+        return self.state
+
+    def get_current_player(self):
+        """
+        :returns (int) current player ID
+        """
+        return self.state["currentPlayer"]
+
+    def reset(self):
+        """
+        (re)set game into initial state
+        :returns self.state
+        """
+        self.state["rollables"] = [random.randint(1, 6) for x in self.state["rollables"]]
+        for name in ["bunnies", "hutches"]:
+            self.state[name] = [0] * NUM_DICE
+        self.state["movables"] = [1] * NUM_DICE
+        self.state["currentPlayer"] = 0
+        # scores = {playerID, score}
+        # The scores dictionary is dynamically generated.
+        # For each player not in the dict, _do_stay() adds an entry.
+        self.state["scores"] = {0: 0}
+        self.state["extraBunnies"] = 0
+        self.state["message"] = ""
+        # at least one bunny needs to be moved before being able to roll again or stay with the result
+        self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+        self.state["boardValue"] = 0
+        return self.state
 
     def _get_num_bunnies(self):
         """
-        number bunnies in the bunnies bin. used for scoring.
+        :returns (int) number of bunnies in the bunnies bin. used for scoring.
         """
-        ones = sum([int(int(x)==1) for x in self.state["bunnies"]])
-        twos = sum([int(int(x)==2) for x in self.state["bunnies"]])
-        return  (ones//2)*10+twos*2+ones%2 + self.state["extraBunnies"]
+        ones = sum([int(int(x) == 1) for x in self.state["bunnies"]])
+        twos = sum([int(int(x) == 2) for x in self.state["bunnies"]])
+        return (ones // 2) * 10 + twos * 2 + ones % 2 + self.state["extraBunnies"]
 
-    def score(self):
+    def _score(self):
         """
-        return current board value
+        :returns (int) current board value of current player
         """
         num_bunnies = self._get_num_bunnies()
-        num_huches = max(self.state["hutches"])
-        num_huches = max(num_huches,1)
-        return num_huches*num_bunnies
+        num_hutches = max(self.state["hutches"])
+        num_hutches = max(num_hutches, 1)
+        return num_hutches * num_bunnies
 
-    def check_hutches(self,hutches):
-        if not all([x!=1 for x in hutches]):
-            return False, "no bunnies allowed in hutch container"
-        old_x = max(hutches)+1
-        for x in sorted(hutches,reverse=True):
-            if x==0:
+    def _check_bunnies(self, bunnies):
+        """
+        :returns (bool) if list of bunnies is valid, (char) error message if not
+        """
+        if not all([x <= 2 for x in bunnies]):
+            return False, "Only bunnies are allowed in bunnies container!"
+        return True, ""
+
+    def _check_hutches(self, hutches):
+        """
+        :returns (bool) if list of hutches is valid, (char) error message if not
+        """
+        if not all([x != 1 for x in hutches]):
+            return False, "No bunnies allowed in hutch container!"
+        if 2 < min([x if x > 0 else NUM_DICE for x in hutches]):
+            return False, "Hutches must start from 2."
+        old_x = max(hutches) + 1
+        for x in sorted(hutches, reverse=True):
+            if x == 0:
                 break
-            if x==old_x-1:
-                old_x =x
+            if x == old_x - 1:
+                old_x = x
             else:
-                return False, "hutches must be consecutive and unique"
-        return True,""
+                return False, "Hutches must be consecutive and unique."
+        return True, ""
 
-
-    def is_valid(self,move):
+    def _is_valid(self, state, move):
         """
-        check if a move is valid given current state
+        :returns (bool) if a move is valid given current state
         """
-        if self.state["allowedMoves"][move]==1:
-            if not all([x<=2 for x in self.state["bunnies"]]):
-                self.state["message"]="only bunnies allowed in bunnies container"
-                return False
-            valid, message = self.check_hutches(self.state["hutches"])
-            if not valid:
-                self.state["message"] = message
-                return False
+        moveName, diceID = move
+        state_copy = copy.deepcopy(state)
+        # if move is allowed
+        if state["allowedMoves"][moveName] == 1:
+            if moveName == "moveBunny":
+                self._do_move_bunny(state_copy, diceID)
+                # if hutches in bunnies container
+                valid, message = self._check_bunnies(state_copy["bunnies"])
+                if not valid:
+                    state["message"] = message
+                    return False
+            elif moveName == "moveHutch":
+                self._do_move_hutch(state_copy, diceID)
+                # check if no bunnies in hutches container and if hutches are ok
+                valid, message = self._check_hutches(state_copy["hutches"])
+                if not valid:
+                    state["message"] = message
+                    return False
+            state["message"] = ""
             return True
         else:
             return False
 
-    def youre_dead(self):
+    def _youre_dead(self):
         """
-        you're dead if you rolled 0 bunnies
+        :returns (bool) if you're dead because you rolled no bunnies
         """
-        return all([int(x)>2 or int(x)==0 for x in self.state["rollable"]])
+        return all([x > 2 or x == 0 for x in self.state["rollables"]])
 
-    def doroll(self):
+    def _do_roll(self):
         """
-        roll mechanicts
+        roll mechanics
+        :returns self.state
         """
-        if all([int(x)==0 for x in self.state["rollable"]]): # if no rollable dice
-            self.state["extraBunnies"] = self._get_num_bunnies() # record existing bunnies
-            self.state["rollable"] = [1 if int(x)>0 else 0 for x in self.state["bunnies"]] # recycle dice
-            self.state["bunnies"] = [0]*7
+        # if no rollable dice
+        if all([x == 0 for x in self.state["rollables"]]):
+            # record existing bunnies
+            self.state["extraBunnies"] = self._get_num_bunnies()
+            # recycle dice from bunnies for new rollable dice
+            self.state["rollables"] = [1 if x > 0 else 0 for x in self.state["bunnies"]]
+            # reset bunnies
+            self.state["bunnies"] = [0] * 7
 
-        self.state["movable"] = [1 if int(x)>0 else 0 for x in self.state["rollable"]] # upate movable
+        # update movable dice
+        self.state["movables"] = [1 if x > 0 else 0 for x in self.state["rollables"]]
 
+        # and do the roll
+        self.state["rollables"] = [random.randint(1, 6) if x > 0 else 0 for x in self.state["rollables"]]
 
-        """ and do the roll """
-        self.state["rollable"] = [random.randint(1,6) if int(x)>0 else 0 for x in self.state["rollable"]]
-
-        if self.youre_dead(): # check if result ends turn
-            self.state["message"]="No Bunnies, your turn is over."
-            self.state["allowedMoves"] = {"roll":0,"stay":1,"reset":0}
+        # check if roll ends turn
+        if self._youre_dead():
+            self.state["message"] = "You rolled no bunnies, your turn is over."
+            # dead player manually ends turn, no automatic switch to new player
+            self.state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
             self.state["boardValue"] = 0
-        else: # update allowed moves
-            self.state["allowedMoves"] = {"roll":1,"stay":1,"reset":0}
-            self.state["boardValue"] = self.score()
+        else:  # if roll did not end turn, update allowed moves and board value
+            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+            self.state["boardValue"] = self._score()
         return self.state
 
-    def dostay(self):
-        player_index = str(self.state["currentPlayer"])
-        if self.state["allowedMoves"]["roll"]==0:
-            self.state["currentPlayer"] = (int(player_index)+1)%self.num_players
-            self.state["allowedMoves"] = {"roll":1,"stay":0,"reset":0}
-            return self.reset()
-        else:
-            board_value = self.score()
-            self.state["movable"] = [1 if int(x)>0 else 0 for x in self.state["rollable"]]
+    def _do_stay(self):
+        """
+        take
+        :returns self.state
+        """
+        # get current player
+        # player_index = str(self.state["currentPlayer"])
+        player_index = self.get_current_player()
+
+        # if not able to roll again
+        if self.state["allowedMoves"]["roll"] == 0:
+            # move to next player and reset dice
+            self.state["currentPlayer"] = (player_index + 1) % self.num_players
+            return self._do_reset()
+        else:  # if able to roll again
+            # update movable dice
+            self.state["movables"] = [1 if x > 0 else 0 for x in self.state["rollables"]]
+            # note board value
+            board_value = self._score()
+            # if the current player has an initialized score
             if player_index in self.state["scores"]:
-                self.state["scores"][player_index]=int(self.state["scores"][player_index])+board_value
-            else:
-                self.state["scores"][player_index]=board_value
-            self.state["currentPlayer"] = (int(player_index)+1)%self.num_players
-            self.state["boardValue"] = self.score()
-            self.state["allowedMoves"] = {"roll":1,"stay":0,"reset":1}
+                self.state["scores"][player_index] += board_value
+            else:  # if not, a new score is initialized
+                self.state["scores"][player_index] = board_value
+            # move to next player, note score and reset allowed moves
+            self.state["currentPlayer"] = (player_index + 1) % self.num_players
+            self.state["boardValue"] = self._score()
+            self.state["allowedMoves"] = {"roll": 1, "stay": 0, "reset": 1, "moveBunny": 0, "moveHutch": 0}
             return self.state
 
-
-    def reset(self):
-        self.state['message']=""
-        self.state["movable"] = [1]*7
-        for name in ["hutches","bunnies"]:
-            self.state[name] = [0]*7
-        self.state["rollable"] = [random.randint(1,6) for x in self.state["rollable"]]
-        self.state["boardValue"] = self.score()
+    def _do_reset(self):
+        """
+        reset state into initial state, leaving current player and scores the same
+        :returns self.state
+        """
+        self.state["rollables"] = [random.randint(1, 6) for x in self.state["rollables"]]
+        for name in ["bunnies", "hutches"]:
+            self.state[name] = [0] * 7
+        self.state["movables"] = [1] * 7
         self.state["extraBunnies"] = 0
-        self.state["allowedMoves"] = {"roll":1,"stay":0,"reset":0}
+        self.state["message"] = ""
+        # at least one bunny needs to be moved before being able to roll again or pass on
+        self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+        self.state["boardValue"] = self._score()
+
+        if self._youre_dead():
+            self.state["message"] = "You rolled no bunnies, your turn is over."
+            # dead player manually ends turn, no automatic switch to new player
+            self.state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+            self.state["boardValue"] = 0
+
         return self.state
 
+    def _do_move_bunny(self, state, diceID):
+        """
+        moves the die at position diceID from rollables to bunnies
+        at least one bunny needs to be moved before being able to roll again or pass on
+        :returns self.state
+        """
+        state["bunnies"][diceID] = state["rollables"][diceID]
+        state["rollables"][diceID] = 0
+        state["movables"][diceID] = 0
+        state["allowedMoves"]["roll"] = 1
+        state["allowedMoves"]["stay"] = 1
+        return state
 
-    def move(self,move):
-        if self.is_valid(move):
-            if move =="stay":
-                self.dostay()
-            elif move =="roll":
-                self.doroll()
-            elif move=="reset":
-                self.reset()
+    def _do_move_hutch(self, state, diceID):
+        """
+        moves the die at position diceID from rollables to hutches
+        :returns self.state
+        """
+        state["hutches"][diceID] = state["rollables"][diceID]
+        state["rollables"][diceID] = 0
+        state["movables"][diceID] = 0
+        return state
+
+    def move(self, move):
+        """
+        checks if move is valid given current state and applies move
+        :returns self.state
+        """
+        moveName, diceID = move
+        state_copy = copy.deepcopy(self.state)
+        if self._is_valid(state_copy, move):
+            self.state["message"] = ""
+            if moveName == "roll":
+                self._do_roll()
+            elif moveName == "stay":
+                self._do_stay()
+            elif moveName == "reset":
+                self._do_reset()
+            elif moveName == "moveBunny":
+                self._do_move_bunny(self.state, diceID)
+            elif moveName == "moveHutch":
+                self._do_move_hutch(self.state, diceID)
+        else:
+            self.state["message"] = "This is not a valid move."
         return self.state
 
-    def get_current_player(self):
-        return self.state["currentPlayer"]
+    def game_over(self):
+        """
+        Check if the game is over
+        """
+        raise NotImplementedError()
