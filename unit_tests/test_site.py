@@ -48,9 +48,9 @@ def test_get_engine():
         "class_name":"BasicGameEngine",
         "settings":{}
       }
-    engine = site_runner.get_game_engine(2,game_config)
+    engine = site_runner.game_engine_factory(2,game_config)
     assert isinstance(engine,BasicGameEngine)
-    assert engine.get_game_name() == game_config["name"]
+    assert engine.get_game_name() == game_config["type"]
 
 def test_run_session():
     scores = site_runner.start_session(config_data_file,save=False,game_delay=0)

@@ -6,7 +6,7 @@ from battleground.game_runner import GameRunner
 
 
 def test_engine():
-    bge = BasicGameEngine(num_players=2, name="bg")
+    bge = BasicGameEngine(num_players=2, type="bg")
     assert len(bge.scores)==2
     assert bge.get_current_player()==0
     bge.move({"value":200})
@@ -26,7 +26,7 @@ def test_game():
     players = {}
     for i in range(3):
         players[i]=basic_agent.BasicAgent()
-    engine = BasicGameEngine(num_players=3, name="bg")
+    engine = BasicGameEngine(num_players=3, type="bg")
     runner = GameRunner(engine,players,save=False)
     scores = runner.run_game()
     print(engine.get_state())

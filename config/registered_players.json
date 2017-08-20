@@ -1,6 +1,6 @@
 {
   "basic_1":{
-    "game_type":"basic_game",
+    "game_type":["basic_game"],
     "owner":"core",
     "name":"basic_1",
     "local_path":"games.basic_game.basic_agent",
@@ -9,7 +9,7 @@
     "settings":{}
   },
   "basic_2":{
-    "game_type":"basic_game",
+    "game_type":["basic_game","basic_game_50"],
     "owner":"core",
     "name":"basic_2",
     "local_path":"games.basic_game.basic_agent",
@@ -18,7 +18,7 @@
     "settings":{}
   },
   "basic_3":{
-    "game_type":"basic_game",
+    "game_type":["basic_game"],
     "owner":"core",
     "name":"basic_3",
     "local_path":"games.basic_game.basic_agent",

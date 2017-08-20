@@ -64,6 +64,7 @@ def save_game_history(game_type, game_states,db=None):
         each key, value in each dict will be stord as key: json(value) in the document.
         expected keys are "game_state", "last_move" and "player_ids"
     """
+
     game_id = get_new_id()
     if db is None:
         db = get_db()
@@ -78,28 +79,35 @@ def save_game_history(game_type, game_states,db=None):
 
 
 def load_game_history(game_id,db=None):
+    """load all states with the same game ID and return an ordered sequence"""
+
     map_fun = '''function(doc) {emit([doc.game_id], doc)}'''
     if db is None:
         db = get_db()
     result = db.query(map_fun)
-    data =  {r.id:r.value for r in result[[game_id]]}
+    data = {r.id:r.value for r in result[[game_id]]}
     states_in_sequence = [None]*len(data)
+    """now decode some of the values that are json strings"""
     for key,loaded_doc in data.items():
         output_doc = loaded_doc.copy()
-        print(loaded_doc)
-        for data_key in ["game_state", "last_move"]:
+        for data_key in ["game_state", "last_move"]:#decode these two keys, because they are special
             output_doc[data_key] = json.loads(loaded_doc[data_key])
         states_in_sequence[loaded_doc["sequence"]] = output_doc
     return states_in_sequence
 
 
-def get_games_list(db=None):
+def get_games_list(game_type=None, db=None):
     """
     get a list of unique game IDs
     """
+
     if db is None:
         db = get_db()
-    map_fun = '''function(doc) {emit([doc.game_id,doc.game_type])}'''
+    map_fun = '''function(doc) {emit([doc.game_type,doc.game_id])}'''
     result = db.query(map_fun,'_count', group=True)
-    data =  [(r.key,r.value) for r in result[:]]
+
+    if game_type is None:
+        data =  [(r.key,r.value) for r in result[:]]
+    else:
+        data =  [(r.key,r.value) for r in result[[game_type]:[game_type,"ZZZ"]]]
     return data

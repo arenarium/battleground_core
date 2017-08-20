@@ -26,7 +26,7 @@ def get_players(players_config):
     return dict(enumerate(agents))
 
 
-def get_game_engine(num_players,game_config):
+def game_engine_factory(num_players,game_config):
     local_path = game_config["local_path"]
     engine_module = importlib.import_module(local_path)
     for name, obj in inspect.getmembers(engine_module):
@@ -34,7 +34,7 @@ def get_game_engine(num_players,game_config):
             engine_class = obj
             break
     engine_instance = engine_class(num_players =num_players,
-                                   name = game_config["name"],
+                                   type = game_config["type"],
                                    **game_config["settings"])
     return engine_instance
 
@@ -44,7 +44,7 @@ def start_session(config,save=True,game_delay=None):
     players = get_players(config_data["players"])
     all_scores = []
     for i in range(config_data["num_games"]):
-        engine = get_game_engine(len(players),config_data["game"])
+        engine = game_engine_factory(len(players),config_data["game"])
         gr = GameRunner(engine,players=players,save=save)
         scores = gr.run_game()
         if game_delay is None:

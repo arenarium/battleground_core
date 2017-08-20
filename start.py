@@ -11,8 +11,11 @@ def get_dynamic_players(game_type,n):
     """
     with open("config/registered_players.json",'r') as f:
         registered_players = json.load(f)
+    qualifying_players = []
+    for name,p in registered_players.items():
+        if game_type in p["game_type"]:
+            qualifying_players.append(p)
 
-    qualifying_players = [p for name,p in registered_players.items() if p["game_type"]==game_type]
     players=[]
     for i in range(n):
         players.append(random.choice(qualifying_players))
@@ -23,10 +26,7 @@ def generate_dynamic_config():
     with open("config/registered_games.json",'r') as f:
         registered_games = json.load(f)
 
-
-    game_id = random.choice(list(registered_games.keys()))
-    game_spec = registered_games[game_id]
-    game_spec["name"] = game_id
+    game_spec = random.choice(registered_games)
 
     players = get_dynamic_players(game_spec["type"],3)
 

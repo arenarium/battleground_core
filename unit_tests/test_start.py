@@ -9,7 +9,7 @@ def test_get_dynamic_players():
     assert len(players)==5
     assert isinstance(players[0],dict)
     for player in players:
-        assert player["game_type"] == game_type
+        assert game_type in player["game_type"]
 
 def test_get_game_gonfig():
 

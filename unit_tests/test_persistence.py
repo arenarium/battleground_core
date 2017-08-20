@@ -74,7 +74,20 @@ def test_save_game_history(db):
 def test_game_list(db):
     """get list of games"""
 
-    data = game_data.get_games_list(db)
+    data = game_data.get_games_list(db=db)
+    assert len(data)>0
+    assert len(data[0])==2
+    assert len(data[0][0])==2
+    assert data[0][1]%1 == 0 # is int
+
+
+def test_game_list_selector(db):
+    """get list of games"""
+
+    data = game_data.get_games_list(db=db,game_type="teskdsajhasde")
+    assert len(data)==0
+
+    data = game_data.get_games_list(db=db,game_type="test_game")
     assert len(data)>0
     assert len(data[0])==2
     assert len(data[0][0])==2

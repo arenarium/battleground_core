@@ -3,12 +3,11 @@ import random
 
 class BasicGameEngine(GameEngine):
 
-    def __init__(self, num_players, name, max_range=25):
-        super().__init__(num_players, name)
+    def __init__(self, num_players, type, max_range=25):
+        super().__init__(num_players, type)
         self.max=max_range
         self.reset()
-        self.name = name
-        
+
 
     def reset(self):
         """
