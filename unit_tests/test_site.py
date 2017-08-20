@@ -12,7 +12,6 @@ def test_json():
     assert isinstance(data,dict)
 
 
-
 def test_config_loader():
     data = site_runner.parse_config(config_data_file)
     assert isinstance(data,dict)

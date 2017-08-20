@@ -1,4 +1,6 @@
 from .persistence import game_data
+import copy
+
 
 class GameRunner(object):
 
@@ -22,13 +24,15 @@ class GameRunner(object):
         while not self.game_engine.game_over():
             move = self.players[player_index].move(state)
             self.game_engine.move(move)
-            state ={}
-            state["game_state"] = self.game_engine.get_state().copy()
-            state["last_move"] = move
-            state["player_ids"] = self.player_ids
-            self.game_states.append(state)
-            self.broadcast(state)
+            state = self.game_engine.get_state()
 
+            data_to_save ={}
+            data_to_save["game_state"] = copy.deepcopy(state)
+            data_to_save["last_move"] = copy.deepcopy(move)
+            data_to_save["player_ids"] = copy.deepcopy(self.player_ids)
+
+            self.game_states.append(data_to_save)
+            self.broadcast(data_to_save)
             player_index = self.game_engine.get_current_player()
 
         if self.save:
