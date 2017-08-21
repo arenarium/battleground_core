@@ -2,6 +2,7 @@
 from . import agent
 import importlib
 import sys, inspect
+from refereemq import RefereeHandler
 
 class DynamicAgent(agent.Agent):
 
@@ -19,7 +20,8 @@ class DynamicAgent(agent.Agent):
                     agent_class = obj
             self.agent_instance = agent_class(**kwargs)
         elif queue_prefix is not None:
-            raise NotImplementedError()
+            self.agent_instance = RefereeHandler(queue_prefix)
+            #raise NotImplementedError()
 
     def move(self,state):
         return self.agent_instance.move(state)

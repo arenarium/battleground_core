@@ -3,7 +3,8 @@ import uuid
 
 class RefereeHandler():
 
-    def __init__(self):
+    def __init__(self,agent_name):
+        self.agent_name = agent_name
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 
         self.channel = self.connection.channel()
@@ -21,10 +22,10 @@ class RefereeHandler():
 
 
 
-    def call(self, agent,method_name):
+    def move(self, param):
         routing_key = None
 
-        routing_key="rpc_queue_"+agent
+        routing_key="rpc_queue_"+self.agent_name
         self.response = None
         self.corr_id = str(uuid.uuid4())
         self.channel.basic_publish(exchange='',
@@ -32,9 +33,9 @@ class RefereeHandler():
                                    properties=pika.BasicProperties(
                                          reply_to = self.callback_queue,
                                          correlation_id = self.corr_id,
-                                         type=method_name
+                                         type='move'
                                          ),
-                                   body='')
+                                   body=param)
         while self.response is None:
             self.connection.process_data_events()
         return int(self.response)
