@@ -5,10 +5,17 @@ Should implement these functions.
 
 class GameEngine(object):
 
-    def __init__(self,num_players):
+    def __init__(self, num_players, type, **kwargs):
         self.num_players = num_players
         self.scores = [0]*num_players
         self.current_player = 0
+        self.type = type
+
+    def get_game_name(self):
+        """
+        return the name of this game (i.e. game type)
+        """
+        return self.type
 
     def reset(self):
         """
