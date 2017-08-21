@@ -8,7 +8,7 @@ class AgentHandler():
         self.__functions = {}
 
     def __on_request(self,ch, method, props, body):
-        response = selft.__functions[props.type](str(body))
+        response = self.__functions[props.type](str(body))
 
         ch.basic_publish(exchange='',
              routing_key=props.reply_to,
