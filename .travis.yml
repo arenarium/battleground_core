@@ -1,5 +1,11 @@
+sudo: required
+services:
+  - docker
 language: python
 python:
   - "3.5"
 install: "pip install -r requirements.txt"
-script: pytest
+before_script:
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)
+  - "docker-compose -f docker-compose-ui.yml up --build -d"
+script: pytest unit_tests
