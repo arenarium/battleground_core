@@ -7,6 +7,7 @@ import copy
 from battleground.game_engine import GameEngine
 
 NUM_DICE = 7
+END_SCORE = 333
 
 
 class DiceGame(GameEngine):
@@ -23,7 +24,9 @@ class DiceGame(GameEngine):
           "extraBunnies": 0,
           "message": "",
           "allowedMoves": {"roll":0,"stay":0,"reset":0,"moveBunny":1,"moveHutch":1},
-          "boardValue": 0
+          "boardValue": 0,
+          "lastPlayer": self.num_players,
+          "lastRound": False
         }
         """
         self.state = state
@@ -66,18 +69,23 @@ class DiceGame(GameEngine):
         # at least one bunny needs to be moved before being able to roll again or stay with the result
         self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
         self.state["boardValue"] = 0
+        # lastPlayer is set to highest player ID + 1
+        self.state["lastPlayer"] = self.num_players
+        self.state["lastRound"] = False
         return self.state
 
     def _get_num_bunnies(self):
         """
-        :returns (int) number of bunnies in the bunnies bin. used for scoring.
+        Two 1's count as 10 bunnies.
+        :returns (int) number of bunnies in the bunnies bin
         """
-        ones = sum([int(int(x) == 1) for x in self.state["bunnies"]])
-        twos = sum([int(int(x) == 2) for x in self.state["bunnies"]])
+        ones = self.state["bunnies"].count(1)
+        twos = self.state["bunnies"].count(2)
         return (ones // 2) * 10 + twos * 2 + ones % 2 + self.state["extraBunnies"]
 
     def _score(self):
         """
+        score = bunnies * hutches
         :returns (int) current board value of current player
         """
         num_bunnies = self._get_num_bunnies()
@@ -99,7 +107,7 @@ class DiceGame(GameEngine):
         """
         if not all([x != 1 for x in hutches]):
             return False, "No bunnies allowed in hutch container!"
-        if 2 < min([x if x > 0 else NUM_DICE for x in hutches]):
+        if 2 < min(x for x in hutches if x > 0):
             return False, "Hutches must start from 2."
         old_x = max(hutches) + 1
         for x in sorted(hutches, reverse=True):
@@ -111,29 +119,29 @@ class DiceGame(GameEngine):
                 return False, "Hutches must be consecutive and unique."
         return True, ""
 
-    def _is_valid(self, state, move):
+    def _is_valid(self, move):
         """
         :returns (bool) if a move is valid given current state
         """
-        moveName, diceID = move
-        state_copy = copy.deepcopy(state)
+        [moveName, diceID] = move
+        state_copy = copy.deepcopy(self.state)
         # if move is allowed
-        if state["allowedMoves"][moveName] == 1:
+        if self.state["allowedMoves"][moveName] == 1:
             if moveName == "moveBunny":
                 self._do_move_bunny(state_copy, diceID)
                 # if hutches in bunnies container
                 valid, message = self._check_bunnies(state_copy["bunnies"])
                 if not valid:
-                    state["message"] = message
+                    self.state["message"] = message
                     return False
             elif moveName == "moveHutch":
                 self._do_move_hutch(state_copy, diceID)
                 # check if no bunnies in hutches container and if hutches are ok
                 valid, message = self._check_hutches(state_copy["hutches"])
                 if not valid:
-                    state["message"] = message
+                    self.state["message"] = message
                     return False
-            state["message"] = ""
+            self.state["message"] = ""
             return True
         else:
             return False
@@ -177,7 +185,7 @@ class DiceGame(GameEngine):
 
     def _do_stay(self):
         """
-        take
+        ends current player's turn and moves on to next player
         :returns self.state
         """
         # get current player
@@ -207,7 +215,7 @@ class DiceGame(GameEngine):
 
     def _do_reset(self):
         """
-        reset state into initial state, leaving current player and scores the same
+        resets state into initial state, leaving current player and scores the same
         :returns self.state
         """
         self.state["rollables"] = [random.randint(1, 6) for x in self.state["rollables"]]
@@ -256,9 +264,8 @@ class DiceGame(GameEngine):
         checks if move is valid given current state and applies move
         :returns self.state
         """
-        moveName, diceID = move
-        state_copy = copy.deepcopy(self.state)
-        if self._is_valid(state_copy, move):
+        [moveName, diceID] = move
+        if self._is_valid(move):
             self.state["message"] = ""
             if moveName == "roll":
                 self._do_roll()
@@ -272,10 +279,26 @@ class DiceGame(GameEngine):
                 self._do_move_hutch(self.state, diceID)
         else:
             self.state["message"] = "This is not a valid move."
+
+        # No moves are allowed any longer if the game is over.
+        if self.game_over():
+            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+            self.state["message"] = str(self.state["scores"])
+
         return self.state
 
     def game_over(self):
         """
-        Check if the game is over
+        :returns (bool) if the game is over
         """
-        raise NotImplementedError()
+        if self.state["currentPlayer"] == self.state["lastPlayer"]:
+            return True
+        if END_SCORE <= max(self.state["scores"].values()) and not self.state["lastRound"]:
+            # The score is evaluated while moving on to the next player,
+            # so as soon as the highest score is above the threshold,
+            # it was the last player's score that breached it.
+            self.state["lastPlayer"] = (self.state["currentPlayer"] - 1) % self.num_players
+            # keep lastPlayer being updated each turn of the last round
+            self.state["lastRound"] = True
+            self.state["message"] = "This is the last round."
+        return False
