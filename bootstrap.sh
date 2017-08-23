@@ -14,6 +14,10 @@ sudo npm install -g create-react-app
 
 sudo gem install travis -v 1.8.8 --no-rdoc --no-ri
 
+curl -L https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
+chmod +x /tmp/docker-machine
+sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
+
 sudo echo "
 source ~/python3/bin/activate
 cd /vagrant

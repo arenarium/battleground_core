@@ -1,12 +1,12 @@
 sudo: required
 services:
-- docker
+  - docker
 language: python
 python:
-- '3.5'
-install: pip install -r requirements.txt
+    - '3.5'
 before_script:
-- export PYTHONPATH=$PYTHONPATH:$(pwd)
-- docker-compose -f docker-compose-ui.yml up --build -d
-- python start.py
-script: pytest unit_tests
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)
+  - docker-compose -f docker-compose-ui.yml up --build -d
+  - docker build -t main .
+  - docker run --network=host main python start.py
+script: docker run --network=host main pytest unit_tests
