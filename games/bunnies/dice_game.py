@@ -66,8 +66,11 @@ class DiceGame(GameEngine):
         self.state["scores"] = {0: 0}
         self.state["extraBunnies"] = 0
         self.state["message"] = ""
-        # at least one bunny needs to be moved before being able to roll again or stay with the result
-        self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+        # if no bunnies were rolled
+        if self._youre_dead():
+            self.state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+        else:  # at least one bunny needs to be moved before being able to roll again or stay with the result
+            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
         self.state["boardValue"] = 0
         # lastPlayer is set to highest player ID + 1
         self.state["lastPlayer"] = self.num_players
