@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  main:
+    build: .
+    depends_on:
+      - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984
