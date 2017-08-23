@@ -1,5 +1,6 @@
 sudo apt-get update
 sudo apt-get install -y zsh curl python3 python3-venv
+sudo apt-get install -y ruby ruby-dev gcc make
 #sudo chsh -s /bin/zsh ubuntu
 zsh
 git clone git://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
@@ -10,6 +11,8 @@ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get -y install nodejs build-essential
 sudo npm install npm@latest -g
 sudo npm install -g create-react-app
+
+sudo gem install travis -v 1.8.8 --no-rdoc --no-ri
 
 sudo echo "
 source ~/python3/bin/activate
