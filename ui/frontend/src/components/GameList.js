@@ -26,7 +26,7 @@ class GameList extends Component {
 
 
   getGamesList() {
-    fetch('http://localhost:8888/api/games/')
+    fetch('/api/games/')
     .then((response) =>{
       return response.json()})
       .then((value)=>{
@@ -39,7 +39,7 @@ class GameList extends Component {
 
 
   updateMoves(gameID){
-    fetch('http://localhost:8888/api/states/'+gameID)
+    fetch('/api/states/'+gameID)
     .then((response) =>{
       return response.json()})
       .then((value)=>{
