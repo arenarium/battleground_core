@@ -18,5 +18,5 @@ COPY . .
 CMD [ "uwsgi", "--socket", "0.0.0.0:3031", \
                "--plugins", "python3", \
                "--protocol", "uwsgi", \
-               "--wsgi-file", "ui/api/app.py",\
+               "--wsgi-file", "app.py",\
                "--callable", "app"]

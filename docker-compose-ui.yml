@@ -10,20 +10,14 @@ services:
 
   uwsgi:
     image: uwsgi:latest
-    build:
-      context: .
-      dockerfile: ui/api/Dockerfile.uwsgi
+    build: ui/api
     depends_on:
       - couchdb
     environment:
       - COUCHDB_HOST=http://couchdb:5984
-    # volumes:
-    #   - ./backend/public:/usr/src/app/public
 
-  api:
-    build:
-      context: .
-      dockerfile: ./ui/Dockerfile.nginx
+  nginx:
+    build: ./ui/frontend
     depends_on:
       - uwsgi
     ports:

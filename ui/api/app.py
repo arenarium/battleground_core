@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from os import path, environ
 import json
 
-from battleground.persistence import game_data
+import game_data
 
 app = Flask(__name__)
 
@@ -37,6 +37,6 @@ def get_games_types():
     return jsonify(data)
 
 
-@app.route("/")
+@app.route("/api/")
 def main():
     return "flask root"
