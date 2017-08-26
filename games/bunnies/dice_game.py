@@ -126,19 +126,24 @@ class DiceGame(GameEngine):
         """
         :returns (bool) if a move is valid given current state
         """
-        [moveName, diceID] = move
+        assert "name" in move
+        assert "value" in move
+
+        move_name = move["name"]
+        dice_ID = move["value"]
+
         state_copy = copy.deepcopy(self.state)
         # if move is allowed
-        if self.state["allowedMoves"][moveName] == 1:
-            if moveName == "moveBunny":
-                self._do_move_bunny(state_copy, diceID)
+        if self.state["allowedMoves"][move_name] == 1:
+            if move_name == "moveBunny":
+                self._do_move_bunny(state_copy, dice_ID)
                 # if hutches in bunnies container
                 valid, message = self._check_bunnies(state_copy["bunnies"])
                 if not valid:
                     self.state["message"] = message
                     return False
-            elif moveName == "moveHutch":
-                self._do_move_hutch(state_copy, diceID)
+            elif move_name == "moveHutch":
+                self._do_move_hutch(state_copy, dice_ID)
                 # check if no bunnies in hutches container and if hutches are ok
                 valid, message = self._check_hutches(state_copy["hutches"])
                 if not valid:
@@ -239,47 +244,52 @@ class DiceGame(GameEngine):
 
         return self.state
 
-    def _do_move_bunny(self, state, diceID):
+    def _do_move_bunny(self, state, dice_ID):
         """
-        moves the die at position diceID from rollables to bunnies
+        moves the die at position dice_ID from rollables to bunnies
         at least one bunny needs to be moved before being able to roll again or pass on
         :returns self.state
         """
-        state["bunnies"][diceID] = state["rollables"][diceID]
-        state["rollables"][diceID] = 0
-        state["movables"][diceID] = 0
+        state["bunnies"][dice_ID] = state["rollables"][dice_ID]
+        state["rollables"][dice_ID] = 0
+        state["movables"][dice_ID] = 0
         state["allowedMoves"]["roll"] = 1
         state["allowedMoves"]["stay"] = 1
         return state
 
-    def _do_move_hutch(self, state, diceID):
+    def _do_move_hutch(self, state, dice_ID):
         """
-        moves the die at position diceID from rollables to hutches
+        moves the die at position dice_ID from rollables to hutches
         :returns self.state
         """
-        state["hutches"][diceID] = state["rollables"][diceID]
-        state["rollables"][diceID] = 0
-        state["movables"][diceID] = 0
+        state["hutches"][dice_ID] = state["rollables"][dice_ID]
+        state["rollables"][dice_ID] = 0
+        state["movables"][dice_ID] = 0
         return state
 
     def move(self, move):
         """
-        checks if move is valid given current state and applies move
+        checks if (dict) move is valid given current state and applies move
         :returns self.state
         """
-        [moveName, diceID] = move
+        assert "name" in move
+        assert "value" in move
+
+        move_name = move["name"]
+        dice_ID = move["value"]
+
         if self._is_valid(move):
             self.state["message"] = ""
-            if moveName == "roll":
+            if move_name == "roll":
                 self._do_roll()
-            elif moveName == "stay":
+            elif move_name == "stay":
                 self._do_stay()
-            elif moveName == "reset":
+            elif move_name == "reset":
                 self._do_reset()
-            elif moveName == "moveBunny":
-                self._do_move_bunny(self.state, diceID)
-            elif moveName == "moveHutch":
-                self._do_move_hutch(self.state, diceID)
+            elif move_name == "moveBunny":
+                self._do_move_bunny(self.state, dice_ID)
+            elif move_name == "moveHutch":
+                self._do_move_hutch(self.state, dice_ID)
         else:
             self.state["message"] = "This is not a valid move."
 
@@ -301,7 +311,6 @@ class DiceGame(GameEngine):
             # so as soon as the highest score is above the threshold,
             # it was the last player's score that breached it.
             self.state["lastPlayer"] = (self.state["currentPlayer"] - 1) % self.num_players
-            # keep lastPlayer being updated each turn of the last round
             self.state["lastRound"] = True
             self.state["message"] = "This is the last round."
         return False
