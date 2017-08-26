@@ -1,6 +1,7 @@
 import argparse
 import json
 import random
+import time
 from battleground import site_runner
 
 
@@ -43,6 +44,7 @@ def generate_dynamic_config():
 
 
 def go():
+    time.sleep(3)
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--config',type=str,default="config/basic_config.json")
     parser.add_argument('--dynamic', action='store_true')
