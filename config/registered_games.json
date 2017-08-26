@@ -12,5 +12,12 @@
     "local_path":"games.basic_game.basic_game_engine",
     "class_name":"BasicGameEngine",
     "settings":{"max_range":50}
+  },
+  {
+    "name":"Bunnies Game",
+    "type":"bunnies_game",
+    "local_path":"games.bunnies.dice_game",
+    "class_name":"DiceGame",
+    "settings":{}
   }
 ]

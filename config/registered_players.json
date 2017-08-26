@@ -25,5 +25,14 @@
     "class_name":"BasicAgent",
     "remote_path":null,
     "settings":{}
+  },
+  "bunnies_1":{
+    "game_type":["bunnies_game"],
+    "owner":"core",
+    "name":"bunnies_1",
+    "local_path":"games.bunnies.simple_agent",
+    "class_name":"SimpleAgent",
+    "remote_path":null,
+    "settings":{}
   }
 }

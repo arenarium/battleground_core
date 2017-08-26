@@ -11,7 +11,7 @@ END_SCORE = 333
 
 
 class DiceGame(GameEngine):
-    def __init__(self, state=None):
+    def __init__(self, num_players, type, state=None):
         """
         state should be a dict with the following elements:
         state = {
@@ -23,14 +23,15 @@ class DiceGame(GameEngine):
           "scores": {0:0},
           "extraBunnies": 0,
           "message": "",
-          "allowedMoves": {"roll":0,"stay":0,"reset":0,"moveBunny":1,"moveHutch":1},
+          "allowedMoves": {"roll":0,"stay":0,"reset":0,"moveBunny":1,"moveHutch":0},
           "boardValue": 0,
           "lastPlayer": self.num_players,
           "lastRound": False
         }
         """
+        self.num_players = num_players
+        self.type = type
         self.state = state
-        self.num_players = 2
 
     def get_game_name(self):
         """
@@ -70,7 +71,7 @@ class DiceGame(GameEngine):
         if self._youre_dead():
             self.state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
         else:  # at least one bunny needs to be moved before being able to roll again or stay with the result
-            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
         self.state["boardValue"] = 0
         # lastPlayer is set to highest player ID + 1
         self.state["lastPlayer"] = self.num_players
@@ -187,7 +188,7 @@ class DiceGame(GameEngine):
             self.state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
             self.state["boardValue"] = 0
         else:  # if roll did not end turn, update allowed moves and board value
-            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+            self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
             self.state["boardValue"] = self._score()
         return self.state
 
@@ -196,8 +197,6 @@ class DiceGame(GameEngine):
         ends current player's turn and moves on to next player
         :returns self.state
         """
-        # get current player
-        # player_index = str(self.state["currentPlayer"])
         player_index = self.get_current_player()
 
         # if not able to roll again
@@ -233,7 +232,7 @@ class DiceGame(GameEngine):
         self.state["extraBunnies"] = 0
         self.state["message"] = ""
         # at least one bunny needs to be moved before being able to roll again or pass on
-        self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
+        self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
         self.state["boardValue"] = self._score()
 
         if self._youre_dead():
@@ -255,6 +254,10 @@ class DiceGame(GameEngine):
         state["movables"][dice_ID] = 0
         state["allowedMoves"]["roll"] = 1
         state["allowedMoves"]["stay"] = 1
+        state["allowedMoves"]["moveHutch"] = 1
+        if state["rollables"].count(0) == NUM_DICE:
+            state["allowedMoves"]["moveBunny"] = 0
+            state["allowedMoves"]["moveHutch"] = 0
         return state
 
     def _do_move_hutch(self, state, dice_ID):
@@ -265,6 +268,9 @@ class DiceGame(GameEngine):
         state["hutches"][dice_ID] = state["rollables"][dice_ID]
         state["rollables"][dice_ID] = 0
         state["movables"][dice_ID] = 0
+        if state["rollables"].count(0) == NUM_DICE:
+            state["allowedMoves"]["moveBunny"] = 0
+            state["allowedMoves"]["moveHutch"] = 0
         return state
 
     def move(self, move):

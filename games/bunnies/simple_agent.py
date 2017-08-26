@@ -8,7 +8,7 @@ class SimpleAgent(agent.Agent):
         self.threshold = threshold
 
     def move(self, state):
-        my_game = dice_game.DiceGame(state)
+        my_game = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
 
         available_move_names = {k for k, v in my_game.state["allowedMoves"].items() if v == 1}
         if ("moveBunny" in available_move_names
