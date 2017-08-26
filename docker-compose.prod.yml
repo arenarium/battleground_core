@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+
+  nginx:
+    ports:
+      - 80:80
+
+  main:
+    build: .
+    depends_on:
+      - couchdb
+    environment:
+      - COUCHDB_HOST=http://couchdb:5984

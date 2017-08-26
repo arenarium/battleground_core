@@ -1,0 +1,4 @@
+./ui/frontend/node_modules
+.git
+.vagrant
+.cache
