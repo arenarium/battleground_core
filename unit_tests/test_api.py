@@ -1,6 +1,8 @@
 import pytest
 import json
-from ui.api import app
+import sys
+sys.path.append("ui/api")
+import app
 
 
 def test_games_list():
