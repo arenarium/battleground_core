@@ -24,23 +24,25 @@ STATE = {
 
 
 def test_reset():
-    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
-    # check reset properties
-    assert state["rollables"].count(0) == 0
-    assert state["bunnies"] == [0] * dice_game.NUM_DICE
-    assert state["hutches"] == [0] * dice_game.NUM_DICE
-    assert state["movables"] == [1] * dice_game.NUM_DICE
-    assert state["currentPlayer"] == 0
-    assert state["scores"] == {0: 0}
-    assert state["extraBunnies"] == 0
-    assert state["message"] == ""
-    assert (state["allowedMoves"] == {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
-            or state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0})
-    assert state["boardValue"] == 0
-    assert state["lastPlayer"] == num_players
-    assert not state["lastRound"]
+    for state in [STATE,None]:
+        engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
+        engine.reset()
+        state = copy.deepcopy(engine.get_state())
+        # check reset properties
+        assert state["rollables"].count(0) == 0
+        assert state["bunnies"] == [0] * dice_game.NUM_DICE
+        assert state["hutches"] == [0] * dice_game.NUM_DICE
+        assert state["movables"] == [1] * dice_game.NUM_DICE
+        assert state["currentPlayer"] == 0
+        for key, value in state["scores"].items():
+            assert value == 0
+        assert state["extraBunnies"] == 0
+        assert state["message"] == ""
+        assert (state["allowedMoves"] == {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+                or state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0})
+        assert state["boardValue"] == 0
+        assert state["lastPlayer"] == num_players
+        assert not state["lastRound"]
 
 
 def test_score():
@@ -225,7 +227,3 @@ if __name__ == "__main__":
     test_move_hutches()
     test_last_round()
     test_game_over()
-
-
-
-

@@ -32,6 +32,9 @@ class DiceGame(GameEngine):
         self.num_players = num_players
         self.type = type
         self.state = state
+        if self.state is None:
+            """if state s not provided, use default starting state"""
+            self.reset()
 
     def get_game_name(self):
         """
@@ -56,7 +59,8 @@ class DiceGame(GameEngine):
         (re)set game into initial state
         :returns self.state
         """
-        self.state["rollables"] = [random.randint(1, 6) for x in self.state["rollables"]]
+        self.state={} #start with a fresh empty dict
+        self.state["rollables"] = [random.randint(1, 6) for x in range(NUM_DICE)]
         for name in ["bunnies", "hutches"]:
             self.state[name] = [0] * NUM_DICE
         self.state["movables"] = [1] * NUM_DICE
@@ -64,7 +68,7 @@ class DiceGame(GameEngine):
         # scores = {playerID, score}
         # The scores dictionary is dynamically generated.
         # For each player not in the dict, _do_stay() adds an entry.
-        self.state["scores"] = {0: 0}
+        self.state["scores"] = {i:0 for i in range(self.num_players)}
         self.state["extraBunnies"] = 0
         self.state["message"] = ""
         # if no bunnies were rolled
