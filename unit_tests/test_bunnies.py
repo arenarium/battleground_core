@@ -103,9 +103,9 @@ def test_do_stay():
 
 
 def test_do_reset():
-    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies", state=STATE)
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
     engine.reset()
-    state = copy.deepcopy(engine.get_state())
+    state = engine.get_state()
     # set a state that was just passed on
     state["rollables"] = [0, 5, 4, 6, 0, 4, 0]
     state["bunnies"] = [1, 0, 0, 0, 1, 0, 0]
@@ -120,8 +120,6 @@ def test_do_reset():
     assert state["movables"] == [1] * dice_game.NUM_DICE
     assert state["currentPlayer"] == current_player
     assert state["extraBunnies"] == 0
-    assert (state["allowedMoves"] == {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
-            or state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1})
     assert state["boardValue"] == 0
 
 
