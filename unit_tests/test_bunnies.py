@@ -66,9 +66,8 @@ def test_score():
 
 
 def test_do_roll():
-    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
+    state = engine.get_state()
     # set a state with only bunnies, no rollables
     state["rollables"] = [0] * dice_game.NUM_DICE
     state["bunnies"] = [1] * dice_game.NUM_DICE
@@ -83,8 +82,19 @@ def test_do_roll():
     assert state["extraBunnies"] == (dice_game.NUM_DICE // 2) * 10 + dice_game.NUM_DICE % 2
     assert state["allowedMoves"]["roll"] == 0
     assert state["allowedMoves"]["reset"] == 0
-    # check if player stays the same
-    assert state["currentPlayer"] == current_player
+
+    """check if only some dice can be rolled that unrollables stay unchanged"""
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
+    state = engine.get_state()
+
+    state["rollables"] = [0, 0, 1, 1, 0, 1, 0]
+    state["bunnies"] = [1-x for x in state["rollables"]]
+    old_bunnies =  state["bunnies"].copy()
+    engine.move({"name": "roll",
+                 "value": 0})
+    for i in range(dice_game.NUM_DICE):
+        if state["rollables"][i] ==0:
+            assert state["bunnies"][i] == old_bunnies[i]
 
 
 def test_do_stay():
