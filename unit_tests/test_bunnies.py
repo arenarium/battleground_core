@@ -46,32 +46,23 @@ def test_reset():
 
 
 def test_score():
-    engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
-    # create state to check scoring
-    state["rollables"] = [0] * dice_game.NUM_DICE
+    engine = dice_game.DiceGame(num_players=2, type="Bunnies")
+    state = copy.deepcopy(engine.get_state()) #get the default state
+    # create new state to check scoring
     state["bunnies"] = [1, 1, 1, 2, 0, 0, 0]
     state["hutches"] = [0, 0, 0, 0, 2, 3, 4]
-    state["movables"] = [0] * dice_game.NUM_DICE
     state["extraBunnies"] = 43
     state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
-    engine.move({"name": "stay",
+
+    """create engine with new state"""
+    new_engine = dice_game.DiceGame(num_players=2,type="Bunnies",state=state)
+    new_engine.move({"name": "stay",
                  "value": 0})
+    state = new_engine.get_state() #update state
     assert 0 in state["scores"]
-    assert state["scores"][0] == 43 + (10 + 3) * 4
-    assert state["boardvalue"] == 43 + (10 + 3) * 4
-    engine.move({"name": "reset",
-                 "value": 0})
-    assert state["extraBunnies"] == 0
-    if state["allowedMoves"]["moveBunny"] == 1:
-        state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
-        engine.move({"name": "moveBunny",
-                     "value": 1})
-    engine.move({"name": "stay",
-                 "value": 0})
-    assert 1 in state["scores"]
-    assert state["scores"][1] <= 1
+    assert state["scores"][0] == (43 + 10 + 3) * 4 #check that player 0 has correct score
+    assert state["boardValue"] == (43 + 10 + 3) * 4
+    assert state["scores"][1] == 0 #check that player 1 has correct score
 
 
 def test_do_roll():
