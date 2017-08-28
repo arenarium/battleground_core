@@ -41,7 +41,7 @@ def test_reset():
         assert (state["allowedMoves"] == {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
                 or state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0})
         assert state["boardValue"] == 0
-        assert state["lastPlayer"] == num_players
+        assert state["lastPlayer"] == -1
         assert not state["lastRound"]
 
 
@@ -174,9 +174,8 @@ def test_move_hutches():
 
 def test_last_round():
     # check ending condition
-    engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
+    engine = dice_game.DiceGame(num_players=2, type="Bunnies")
+    state = engine.get_state()
     # set a state that leads to END_SCORE, triggering the last round
     player_0 = state["currentPlayer"]
     state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
@@ -186,29 +185,21 @@ def test_last_round():
                  "value": 1})
     engine.move({"name": "stay",
                  "value": 0})
-    print(state["scores"])
     assert state["scores"][player_0] == dice_game.END_SCORE
     assert state["lastRound"]
-    assert state["lastPlayer"] == player_0
+    assert state["lastPlayer"] == (player_0-1)%num_players
     engine.move({"name": "reset",
                  "value": 0})
-    if state["allowedMoves"]["moveBunny"] == 1:
-        state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
-        engine.move({"name": "moveBunny",
-                     "value": 1})
+    state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
+    engine.move({"name": "moveBunny",
+                 "value": 1})
     engine.move({"name": "stay",
                  "value": 0})
     assert state["lastRound"]
-    assert state["lastPlayer"] == player_0
+    assert state["lastPlayer"] == state["currentPlayer"]
     assert state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+    assert engine.game_over()
 
-
-def test_game_over():
-    assert True
-
-    # check consecutiveness of hatches
-    # check consecutiveness of players
-    # check carrots
 
 
 if __name__ == "__main__":

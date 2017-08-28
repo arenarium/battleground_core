@@ -78,7 +78,7 @@ class DiceGame(GameEngine):
             self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
         self.state["boardValue"] = 0
         # lastPlayer is set to highest player ID + 1
-        self.state["lastPlayer"] = self.num_players
+        self.state["lastPlayer"] = -1
         self.state["lastRound"] = False
         return self.state
 
@@ -303,6 +303,13 @@ class DiceGame(GameEngine):
         else:
             self.state["message"] = "This is not a valid move."
 
+
+        if self._last_round():
+            if not self.state["lastRound"]:
+                self.state["lastRound"] = True
+                self.state["lastPlayer"] = (self.state["currentPlayer"] - 2) % self.num_players
+
+
         # No moves are allowed any longer if the game is over.
         if self.game_over():
             self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 0, "moveHutch": 0}
@@ -310,17 +317,15 @@ class DiceGame(GameEngine):
 
         return self.state
 
+
+    def _last_round(self):
+        return END_SCORE <= max(self.state["scores"].values())
+
     def game_over(self):
         """
         :returns (bool) if the game is over
         """
         if self.state["currentPlayer"] == self.state["lastPlayer"]:
             return True
-        if END_SCORE <= max(self.state["scores"].values()) and not self.state["lastRound"]:
-            # The score is evaluated while moving on to the next player,
-            # so as soon as the highest score is above the threshold,
-            # it was the last player's score that breached it.
-            self.state["lastPlayer"] = (self.state["currentPlayer"] - 1) % self.num_players
-            self.state["lastRound"] = True
-            self.state["message"] = "This is the last round."
-        return False
+        else:
+            return False
