@@ -125,56 +125,51 @@ def test_do_reset():
 
 def test_move_bunnies():
     # create state without bunnies or correct hutches (2 needs to be the first hutch)
-    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
-    state["rollables"] = [random.randint(3, 6) for x in state["rollables"]]
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
+    state = engine.get_state()
+    state["rollables"] = [2,2,3,4,5,6,7]
     # try to move a die into the bunny container
     engine.move({"name": "moveBunny",
-                 "value": random.randint(0, dice_game.NUM_DICE - 1)})
-    # check that hutch didn't move into bunnies container:
-    assert state["bunnies"] == [0] * dice_game.NUM_DICE
-    # check that allowed moves didn't change
-    assert state["allowedMoves"] == {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
-
-    # create state with only bunnies
-    state["rollables"] = [random.randint(1, 2) for x in state["rollables"]]
-    # try to move a die into the bunny container
-    engine.move({"name": "moveBunny",
-                 "value": random.randint(0, dice_game.NUM_DICE - 1)})
-    # check that bunny did move into bunnies container:
-    assert state["bunnies"].count(0) == dice_game.NUM_DICE - 1
-    # check that moving a bunny enabled stay move as allowed move
-    assert state["allowedMoves"]["stay"] == 1
+                 "value": 0})
+    assert state["bunnies"][0] == 2
+    assert state["bunnies"][1] == 0
+    assert state["rollables"][0]==0
+    assert state["hutches"][0]==0
+    # check that allowed moves are correct
+    assert state["allowedMoves"] == {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 1, "moveHutch": 1}
 
 
 def test_move_hutches():
     # create state without hutches
-    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies", state=STATE)
-    engine.reset()
-    state = copy.deepcopy(engine.get_state())
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
+    state = engine.get_state()
     state["rollables"] = [1] * dice_game.NUM_DICE
-    # try to move a die into the hutch container
-    engine.move({"name": "moveHutch",
-                 "value": random.randint(0, dice_game.NUM_DICE - 1)})
-    # check that bunnies didn't move into hutches container:
-    assert state["hutches"] == [0] * dice_game.NUM_DICE
+    state["allowedMoves"] = {"roll": 1, "stay": 0, "reset": 1, "moveBunny": 0, "moveHutch": 1}
+
+    # try to move any die into the hutch container
+    for i in range(dice_game.NUM_DICE):
+        engine.move({"name": "moveHutch",
+                     "value": i})
+        # check that bunnies didn't move into hutches container:
+        assert state["hutches"] == [0] * dice_game.NUM_DICE
 
     # create state without correct hutches (2 needs to be the first hutch)
-    state["rollables"] = [random.randint(3, 6) for x in state["rollables"]]
+    state["rollables"] = [1,4,5,6,3,4,5]
     # try to move a die into the hutch container
-    engine.move({"name": "moveHutch",
-                 "value": random.randint(0, dice_game.NUM_DICE - 1)})
-    # check that die didn't move into hutches container
-    assert state["hutches"] == [0] * dice_game.NUM_DICE
+    for i in range(dice_game.NUM_DICE):
+        engine.move({"name": "moveHutch",
+                     "value": i})
+        # check that dice didn't move into hutches container:
+        assert state["hutches"] == [0] * dice_game.NUM_DICE
 
     # create state with only 2-hutches
     state["rollables"] = [2] * dice_game.NUM_DICE
     # try to move a die into the hutch container
-    engine.move({"name": "moveHutch",
-                 "value": random.randint(0, dice_game.NUM_DICE - 1)})
-    # check that hutch did move into hutch container:
-    assert state["hutches"].count(0) == dice_game.NUM_DICE - 1
+    for i in range(dice_game.NUM_DICE):
+        engine.move({"name": "moveHutch",
+                     "value": i})
+    # check that only first dice was moved:
+    assert state["hutches"] == [2,0,0,0,0,0,0]
 
 
 def test_last_round():
