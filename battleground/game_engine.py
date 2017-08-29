@@ -6,9 +6,7 @@ Should implement these functions.
 
 class GameEngine(object):
 
-    def __init__(self, num_players, type, **kwargs):
-        self.num_players = num_players
-        self.scores = [0] * num_players
+    def __init__(self, type, **kwargs):
         self.current_player = 0
         self.type = type
 
@@ -26,6 +24,7 @@ class GameEngine(object):
         This will be used by the game runner to determine which player should
         make the next move
         (only turn-based games!)
+        :returns index of players list of GameRunner
         """
         raise NotImplementedError()
 
