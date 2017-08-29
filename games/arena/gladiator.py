@@ -3,31 +3,38 @@ import copy
 
 class Gladiator(object):
 
-    def __init__(self, pos, name, stats, skills):
+    def __init__(self, pos, name, team, stats, skills):
         """
         :param pos: [int, int]
         :param name: str
-        :param stats: {"str": int, "dex": int, "con": int}
-        :param skills: {"melee": int, "eva": int, "speed": int}
+        :param team: int
+        :param stats: dict {"str": int, "dex": int, "con": int}
+        :param skills: dict {"melee": int, "eva": int, "speed": int}
         """
         self.pos = pos
         self.name = name
+        self.team = team
         self.base_stats = stats
         self.base_skills = skills
         self.max_hp = self.get_max_hp()
         self.cur_hp = self.max_hp
         self.max_sp = self.get_max_sp()
         self.cur_sp = self.max_sp
+        self.boosts = {"att": 0,
+                       "eva": 0,
+                       "dam": 0,
+                       "prot": 0,
+                       "speed": 0}
 
     def get_stats(self):
         """
-        :return: stats mod item / boost bonus
+        :return: stats
         """
         return self.base_stats
 
     def get_skills(self):
         """
-        :return: skills mod stats / item bonus
+        :return: skills mod stats bonus
         """
         cur_skills = copy.deepcopy(self.base_skills)
         stats = self.get_stats()
@@ -38,40 +45,38 @@ class Gladiator(object):
 
     def get_attack(self):
         """
-        :return: melee value
+        :return: melee + boost
         """
         skills = self.get_skills()
-        return skills["melee"]
+        att = skills["melee"] + self.boosts["att"]
+        return att
 
     def get_evasion(self):
         """
-        :return: dex value
+        :return: eva + boost
         """
         skills = self.get_skills()
-        return skills["eva"]
+        eva = skills["eva"] + self.boosts["eva"]
+        return eva
 
     def get_damage(self):
         """
         returns list of [damage dice, damage sides]
-        :return: [1, 2 + str value]
+        :return: [1 + boost, 2 + str]
         """
         stats = self.get_stats()
-        dd = 1
-        ds = 2
-        if "str" in stats:
-            ds += stats["str"]
+        dd = 1 + self.boosts["dam"]
+        ds = 2 + stats["str"]
         return [dd, ds]
 
     def get_protection(self):
         """
         returns list of [protection dice, protection sides]
-        :return: [1, con]
+        :return: [1 + boost, str]
         """
         stats = self.get_stats()
-        pd = 1
-        ps = 0
-        if "con" in stats:
-            ps += stats["con"]
+        pd = 1 + self.boosts["prot"]
+        ps = 0 + stats["str"]
         return [pd, ps]
 
     def get_max_hp(self):
@@ -79,9 +84,7 @@ class Gladiator(object):
         :return: 20 + a compounding 20% bonus per point of con
         """
         stats = self.get_stats()
-        mhp = 20
-        if "con" in stats:
-            mhp = int(20 * (1.2 ** stats["con"]))
+        mhp = int(20 * (1.2 ** stats["con"]))
         return mhp
 
     def get_max_sp(self):
@@ -89,15 +92,42 @@ class Gladiator(object):
         :return: 10 + a compounding 10% bonus per point of con
         """
         stats = self.get_stats()
-        msp = 10
-        if "con" in stats:
-            msp = int(10 * (1.1 ** stats["con"]))
+        msp = int(10 * (1.1 ** stats["con"]))
         return msp
 
     def get_speed(self):
         """
-        :return: 21 - speed value
+        :return: 21 - speed - boost
         """
         skills = self.get_skills()
-        speed = 21 - skills["speed"]
+        speed = 21 - skills["speed"] - self.boosts["speed"]
         return speed
+
+    def is_dead(self):
+        if self.cur_hp <= 0:
+            return True
+        else:
+            return False
+
+    def set_boosts(self, boosts):
+        """
+        :param boosts: dict containing keys and values to boost;
+                       boosting a key should reduce cur_sp by that amount
+        :return: None
+        """
+        for k, v in boosts:
+            """ 
+            # Introduce cost for boosting:
+            if v < self.cur_sp:
+                self.cur_sp -= v
+            """
+            self.boosts[k] = v
+        return None
+
+    def move(self, direction):
+        """
+        :param direction: [int, int] direction vector (list)
+        :return: None
+        """
+        self.pos += direction
+        return None
