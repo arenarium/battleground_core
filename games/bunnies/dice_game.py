@@ -262,7 +262,7 @@ class DiceGame(GameEngine):
         if state["rollables"].count(0) == NUM_DICE:
             state["allowedMoves"]["moveHutch"] = 0
             state["allowedMoves"]["moveBunny"] = 0
-        elif 1 not in state["rollables"] or 2 not in state["rollables"]:
+        elif 1 not in state["rollables"] and 2 not in state["rollables"]:
             state["allowedMoves"]["moveBunny"] = 0
         return state
 
