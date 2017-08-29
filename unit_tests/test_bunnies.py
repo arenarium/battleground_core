@@ -1,7 +1,5 @@
 from games.bunnies import dice_game
-import random
 import copy
-
 
 num_players = 2
 
@@ -24,7 +22,7 @@ STATE = {
 
 
 def test_reset():
-    for state in [STATE,None]:
+    for state in [STATE, None]:
         engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
         engine.reset()
         state = copy.deepcopy(engine.get_state())
@@ -47,7 +45,7 @@ def test_reset():
 
 def test_score():
     engine = dice_game.DiceGame(num_players=2, type="Bunnies")
-    state = copy.deepcopy(engine.get_state()) #get the default state
+    state = copy.deepcopy(engine.get_state())  # get the default state
     # create new state to check scoring
     state["bunnies"] = [1, 1, 1, 2, 0, 0, 0]
     state["hutches"] = [0, 0, 0, 0, 2, 3, 4]
@@ -55,14 +53,14 @@ def test_score():
     state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
 
     """create engine with new state"""
-    new_engine = dice_game.DiceGame(num_players=2,type="Bunnies",state=state)
+    new_engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
     new_engine.move({"name": "stay",
-                 "value": 0})
-    state = new_engine.get_state() #update state
+                     "value": 0})
+    state = new_engine.get_state()  # update state
     assert 0 in state["scores"]
-    assert state["scores"][0] == (43 + 10 + 3) * 4 #check that player 0 has correct score
+    assert state["scores"][0] == (43 + 10 + 3) * 4  # check that player 0 has correct score
     assert state["boardValue"] == (43 + 10 + 3) * 4
-    assert state["scores"][1] == 0 #check that player 1 has correct score
+    assert state["scores"][1] == 0  # check that player 1 has correct score
 
 
 def test_do_roll():
@@ -73,7 +71,6 @@ def test_do_roll():
     state["bunnies"] = [1] * dice_game.NUM_DICE
     state["movables"] = [0] * dice_game.NUM_DICE
     state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 1, "moveHutch": 1}
-    current_player = state["currentPlayer"]
     engine.move({"name": "roll",
                  "value": 0})
     # check if all dice from bunnies were used as rollables
@@ -88,12 +85,12 @@ def test_do_roll():
     state = engine.get_state()
 
     state["rollables"] = [0, 0, 1, 1, 0, 1, 0]
-    state["bunnies"] = [1-x for x in state["rollables"]]
-    old_bunnies =  state["bunnies"].copy()
+    state["bunnies"] = [1 - x for x in state["rollables"]]
+    old_bunnies = state["bunnies"].copy()
     engine.move({"name": "roll",
                  "value": 0})
     for i in range(dice_game.NUM_DICE):
-        if state["rollables"][i] ==0:
+        if state["rollables"][i] == 0:
             assert state["bunnies"][i] == old_bunnies[i]
 
 
@@ -104,7 +101,6 @@ def test_do_stay():
 
 def test_do_reset():
     engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
-    engine.reset()
     state = engine.get_state()
     # set a state that was just passed on
     state["rollables"] = [0, 5, 4, 6, 0, 4, 0]
@@ -127,14 +123,15 @@ def test_move_bunnies():
     # create state without bunnies or correct hutches (2 needs to be the first hutch)
     engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
     state = engine.get_state()
-    state["rollables"] = [2,2,3,4,5,6,7]
+    state["rollables"] = [2, 2, 3, 4, 5, 6, 7]
+    state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
     # try to move a die into the bunny container
     engine.move({"name": "moveBunny",
                  "value": 0})
     assert state["bunnies"][0] == 2
     assert state["bunnies"][1] == 0
-    assert state["rollables"][0]==0
-    assert state["hutches"][0]==0
+    assert state["rollables"][0] == 0
+    assert state["hutches"][0] == 0
     # check that allowed moves are correct
     assert state["allowedMoves"] == {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 1, "moveHutch": 1}
 
@@ -154,7 +151,7 @@ def test_move_hutches():
         assert state["hutches"] == [0] * dice_game.NUM_DICE
 
     # create state without correct hutches (2 needs to be the first hutch)
-    state["rollables"] = [1,4,5,6,3,4,5]
+    state["rollables"] = [1, 4, 5, 6, 3, 4, 5]
     # try to move a die into the hutch container
     for i in range(dice_game.NUM_DICE):
         engine.move({"name": "moveHutch",
@@ -169,7 +166,7 @@ def test_move_hutches():
         engine.move({"name": "moveHutch",
                      "value": i})
     # check that only first dice was moved:
-    assert state["hutches"] == [2,0,0,0,0,0,0]
+    assert state["hutches"] == [2, 0, 0, 0, 0, 0, 0]
 
 
 def test_last_round():
@@ -187,7 +184,7 @@ def test_last_round():
                  "value": 0})
     assert state["scores"][player_0] == dice_game.END_SCORE
     assert state["lastRound"]
-    assert state["lastPlayer"] == (player_0-1)%num_players
+    assert state["lastPlayer"] == (player_0 - 1) % num_players
     engine.move({"name": "reset",
                  "value": 0})
     state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
@@ -201,7 +198,6 @@ def test_last_round():
     assert engine.game_over()
 
 
-
 if __name__ == "__main__":
     test_reset()
     test_score()
@@ -211,4 +207,4 @@ if __name__ == "__main__":
     test_move_bunnies()
     test_move_hutches()
     test_last_round()
-    test_game_over()
+    # test_game_over()

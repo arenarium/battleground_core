@@ -59,7 +59,7 @@ class DiceGame(GameEngine):
         (re)set game into initial state
         :returns self.state
         """
-        self.state={} #start with a fresh empty dict
+        self.state = {}  # start with a fresh empty dict
         self.state["rollables"] = [random.randint(1, 6) for x in range(NUM_DICE)]
         for name in ["bunnies", "hutches"]:
             self.state[name] = [0] * NUM_DICE
@@ -68,7 +68,7 @@ class DiceGame(GameEngine):
         # scores = {playerID, score}
         # The scores dictionary is dynamically generated.
         # For each player not in the dict, _do_stay() adds an entry.
-        self.state["scores"] = {i:0 for i in range(self.num_players)}
+        self.state["scores"] = {i: 0 for i in range(self.num_players)}
         self.state["extraBunnies"] = 0
         self.state["message"] = ""
         # if no bunnies were rolled
@@ -77,7 +77,6 @@ class DiceGame(GameEngine):
         else:  # at least one bunny needs to be moved before being able to roll again or stay with the result
             self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
         self.state["boardValue"] = 0
-        # lastPlayer is set to highest player ID + 1
         self.state["lastPlayer"] = -1
         self.state["lastRound"] = False
         return self.state
@@ -259,9 +258,12 @@ class DiceGame(GameEngine):
         state["allowedMoves"]["roll"] = 1
         state["allowedMoves"]["stay"] = 1
         state["allowedMoves"]["moveHutch"] = 1
+        # if no bunny to take
         if state["rollables"].count(0) == NUM_DICE:
-            state["allowedMoves"]["moveBunny"] = 0
             state["allowedMoves"]["moveHutch"] = 0
+            state["allowedMoves"]["moveBunny"] = 0
+        elif 1 not in state["rollables"] or 2 not in state["rollables"]:
+            state["allowedMoves"]["moveBunny"] = 0
         return state
 
     def _do_move_hutch(self, state, dice_ID):
@@ -272,8 +274,12 @@ class DiceGame(GameEngine):
         state["hutches"][dice_ID] = state["rollables"][dice_ID]
         state["rollables"][dice_ID] = 0
         state["movables"][dice_ID] = 0
+        # if no next hutch to take
+        max_hutch = max(state["hutches"])
         if state["rollables"].count(0) == NUM_DICE:
             state["allowedMoves"]["moveBunny"] = 0
+            state["allowedMoves"]["moveHutch"] = 0
+        elif (max_hutch + 1) not in state["rollables"]:
             state["allowedMoves"]["moveHutch"] = 0
         return state
 
@@ -303,12 +309,10 @@ class DiceGame(GameEngine):
         else:
             self.state["message"] = "This is not a valid move."
 
-
         if self._last_round():
             if not self.state["lastRound"]:
                 self.state["lastRound"] = True
                 self.state["lastPlayer"] = (self.state["currentPlayer"] - 2) % self.num_players
-
 
         # No moves are allowed any longer if the game is over.
         if self.game_over():
@@ -316,7 +320,6 @@ class DiceGame(GameEngine):
             self.state["message"] = str(self.state["scores"])
 
         return self.state
-
 
     def _last_round(self):
         return END_SCORE <= max(self.state["scores"].values())
