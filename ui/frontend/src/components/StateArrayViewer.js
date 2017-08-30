@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import { ListGroup, ListGroupItem, Pagination} from 'react-bootstrap';
-import {
-  withRouter,
-  Redirect
-} from 'react-router-dom'
+import {  Pagination} from 'react-bootstrap';
 
 // const MyPagination = withRouter(({numItems, newActivePage, history})=>(
 // // {(eventKey)=>{history.push("../"+String(eventKey)+"/")}}
