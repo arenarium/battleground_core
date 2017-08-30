@@ -8,6 +8,7 @@ before_install:
   - cd ui/frontend
 install:
   - npm install
+  - cd ../..
 before_script:
   - npm run build
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
