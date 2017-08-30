@@ -33,7 +33,7 @@ class DiceGame(GameEngine):
         self.type = type
         self.state = state
         if self.state is None:
-            """if state s not provided, use default starting state"""
+            """if state is not provided, use default starting state"""
             self.reset()
 
     def get_game_name(self):

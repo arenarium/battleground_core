@@ -45,22 +45,19 @@ def test_reset():
 
 def test_score():
     engine = dice_game.DiceGame(num_players=2, type="Bunnies")
-    state = copy.deepcopy(engine.get_state())  # get the default state
+    state = engine.get_state()  # get the default state
     # create new state to check scoring
     state["bunnies"] = [1, 1, 1, 2, 0, 0, 0]
     state["hutches"] = [0, 0, 0, 0, 2, 3, 4]
     state["extraBunnies"] = 43
     state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
-
-    """create engine with new state"""
-    new_engine = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
-    new_engine.move({"name": "stay",
-                     "value": 0})
-    state = new_engine.get_state()  # update state
+    current_player = copy.deepcopy(state["currentPlayer"])
+    engine.move({"name": "stay",
+                 "value": 0})
     assert 0 in state["scores"]
-    assert state["scores"][0] == (43 + 10 + 3) * 4  # check that player 0 has correct score
+    assert state["scores"][current_player] == (43 + 10 + 3) * 4  # check that player 0 has correct score
     assert state["boardValue"] == (43 + 10 + 3) * 4
-    assert state["scores"][1] == 0  # check that player 1 has correct score
+    assert state["scores"][state["currentPlayer"]] == 0  # check that next player has correct score
 
 
 def test_do_roll():
@@ -86,7 +83,8 @@ def test_do_roll():
 
     state["rollables"] = [0, 0, 1, 1, 0, 1, 0]
     state["bunnies"] = [1 - x for x in state["rollables"]]
-    old_bunnies = state["bunnies"].copy()
+    state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 1, "moveHutch": 0}
+    old_bunnies = copy.deepcopy(state["bunnies"])
     engine.move({"name": "roll",
                  "value": 0})
     for i in range(dice_game.NUM_DICE):
@@ -96,7 +94,31 @@ def test_do_roll():
 
 def test_do_stay():
     # check stay move: taking over state from previous player and continue playing
-    assert True
+    engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
+    state = engine.get_state()
+    state["rollables"] = [0, 5, 4, 6, 0, 4, 0]
+    state["bunnies"] = [1, 0, 0, 0, 1, 0, 0]
+    state["hutches"] = [0, 0, 0, 0, 0, 0, 2]
+    state["movables"] = [0, 1, 1, 1, 0, 1, 0]
+    state["allowedMoves"] = {"roll": 1, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+    current_player = copy.deepcopy(state["currentPlayer"])
+    engine.move({"name": "stay",
+                 "value": 0})
+    assert state["currentPlayer"] == (current_player + 1) % num_players
+    assert state["boardValue"] == 10 * 2
+    assert state["scores"][current_player] == 10 * 2
+    assert state["allowedMoves"] == {"roll": 1, "stay": 0, "reset": 1, "moveBunny": 0, "moveHutch": 0}
+
+    # new state where it's not allowed to roll again
+    state["rollables"] = [0, 5, 4, 6, 0, 4, 0]
+    state["bunnies"] = [1, 0, 0, 0, 1, 0, 0]
+    state["hutches"] = [0, 0, 0, 0, 0, 0, 2]
+    state["movables"] = [0, 1, 1, 1, 0, 1, 0]
+    state["allowedMoves"] = {"roll": 0, "stay": 1, "reset": 0, "moveBunny": 0, "moveHutch": 0}
+    current_player = copy.deepcopy(state["currentPlayer"])
+    engine.move({"name": "stay",
+                 "value": 0})
+    assert state["currentPlayer"] == (current_player + 1) % num_players
 
 
 def test_do_reset():
@@ -105,9 +127,10 @@ def test_do_reset():
     # set a state that was just passed on
     state["rollables"] = [0, 5, 4, 6, 0, 4, 0]
     state["bunnies"] = [1, 0, 0, 0, 1, 0, 0]
-    state["movables"] = [0, 0, 0, 0, 0, 0, 2]
+    state["hutches"] = [0, 0, 0, 0, 0, 0, 2]
+    state["movables"] = [0, 1, 1, 1, 0, 1, 0]
     state["allowedMoves"] = {"roll": 1, "stay": 0, "reset": 1, "moveBunny": 0, "moveHutch": 0}
-    current_player = state["currentPlayer"]
+    current_player = copy.deepcopy(state["currentPlayer"])
     engine.move({"name": "reset",
                  "value": 0})
     assert state["rollables"].count(0) == 0
@@ -174,7 +197,7 @@ def test_last_round():
     engine = dice_game.DiceGame(num_players=2, type="Bunnies")
     state = engine.get_state()
     # set a state that leads to END_SCORE, triggering the last round
-    player_0 = state["currentPlayer"]
+    player_0 = copy.deepcopy(state["currentPlayer"])
     state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
     state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}
     state["scores"][player_0] = dice_game.END_SCORE - 1
