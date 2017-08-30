@@ -32,6 +32,9 @@ class DiceGame(GameEngine):
         self.num_players = num_players
         self.type = type
         self.state = state
+        if self.state is None:
+            """if state s not provided, use default starting state"""
+            self.reset()
 
     def get_game_name(self):
         """
@@ -56,7 +59,8 @@ class DiceGame(GameEngine):
         (re)set game into initial state
         :returns self.state
         """
-        self.state["rollables"] = [random.randint(1, 6) for x in self.state["rollables"]]
+        self.state={} #start with a fresh empty dict
+        self.state["rollables"] = [random.randint(1, 6) for x in range(NUM_DICE)]
         for name in ["bunnies", "hutches"]:
             self.state[name] = [0] * NUM_DICE
         self.state["movables"] = [1] * NUM_DICE
@@ -64,7 +68,7 @@ class DiceGame(GameEngine):
         # scores = {playerID, score}
         # The scores dictionary is dynamically generated.
         # For each player not in the dict, _do_stay() adds an entry.
-        self.state["scores"] = {0: 0}
+        self.state["scores"] = {i:0 for i in range(self.num_players)}
         self.state["extraBunnies"] = 0
         self.state["message"] = ""
         # if no bunnies were rolled
@@ -74,7 +78,7 @@ class DiceGame(GameEngine):
             self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 0}
         self.state["boardValue"] = 0
         # lastPlayer is set to highest player ID + 1
-        self.state["lastPlayer"] = self.num_players
+        self.state["lastPlayer"] = -1
         self.state["lastRound"] = False
         return self.state
 
@@ -299,6 +303,13 @@ class DiceGame(GameEngine):
         else:
             self.state["message"] = "This is not a valid move."
 
+
+        if self._last_round():
+            if not self.state["lastRound"]:
+                self.state["lastRound"] = True
+                self.state["lastPlayer"] = (self.state["currentPlayer"] - 2) % self.num_players
+
+
         # No moves are allowed any longer if the game is over.
         if self.game_over():
             self.state["allowedMoves"] = {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 0, "moveHutch": 0}
@@ -306,17 +317,15 @@ class DiceGame(GameEngine):
 
         return self.state
 
+
+    def _last_round(self):
+        return END_SCORE <= max(self.state["scores"].values())
+
     def game_over(self):
         """
         :returns (bool) if the game is over
         """
         if self.state["currentPlayer"] == self.state["lastPlayer"]:
             return True
-        if END_SCORE <= max(self.state["scores"].values()) and not self.state["lastRound"]:
-            # The score is evaluated while moving on to the next player,
-            # so as soon as the highest score is above the threshold,
-            # it was the last player's score that breached it.
-            self.state["lastPlayer"] = (self.state["currentPlayer"] - 1) % self.num_players
-            self.state["lastRound"] = True
-            self.state["message"] = "This is the last round."
-        return False
+        else:
+            return False
