@@ -1,10 +1,15 @@
 sudo: required
 services:
   - docker
-language: python
-python:
-    - '3.5'
+language: node_js
+node_js:
+  - "7"
+before_install:
+  - cd ui/frontend
+install:
+  - npm install
 before_script:
+  - npm run build
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
   - docker-compose -f docker-compose-ui.yml up --build -d
   - docker build -t main .
