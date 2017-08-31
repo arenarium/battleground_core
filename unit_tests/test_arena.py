@@ -12,20 +12,19 @@ import random
 
 
 def test_engine():
-    age = ArenaGameEngine(num_players=2, type="Arena_1", size=[20, 20])
+    age = ArenaGameEngine(type="Arena_1", size=[20, 20])
     assert age.get_game_name() == "Arena_1"
     assert isinstance(age.gladiators, dict)
-    assert len(age.gladiators) == 2
     assert isinstance(age.dungeon, Dungeon)
 
 
 def test_EAST_engine():
-    age = EASTArenaGameEngine(num_players=2, type="Arena_1", size=[20, 20])
+    age = EASTArenaGameEngine(type="Arena_1", size=[20, 20])
     assert True
 
 
 def test_EQ_engine():
-    age = EQArenaGameEngine(num_players=2, type="Arena_1", size=[20, 20])
+    age = EQArenaGameEngine(type="Arena_1", size=[20, 20])
     assert isinstance(age.event_queue, deque)
 
 

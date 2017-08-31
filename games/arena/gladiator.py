@@ -115,7 +115,7 @@ class Gladiator(object):
                        boosting a key should reduce cur_sp by that amount
         :return: None
         """
-        for k, v in boosts:
+        for k, v in boosts.item():
             """ 
             # Introduce cost for boosting:
             if v < self.cur_sp:
