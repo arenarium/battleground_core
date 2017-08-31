@@ -7,7 +7,8 @@ class SimpleAgent(agent.Agent):
     def __init__(self, threshold=20):
         self.threshold = threshold
 
-    def move(self, state):
+    @staticmethod
+    def move(state):
         my_game = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
 
         available_move_names = {k for k, v in my_game.state["allowedMoves"].items() if v == 1}

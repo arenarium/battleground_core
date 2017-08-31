@@ -5,7 +5,6 @@ Should implement these functions.
 
 
 class GameEngine(object):
-
     def __init__(self, type, **kwargs):
         self.current_player = 0
         self.type = type

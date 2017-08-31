@@ -32,7 +32,7 @@ def test_reset():
         assert state["hutches"] == [0] * dice_game.NUM_DICE
         assert state["movables"] == [1] * dice_game.NUM_DICE
         assert state["currentPlayer"] == 0
-        for key, value in state["scores"].items():
+        for value in state["scores"].values():
             assert value == 0
         assert state["extraBunnies"] == 0
         assert state["message"] == ""

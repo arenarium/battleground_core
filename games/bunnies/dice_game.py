@@ -33,7 +33,7 @@ class DiceGame(GameEngine):
         self.type = type
         self.state = state
         if self.state is None:
-            """if state is not provided, use default starting state"""
+            # if state is not provided, use default starting state
             self.reset()
 
     def get_game_name(self):
@@ -100,7 +100,8 @@ class DiceGame(GameEngine):
         num_hutches = max(num_hutches, 1)
         return num_hutches * num_bunnies
 
-    def _check_bunnies(self, bunnies):
+    @staticmethod
+    def _check_bunnies(bunnies):
         """
         :returns (bool) if list of bunnies is valid, (char) error message if not
         """
@@ -108,7 +109,8 @@ class DiceGame(GameEngine):
             return False, "Only bunnies are allowed in bunnies container!"
         return True, ""
 
-    def _check_hutches(self, hutches):
+    @staticmethod
+    def _check_hutches(hutches):
         """
         :returns (bool) if list of hutches is valid, (char) error message if not
         """
@@ -246,7 +248,8 @@ class DiceGame(GameEngine):
 
         return self.state
 
-    def _do_move_bunny(self, state, dice_ID):
+    @staticmethod
+    def _do_move_bunny(state, dice_ID):
         """
         moves the die at position dice_ID from rollables to bunnies
         at least one bunny needs to be moved before being able to roll again or pass on
@@ -266,7 +269,8 @@ class DiceGame(GameEngine):
             state["allowedMoves"]["moveBunny"] = 0
         return state
 
-    def _do_move_hutch(self, state, dice_ID):
+    @staticmethod
+    def _do_move_hutch(state, dice_ID):
         """
         moves the die at position dice_ID from rollables to hutches
         :returns self.state
@@ -328,7 +332,4 @@ class DiceGame(GameEngine):
         """
         :returns (bool) if the game is over
         """
-        if self.state["currentPlayer"] == self.state["lastPlayer"]:
-            return True
-        else:
-            return False
+        return bool(self.state["currentPlayer"] == self.state["lastPlayer"])

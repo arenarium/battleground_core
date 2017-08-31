@@ -24,12 +24,12 @@ class ArenaGameEngine(GameEngine):
                       "stats": {"str": int, "dex": int, "con": int},
                       "skills": {"melee": int, "eva": int, "speed": int}
                     }
-        """
-        super().__init__(type)
-        """ initializing: 
+
+            initializing:
             self.current_player
             self.type
         """
+        super().__init__(type)
         self.num_players = len(gladiator_stats)
         # names have to be unique
         self.gladiators = {g["name"]: Gladiator(pos=g["pos"],

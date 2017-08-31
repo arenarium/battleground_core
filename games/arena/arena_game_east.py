@@ -1,10 +1,6 @@
-
 from games.arena.arena import ArenaGameEngine
 from games.arena.dungeon import Dungeon
 from games.arena.gladiator import Gladiator
-
-from collections import deque
-import random
 
 
 class EASTArenaGameEngine(ArenaGameEngine):

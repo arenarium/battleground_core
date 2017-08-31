@@ -45,10 +45,7 @@ class BasicGameEngine(GameEngine):
         """
         Check if the game is over
         """
-        if self.last_round and self.last_player == self.current_player:
-            return True
-        else:
-            return False
+        return bool(self.last_round and self.last_player == self.current_player)
 
     def get_current_player(self):
         """

@@ -1,7 +1,4 @@
-
-
 class Dungeon(object):
-
     def __init__(self, size):
         """
         :param size: [int, int] list of coordinates

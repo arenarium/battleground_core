@@ -8,10 +8,10 @@ import time
 
 
 def parse_config(config):
-    if isinstance(config,dict):
+    if isinstance(config, dict):
         return config
     try:
-        with open(config,"r") as f:
+        with open(config, "r") as f:
             data = json.load(f)
     except:
         data = json.loads(config)
@@ -26,26 +26,26 @@ def get_players(players_config):
     return dict(enumerate(agents))
 
 
-def game_engine_factory(num_players,game_config):
+def game_engine_factory(num_players, game_config):
     local_path = game_config["local_path"]
     engine_module = importlib.import_module(local_path)
     for name, obj in inspect.getmembers(engine_module):
-        if name==game_config["class_name"] and inspect.isclass(obj):
+        if name == game_config["class_name"] and inspect.isclass(obj):
             engine_class = obj
             break
-    engine_instance = engine_class(num_players =num_players,
-                                   type = game_config["type"],
+    engine_instance = engine_class(num_players=num_players,
+                                   type=game_config["type"],
                                    **game_config["settings"])
     return engine_instance
 
 
-def start_session(config,save=True,game_delay=None):
+def start_session(config, save=True, game_delay=None):
     config_data = parse_config(config)
     players = get_players(config_data["players"])
     all_scores = []
     for i in range(config_data["num_games"]):
-        engine = game_engine_factory(len(players),config_data["game"])
-        gr = GameRunner(engine,players=players,save=save)
+        engine = game_engine_factory(len(players), config_data["game"])
+        gr = GameRunner(engine, players=players, save=save)
         scores = gr.run_game()
         if game_delay is None:
             time.sleep(config_data["game_delay"])

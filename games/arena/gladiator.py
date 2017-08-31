@@ -111,16 +111,14 @@ class Gladiator(object):
 
     def set_boosts(self, boosts):
         """
+            # Introduce cost for boosting:
+            if v < self.cur_sp:
+                self.cur_sp -= v
         :param boosts: dict containing keys and values to boost;
                        boosting a key should reduce cur_sp by that amount
         :return: None
         """
-        for k, v in boosts.item():
-            """ 
-            # Introduce cost for boosting:
-            if v < self.cur_sp:
-                self.cur_sp -= v
-            """
+        for k, v in boosts.items():
             self.boosts[k] = v
         return None
 

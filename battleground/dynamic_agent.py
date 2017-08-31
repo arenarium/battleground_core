@@ -1,10 +1,10 @@
-
 from . import agent
 import importlib
-import sys, inspect
+import sys
+import inspect
+
 
 class DynamicAgent(agent.Agent):
-
     def __init__(self,
                  owner,
                  name,
@@ -21,5 +21,5 @@ class DynamicAgent(agent.Agent):
         elif queue_prefix is not None:
             raise NotImplementedError()
 
-    def move(self,state):
+    def move(self, state):
         return self.agent_instance.move(state)
