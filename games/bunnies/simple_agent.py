@@ -11,8 +11,10 @@ class SimpleAgent(agent.Agent):
         my_game = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
 
         available_move_names = {k for k, v in my_game.state["allowedMoves"].items() if v == 1}
+        # caught these two cases in _do_move_bunny or _do_move_hutch functions
         if ("moveBunny" in available_move_names
-                and 1 not in my_game.state["rollables"] and 2 not in my_game.state["rollables"]):
+                and 1 not in my_game.state["rollables"]
+                and 2 not in my_game.state["rollables"]):
             available_move_names.remove("moveBunny")
 
         max_hutch = max(my_game.state["hutches"])

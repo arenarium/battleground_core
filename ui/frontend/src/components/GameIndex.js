@@ -7,7 +7,7 @@ class GameIndex extends Component {
 
   render() {
     let listItemArray=[]
-    for (var key in this.props.gameArray) {
+    for (let key in this.props.gameArray) {
       if (this.props.gameArray.hasOwnProperty(key)) {
         let gameID = this.props.gameArray[key][0][1]
         let gameType = this.props.gameArray[key][0][0]

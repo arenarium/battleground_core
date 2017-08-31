@@ -17,7 +17,9 @@ services:
       - COUCHDB_HOST=http://couchdb:5984
 
   nginx:
-    build: ./ui/frontend
+    build:
+      context: ./ui/frontend
+      dockerfile: Dockerfile.dev
     depends_on:
       - uwsgi
     ports:
