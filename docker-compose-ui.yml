@@ -9,7 +9,7 @@ services:
       - 5984:5984
 
   uwsgi:
-    image: uwsgi:latest
+    image: battleground/uwsgi:latest
     build: ui/api
     depends_on:
       - couchdb
@@ -17,6 +17,7 @@ services:
       - COUCHDB_HOST=http://couchdb:5984
 
   nginx:
+    image: battleground/nginx:latest
     build:
       context: ./ui/frontend
       dockerfile: Dockerfile.dev
