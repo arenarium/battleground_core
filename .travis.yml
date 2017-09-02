@@ -16,6 +16,7 @@ before_script:
 - docker run --network=host battleground/battleground python start.py
 script: docker run --network=host battleground/battleground pytest unit_tests
 after_script:
+  - chmod +x ./deploy_scripts/*.sh
   - ./deploy_scripts/push_images.sh
 env:
   global:
