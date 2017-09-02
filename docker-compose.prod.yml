@@ -7,7 +7,8 @@ services:
     ports:
       - 80:80
 
-  main:
+  battleground:
+    image: battleground/battleground:latest
     build: .
     depends_on:
       - couchdb
