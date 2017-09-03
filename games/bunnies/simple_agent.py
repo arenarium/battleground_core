@@ -1,5 +1,8 @@
-import agent
-import dice_game
+from battleground import agent
+if __name__ == "__main__":
+    import dice_game
+else:
+    from . import dice_game
 import random
 
 

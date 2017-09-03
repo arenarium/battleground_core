@@ -38,7 +38,7 @@ class GameRunner(object):
         if self.save:
             game_data.save_game_history(self.game_engine.get_game_name(),
                                         self.game_states)
-        return self.game_engine.scores
+        return self.game_engine.get_state()["scores"]
 
     def broadcast(self,state):
         pass
