@@ -37,7 +37,7 @@ def generate_dynamic_config():
     "num_games":3,
     "max_turns":1000,
     "move_delay":0.1,
-    "game_delay":1.0,
+    "game_delay":0.1,
     }
 
     return config
@@ -58,6 +58,7 @@ def go():
         if args.dynamic:
             print("running new dynamic config ...")
             config = generate_dynamic_config()
+            #print(config)
             site_runner.start_session(config)
         else:
             site_runner.start_session(args.config)
