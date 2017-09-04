@@ -23,7 +23,7 @@ def get_dynamic_players(game_type,n):
     return players
 
 
-def generate_dynamic_config():
+def generate_dynamic_config(game_delay):
     with open("config/registered_games.json",'r') as f:
         registered_games = json.load(f)
 
@@ -37,7 +37,7 @@ def generate_dynamic_config():
     "num_games":3,
     "max_turns":1000,
     "move_delay":0.1,
-    "game_delay":0.1,
+    "game_delay":game_delay,
     }
 
     return config
@@ -57,7 +57,8 @@ def go():
         i+=1
         if args.dynamic:
             print("running new dynamic config ...")
-            config = generate_dynamic_config()
+            delay = 10 if args.d else 0
+            config = generate_dynamic_config(delay)
             #print(config)
             site_runner.start_session(config)
         else:
