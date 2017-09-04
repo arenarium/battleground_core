@@ -1,8 +1,6 @@
 from battleground.game_runner import GameRunner
 
-from games.arena.arena import ArenaGameEngine
-from games.arena.arena_game_east import EASTArenaGameEngine
-from games.arena.arena_game_eq import EQArenaGameEngine
+from games.arena.arena_game import ArenaGameEngine
 from games.arena.dungeon import Dungeon
 from games.arena.gladiator import Gladiator
 from games.arena import arena_agent
@@ -16,16 +14,7 @@ def test_engine():
     assert age.get_game_name() == "Arena_1"
     assert isinstance(age.gladiators, dict)
     assert isinstance(age.dungeon, Dungeon)
-
-
-def test_EAST_engine():
-    age = EASTArenaGameEngine(type="Arena_1", size=[20, 20])
-    assert True
-
-
-def test_EQ_engine():
-    age = EQArenaGameEngine(type="Arena_1", size=[20, 20])
-    assert isinstance(age.event_queue, deque)
+    assert isinstance(age.event_queue, list)
 
 
 def test_dungeon():
@@ -64,11 +53,19 @@ def test_gladiator():
     assert isinstance(glad.get_max_sp(), int)
     assert isinstance(glad.max_sp, int)
     assert isinstance(glad.cur_sp, int)
+    assert isinstance(glad.is_dead(), bool)
     assert 0 < glad.get_speed()
     assert isinstance(glad.boosts, dict)
     assert glad.set_boosts({"speed": random.randint(1, 3)}) is None
+    assert glad.cur_sp < glad.max_sp
     assert glad.boosts["speed"] > 0
     assert glad.move([1, 2]) is None
+    assert isinstance(glad.actions, dict)
+    assert all([isinstance(glad.get_cost(action, value), int)
+                for action, value in {"move": 0,
+                                      "attack": 0,
+                                      "boost": random.randint(1, 10)}.items()
+                ])
 
 
 def test_player():

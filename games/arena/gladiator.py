@@ -1,4 +1,7 @@
 import copy
+import random
+
+from games.arena.calc import calc
 
 
 class Gladiator(object):
@@ -16,6 +19,7 @@ class Gladiator(object):
         self.team = team
         self.base_stats = stats
         self.base_skills = skills
+        self.range = 1
         self.max_hp = self.get_max_hp()
         self.cur_hp = self.max_hp
         self.max_sp = self.get_max_sp()
@@ -25,6 +29,10 @@ class Gladiator(object):
                        "dam": 0,
                        "prot": 0,
                        "speed": 0}
+        # available actions: {action: 0 - not allowed OR 1 - allowed}
+        self.actions = {"move": 1,
+                        "attack": 1,
+                        "boost": 1}
 
     def get_stats(self):
         """
@@ -82,6 +90,7 @@ class Gladiator(object):
     def get_max_hp(self):
         """
         :return: 20 + a compounding 20% bonus per point of con
+                 (20, 24, 28, 34, 41, 49, ...)
         """
         stats = self.get_stats()
         mhp = int(20 * (1.2 ** stats["con"]))
@@ -90,6 +99,7 @@ class Gladiator(object):
     def get_max_sp(self):
         """
         :return: 10 + a compounding 10% bonus per point of con
+                 (10, 11, 12, 13, 14, 16)
         """
         stats = self.get_stats()
         msp = int(10 * (1.1 ** stats["con"]))
@@ -104,23 +114,43 @@ class Gladiator(object):
         return speed
 
     def is_dead(self):
-        if self.cur_hp <= 0:
-            return True
-        else:
-            return False
+        return bool(self.cur_hp <= 0)
 
     def set_boosts(self, boosts):
         """
-            # Introduce cost for boosting:
-            if v < self.cur_sp:
-                self.cur_sp -= v
         :param boosts: dict containing keys and values to boost;
                        boosting a key should reduce cur_sp by that amount
         :return: None
         """
         for k, v in boosts.items():
-            self.boosts[k] = v
+            # cost for boosting: (1, 2, 3, 4, 5, ...) -> (1, 3, 6, 10, 15, ...)
+            cost = v * (v + 1) / 2
+            if cost <= self.cur_sp:
+                self.cur_sp -= cost
+                self.boosts[k] = v
         return None
+
+    def attack(self, target):
+        """
+        :param target: object that has a position, evasion score and protection tuple
+        :return: (int) damage
+        """
+        pos_o = self.pos
+        pos_t = target.pos
+        attack = self.get_attack()
+        evasion = target.get_evasion()
+        [dd, ds] = self.get_damage()
+        [pd, ps] = target.get_protection()
+        damage = 0
+        protection = 0
+        if calc.dist(pos_o, pos_t) > self.range:
+            return 0
+        else:
+            hit = attack + random.randint(1, 20) - evasion - random.randint(1, 20)
+            if hit > 0:
+                damage = sum([random.randint(1, ds) for _ in range(dd)])
+                protection = sum([random.randint(1, ps) for _ in range(pd)])
+            return max(damage - protection, 0)
 
     def move(self, direction):
         """
@@ -129,3 +159,13 @@ class Gladiator(object):
         """
         self.pos += direction
         return None
+
+    def get_cost(self, action, value):
+        if action == "move":
+            return self.get_speed()
+        elif action == "attack":
+            return self.get_speed()
+        elif action == "boost":
+            return value * self.get_speed()
+        else:
+            return 0
