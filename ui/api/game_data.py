@@ -96,7 +96,7 @@ def load_game_history(game_id,db=None):
     return states_in_sequence
 
 
-def get_games_list(game_type=None, db=None):
+def get_games_list(game_type=None, db=None,limit=None):
     """
     get a list of unique game IDs
     """
@@ -105,9 +105,15 @@ def get_games_list(game_type=None, db=None):
         db = get_db()
     map_fun = '''function(doc) {emit([doc.game_type,doc.game_id])}'''
     result = db.query(map_fun,'_count', group=True)
-
+    data = []
     if game_type is None:
-        data =  [(r.key,r.value) for r in result[:]]
+        for i,r in enumerate(result[:]):
+            data.append((r.key,r.value))
+            if limit is not None and i>limit:
+                break
     else:
-        data =  [(r.key,r.value) for r in result[[game_type]:[game_type,"ZZZ"]]]
+        for i,r in enumerate(result[[game_type]:[game_type,"ZZZ"]]):
+            data.append((r.key,r.value))
+            if limit is not None and i>limit:
+                break
     return data

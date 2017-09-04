@@ -27,13 +27,13 @@ def get_game_states(game_id):
 
 @app.route("/api/games/<game_type>")
 def get_games(game_type):
-    data = game_data.get_games_list(game_type=game_type)
+    data = game_data.get_games_list(game_type=game_type,limit=10)
     return jsonify(data)
 
 
 @app.route("/api/games/")
 def get_games_types():
-    data = game_data.get_games_list()
+    data = game_data.get_games_list(limit=10)
     return jsonify(data)
 
 
