@@ -18,6 +18,7 @@ script: docker run --network=host battleground/battleground pytest unit_tests
 after_script:
 - chmod +x ./deploy_scripts/*.sh
 - "./deploy_scripts/push_images.sh"
+- chmod 600 deploy_key
 - ssh -o "StrictHostKeyChecking no" -i deploy_key $DEPLOY_HOST ./deploy.sh
 env:
   global:
