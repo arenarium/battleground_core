@@ -1,7 +1,10 @@
 from uuid import uuid4
+import pymongo
 from pymongo import MongoClient
 import json
 from os import environ
+
+import datetime
 
 global_client = None
 
@@ -26,12 +29,6 @@ def get_db(name=None, client=None):
     return db
 
 
-def get_collection(name=None):
-    if name is None:
-        name = "game_states"
-    return get_db()[name]
-
-
 def get_new_id():
     doc_id = uuid4().hex
     return doc_id
@@ -40,15 +37,17 @@ def get_new_id():
 def save_game_states(game_id,
                      game_type,
                      game_states,
-                     collection=None):
+                     db=None):
     """
     save one or more documents to the data-store.
     game_states: [dict,...]
         each key, value will be stord as key: json(value) in the document.
         expected keys are "game_state", "last_move" and "player_ids"
     """
-    if collection is None:
-        collection = get_collection()
+    if db is None:
+        db = get_db()
+    collection = db.game_states
+
     all_docs = []
     for i, game_state in enumerate(game_states):
         doc = {
@@ -65,7 +64,17 @@ def save_game_states(game_id,
     return result
 
 
-def save_game_history(game_type, game_states, collection=None):
+def save_game_meta_data(game_type,utc_time=None,db=None):
+    if db is None:
+        db = get_db()
+    if utc_time is None:
+        utc_time = str(datetime.datetime.utcnow())
+    doc = {"game_type":game_type,"utc_time":utc_time}
+    game_id = db.games.insert_one(doc).inserted_id
+    return game_id
+
+
+def save_game_history(game_type, game_states, db=None):
     """
     save a sequence of documents to the data-store.
     game_states: array of dict
@@ -74,22 +83,25 @@ def save_game_history(game_type, game_states, collection=None):
         expected keys are "game_state", "last_move" and "player_ids"
     """
 
-    game_id = get_new_id()
-    if collection is None:
-        collection = get_collection()
+    if db is None:
+        db = get_db()
+
+    game_id = save_game_meta_data(game_type=game_type, db=db)
 
     result = save_game_states(game_id=game_id,
                      game_type=game_type,
                      game_states=game_states,
-                     collection=collection)
+                     db=db)
     return game_id
 
 
-def load_game_history(game_id, collection=None):
+def load_game_history(game_id, db=None):
     """load all states with the same game ID and return an ordered sequence"""
 
-    if collection is None:
-        collection = get_collection()
+    if db is None:
+        db = get_db()
+    collection = db.game_states
+
     result = collection.find({"game_id":game_id})
     data = result[:]
     states_in_sequence = [None] * result.count()
@@ -105,17 +117,20 @@ def load_game_history(game_id, collection=None):
     return states_in_sequence
 
 
-def get_games_list(game_type=None, collection=None):
+def get_games_list(game_type=None, db=None):
     """
     get a list of unique game IDs
     """
 
-    if collection is None:
-        collection = get_collection()
+    if db is None:
+        db = get_db()
+
+    collection = db.games
 
     if game_type is None:
-        result = collection.distinct(key="game_id")
+        result = collection.find(sort=[('utc_time', pymongo.DESCENDING)])
     else:
-        result = collection.distinct(key="game_id", filter={"game_type":game_type})
+        result = collection.find(sort=[('utc_time', pymongo.DESCENDING)],
+                                 filter={"game_type":game_type})
 
     return result
