@@ -1,6 +1,7 @@
 from uuid import uuid4
 import pymongo
 from pymongo import MongoClient
+import bson
 import json
 from os import environ
 
@@ -29,9 +30,9 @@ def get_db(name=None, client=None):
     return db
 
 
-def get_new_id():
-    doc_id = uuid4().hex
-    return doc_id
+# def get_new_id():
+#     doc_id = uuid4().hex
+#     return doc_id
 
 
 def save_game_states(game_id,
@@ -64,12 +65,12 @@ def save_game_states(game_id,
     return result
 
 
-def save_game_meta_data(game_type,utc_time=None,db=None):
+def save_game_meta_data(game_type, num_states,utc_time=None,db=None):
     if db is None:
         db = get_db()
     if utc_time is None:
         utc_time = str(datetime.datetime.utcnow())
-    doc = {"game_type":game_type,"utc_time":utc_time}
+    doc = {"game_type":game_type,"utc_time":utc_time,"num_states":num_states}
     game_id = db.games.insert_one(doc).inserted_id
     return game_id
 
@@ -86,7 +87,9 @@ def save_game_history(game_type, game_states, db=None):
     if db is None:
         db = get_db()
 
-    game_id = save_game_meta_data(game_type=game_type, db=db)
+    game_id = save_game_meta_data(game_type=game_type,
+                                  num_states = len(game_states),
+                                  db=db)
 
     result = save_game_states(game_id=game_id,
                      game_type=game_type,
@@ -100,11 +103,16 @@ def load_game_history(game_id, db=None):
 
     if db is None:
         db = get_db()
+
+    if not isinstance(game_id,bson.ObjectId):
+        game_id = bson.ObjectId(str(game_id))
+
     collection = db.game_states
 
     result = collection.find({"game_id":game_id})
     data = result[:]
     states_in_sequence = [None] * result.count()
+
     """now decode some of the values that are json strings"""
     for loaded_doc in data:
         output_doc = {}

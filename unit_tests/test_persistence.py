@@ -24,9 +24,9 @@ def test_connection():
 def test_game_id(db):
     """generate a unique ID"""
 
-    id1 = game_data.save_game_meta_data("test_game",db=db)
+    id1 = game_data.save_game_meta_data("test_game",num_states=0,db=db)
     assert len(str(id1)) == 24
-    id2 = game_data.save_game_meta_data("test_game2",db=db)
+    id2 = game_data.save_game_meta_data("test_game2",num_states=0,db=db)
     assert len(str(id2)) == 24
     assert id1 != id2
 
@@ -36,7 +36,7 @@ def test_save_state(db):
 
     test_state = {"game_state": {"k_a": "v_a", "k_b": 2, "k_c": None},
                   "last_move": {"move": "a move"}}
-    game_id = game_data.get_new_id()
+    game_id = game_data.save_game_meta_data("test_game2",num_states=0,db=db)
     state_ids = game_data.save_game_states(
         game_id, "test_game", [test_state], db=db).inserted_ids
     assert len(state_ids) == 1
@@ -79,6 +79,10 @@ def test_game_list(db):
     data = game_data.get_games_list(db=db)
     assert data.count() > 0
     assert len(str(data[0]["_id"])) == 24
+
+    for doc in data:
+        assert "game_type" in doc
+        assert "utc_time" in doc
 
 
 def test_game_list_selector(db):
