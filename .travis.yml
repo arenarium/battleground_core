@@ -17,9 +17,12 @@ before_script:
 script: docker run --network=host battleground/battleground pytest unit_tests
 after_script:
 - chmod +x ./deploy_scripts/*.sh
-- "./deploy_scripts/push_images.sh"
 - chmod 600 deploy_key
-- ssh -o "StrictHostKeyChecking no" -i deploy_key $DEPLOY_HOST ./deploy.sh
+deploy:
+  provider: script
+  script: deploy_scripts/do_deploy.sh
+  on:
+    branch: vpl_dev
 env:
   global:
   - secure: vgBfw0UiYND6rhu3cKK4LgTeiizDS+VaU8Vq5lmGzezZPqAlvmQbd0Olr6Ls4P3LB6uvroINIsSiA9pjk6YhqQkwHvnubmF6WX4X4Hk74SyaRpHLoQxVpC3/uyINwF1oA0cywrmPyPsyP/E6APLbfCcv7zkUs1MX6EbWlg3XIyKvK56QRbZ2shu2KKDtTPV0PbQDC3Fy1mSEx33BZFMJcvj1xcWc/qJdYwPvcjLRGldfAPArsRdswLg0ch/AbmZJcvHDva5RfNBGWsQz3LuGcdC7fv2UipyK+r8uRl86rlBk0c1LcowFD0a16tGKU+aB8HUcF7GrXAPNA9HP1Pd/q9rxaaQZX3Q+9M+5i0dEEKXQjKUBMKgmSk3xgQdkfGYcggR7gidtYwgfd3JTmaxwBHlcSQspeO/oAQrcb65ZlmLonA8XJXMuagmMpdHt9t32wxwCYAnmP+HgOcEJpO6bjDfcqOAGbthAoKYvJIdhTWuOmTvikS6DS2wg/MgkSm69cDyT6h8ai4hxYSz3H+LpiyFD8QtxxGPBz9HRkTXPIPIZ1F2lWpcGx5efT2dfWSUZdAgChvSFjw87uBrXQTE3B/e7Yh7FRjTnVGQQo6fFd0vteReUuspOIbT0+DycS7oGZHDuNKuwSIN698LvVHe0b67mVjR7IGttSPHtPUZt+js=
