@@ -13,6 +13,6 @@ services:
     image: battleground/battleground:latest
     build: .
     depends_on:
-      - couchdb
+      - mongo
     environment:
-      - COUCHDB_HOST=http://couchdb:5984
+      - MONGO_HOST=mongo:27017

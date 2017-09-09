@@ -1,4 +1,4 @@
-from uuid import uuid4
+#from uuid import uuid4
 import pymongo
 from pymongo import MongoClient
 import bson
@@ -28,11 +28,6 @@ def get_db(name=None, client=None):
         client = get_client()
     db = client[name]
     return db
-
-
-# def get_new_id():
-#     doc_id = uuid4().hex
-#     return doc_id
 
 
 def save_game_states(game_id,

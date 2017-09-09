@@ -51,13 +51,13 @@ def go():
     parser.add_argument('-d', action='store_true')
     parser.add_argument('--count', type=int, default=1)
     args = parser.parse_args()
-
+    print("starting battleground ...")
     i=0
     while i < args.count or args.d:
         i+=1
         if args.dynamic:
             print("running new dynamic config ...")
-            delay = 10 if args.d else 0
+            delay = 60 if args.d else 0
             config = generate_dynamic_config(delay)
             #print(config)
             site_runner.start_session(config)

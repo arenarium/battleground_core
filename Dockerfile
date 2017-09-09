@@ -9,7 +9,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 
-ENV COUCHDB_HOST=http://localhost:5984
+ENV MONGO_HOST=localhost:27017
 ENV PYTHONPATH=$PYTHONPATH:/app
 
 CMD [ "python", "start.py", "--dynamic", "-d"]
