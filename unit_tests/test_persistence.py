@@ -1,6 +1,5 @@
 import pytest
 from battleground.persistence import game_data
-from couchdb.client import Server
 import uuid
 import random
 
