@@ -4,21 +4,21 @@ from  battleground.dynamic_agent import DynamicAgent
 from battleground.game_engine import GameEngine
 from games.basic_game.basic_game_engine import BasicGameEngine
 import json
-config_data_file = "config/basic_config.json"
+CONFIG_DATA_FILE = "config/basic_config.json"
 
 def test_json():
-    with open(config_data_file,"r") as f:
+    with open(CONFIG_DATA_FILE,"r") as f:
         data = json.load(f)
     assert isinstance(data,dict)
 
 
 def test_config_loader():
-    data = site_runner.parse_config(config_data_file)
+    data = site_runner.parse_config(CONFIG_DATA_FILE)
     assert isinstance(data,dict)
     assert "game" in data
     assert "players" in data
 
-    with open(config_data_file,'r') as f:
+    with open(CONFIG_DATA_FILE,'r') as f:
         config_string = f.read()
 
     data = site_runner.parse_config(config_string)
@@ -29,7 +29,7 @@ def test_config_loader():
 
 
 def test_get_players():
-    data = site_runner.parse_config(config_data_file)
+    data = site_runner.parse_config(CONFIG_DATA_FILE)
     players = site_runner.get_players(data["players"])
 
     assert isinstance(players,dict)
@@ -52,7 +52,7 @@ def test_get_engine():
     assert engine.get_game_name() == game_config["type"]
 
 def test_run_session():
-    scores = site_runner.start_session(config_data_file,save=False,game_delay=0)
+    scores = site_runner.start_session(CONFIG_DATA_FILE,save=False,game_delay=0)
     assert len(scores)>0
     assert len(scores[0])>0
 

@@ -5,12 +5,12 @@ import random
 
 
 @pytest.fixture(scope="module")
-def db():
+def db_handle():
     """temporary database for testing"""
     c = game_data.get_client()
-    db = game_data.get_db("test_db")
-    yield db
-    c.drop_database("test_db")
+    db_handle = game_data.get_db_handle("test_db_handle")
+    yield db_handle
+    c.drop_database("test_db_handle")
 
 
 def test_connection():
@@ -20,27 +20,27 @@ def test_connection():
     assert isinstance(connection_info, dict)
 
 
-def test_game_id(db):
+def test_game_id(db_handle):
     """generate a unique ID"""
 
-    id1 = game_data.save_game_meta_data("test_game",num_states=0,db=db)
+    id1 = game_data.save_game_meta_data("test_game",num_states=0,db_handle=db_handle)
     assert len(str(id1)) == 24
-    id2 = game_data.save_game_meta_data("test_game2",num_states=0,db=db)
+    id2 = game_data.save_game_meta_data("test_game2",num_states=0,db_handle=db_handle)
     assert len(str(id2)) == 24
     assert id1 != id2
 
 
-def test_save_state(db):
+def test_save_state(db_handle):
     """save a single game state"""
 
     test_state = {"game_state": {"k_a": "v_a", "k_b": 2, "k_c": None},
                   "last_move": {"move": "a move"}}
-    game_id = game_data.save_game_meta_data("test_game2",num_states=0,db=db)
+    game_id = game_data.save_game_meta_data("test_game2",num_states=0,db_handle=db_handle)
     state_ids = game_data.save_game_states(
-        game_id, "test_game", [test_state], db=db).inserted_ids
+        game_id, "test_game", [test_state], db_handle=db_handle).inserted_ids
     assert len(state_ids) == 1
 
-    loaded_states = game_data.load_game_history(game_id, db=db)
+    loaded_states = game_data.load_game_history(game_id, db_handle=db_handle)
     assert len(loaded_states) == 1
 
     assert state_ids[0] == loaded_states[0]["_id"]
@@ -50,7 +50,7 @@ def test_save_state(db):
             assert loaded_states[0][key][key2] == value2
 
 
-def test_save_game_history(db):
+def test_save_game_history(db_handle):
     """save a sequence of game states"""
 
     test_states = []
@@ -58,9 +58,9 @@ def test_save_game_history(db):
         test_states.append({"game_state": {"k_a": random.randint(0, 1000)},
                             "last_move": {"k_move": random.randint(0, 1000)}})
 
-    game_id = game_data.save_game_history("test_game", test_states, db=db)
+    game_id = game_data.save_game_history("test_game", test_states, db_handle=db_handle)
 
-    loaded_states = game_data.load_game_history(game_id, db=db)
+    loaded_states = game_data.load_game_history(game_id, db_handle=db_handle)
 
     assert len(loaded_states) == 10
 
@@ -72,10 +72,10 @@ def test_save_game_history(db):
         assert state["last_move"] == loaded_states[i]["last_move"]
 
 
-def test_game_list(db):
+def test_game_list(db_handle):
     """get list of games"""
 
-    data = game_data.get_games_list(db=db)
+    data = game_data.get_games_list(db_handle=db_handle)
     assert data.count() > 0
     assert len(str(data[0]["_id"])) == 24
 
@@ -84,13 +84,13 @@ def test_game_list(db):
         assert "utc_time" in doc
 
 
-def test_game_list_selector(db):
+def test_game_list_selector(db_handle):
     """get list of games"""
 
-    data = game_data.get_games_list(db=db, game_type="teskdsajhasde")
+    data = game_data.get_games_list(db_handle=db_handle, game_type="teskdsajhasde")
     assert data.count() == 0
 
-    data = game_data.get_games_list(db=db, game_type="test_game")
+    data = game_data.get_games_list(db_handle=db_handle, game_type="test_game")
     assert data.count() > 0
     assert len(str(data[0]["_id"])) == 24
 

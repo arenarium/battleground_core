@@ -21,28 +21,28 @@ def get_client():
     return global_client
 
 
-def get_db(name=None, client=None):
+def get_db_handle(name=None, client=None):
     if name is None:
         name = "game_states"
     if client is None:
         client = get_client()
-    db = client[name]
-    return db
+    db_handle = client[name]
+    return db_handle
 
 
 def save_game_states(game_id,
                      game_type,
                      game_states,
-                     db=None):
+                     db_handle=None):
     """
     save one or more documents to the data-store.
     game_states: [dict,...]
         each key, value will be stord as key: json(value) in the document.
         expected keys are "game_state", "last_move" and "player_ids"
     """
-    if db is None:
-        db = get_db()
-    collection = db.game_states
+    if db_handle is None:
+        db_handle = get_db_handle()
+    collection = db_handle.game_states
 
     all_docs = []
     for i, game_state in enumerate(game_states):
@@ -60,17 +60,17 @@ def save_game_states(game_id,
     return result
 
 
-def save_game_meta_data(game_type, num_states,utc_time=None,db=None):
-    if db is None:
-        db = get_db()
+def save_game_meta_data(game_type, num_states,utc_time=None,db_handle=None):
+    if db_handle is None:
+        db_handle = get_db_handle()
     if utc_time is None:
         utc_time = str(datetime.datetime.utcnow())
     doc = {"game_type":game_type,"utc_time":utc_time,"num_states":num_states}
-    game_id = db.games.insert_one(doc).inserted_id
+    game_id = db_handle.games.insert_one(doc).inserted_id
     return game_id
 
 
-def save_game_history(game_type, game_states, db=None):
+def save_game_history(game_type, game_states, db_handle=None):
     """
     save a sequence of documents to the data-store.
     game_states: array of dict
@@ -79,40 +79,41 @@ def save_game_history(game_type, game_states, db=None):
         expected keys are "game_state", "last_move" and "player_ids"
     """
 
-    if db is None:
-        db = get_db()
+    if db_handle is None:
+        db_handle = get_db_handle()
 
     game_id = save_game_meta_data(game_type=game_type,
                                   num_states = len(game_states),
-                                  db=db)
+                                  db_handle=db_handle)
 
-    result = save_game_states(game_id=game_id,
+    save_game_states(game_id=game_id,
                      game_type=game_type,
                      game_states=game_states,
-                     db=db)
+                     db_handle=db_handle)
     return game_id
 
 
-def load_game_history(game_id, db=None):
+def load_game_history(game_id, db_handle=None):
     """load all states with the same game ID and return an ordered sequence"""
 
-    if db is None:
-        db = get_db()
+    if db_handle is None:
+        db_handle = get_db_handle()
 
     if not isinstance(game_id,bson.ObjectId):
         game_id = bson.ObjectId(str(game_id))
 
-    collection = db.game_states
+    collection = db_handle.game_states
 
     result = collection.find({"game_id":game_id})
     data = result[:]
     states_in_sequence = [None] * result.count()
 
-    """now decode some of the values that are json strings"""
+    # now decode some of the values that are json strings
     for loaded_doc in data:
         output_doc = {}
         for data_key in loaded_doc:
-            if data_key in ["game_state", "last_move"]:  # decode these two keys, because they are special
+            if data_key in ["game_state", "last_move"]:
+                # decode these two keys, because they are special
                 output_doc[data_key] = json.loads(loaded_doc[data_key])
             else:
                 output_doc[data_key] = loaded_doc[data_key]
@@ -120,15 +121,15 @@ def load_game_history(game_id, db=None):
     return states_in_sequence
 
 
-def get_games_list(game_type=None, db=None):
+def get_games_list(game_type=None, db_handle=None):
     """
     get a list of unique game IDs
     """
 
-    if db is None:
-        db = get_db()
+    if db_handle is None:
+        db_handle = get_db_handle()
 
-    collection = db.games
+    collection = db_handle.games
 
     if game_type is None:
         result = collection.find(sort=[('utc_time', pymongo.DESCENDING)])
