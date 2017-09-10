@@ -13,7 +13,7 @@ def test_get_dynamic_players():
 
 def test_get_game_gonfig():
 
-    game_config = start.generate_dynamic_config()
+    game_config = start.generate_dynamic_config(0)
 
     assert isinstance(game_config,dict)
 

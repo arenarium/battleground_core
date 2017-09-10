@@ -1,22 +1,23 @@
 version: '3'
 
 services:
-  couchdb:
-    image: couchdb:1.6
+  mongo:
+    image: mongo:3.4
     volumes:
-      - /data:/usr/local/var/lib/couchdb
+      - /data:/data/db
     ports:
-      - 5984:5984
+      - 27017:27017
 
   uwsgi:
-    image: uwsgi:latest
+    image: battleground/uwsgi:latest
     build: ui/api
     depends_on:
-      - couchdb
+      - mongo
     environment:
-      - COUCHDB_HOST=http://couchdb:5984
+      - MONGO_HOST=mongo:27017
 
   nginx:
+    image: battleground/nginx:latest
     build:
       context: ./ui/frontend
       dockerfile: Dockerfile.dev
