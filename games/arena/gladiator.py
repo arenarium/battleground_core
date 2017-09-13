@@ -1,25 +1,55 @@
 import copy
 import random
 
-from games.arena.calc import calc
+from games.arena.calc import *
 
 
 class Gladiator(object):
 
-    def __init__(self, pos, name, team, stats, skills):
+    def __init__(self, pos,
+                 stats=None, skills=None, name="Nameless", team=1, cur_hp=None, cur_sp=None, boosts=None):
         """
         :param pos: [int, int]
-        :param name: str
-        :param team: int
         :param stats: dict {"str": int, "dex": int, "con": int}
         :param skills: dict {"melee": int, "eva": int, "speed": int}
+        :param name: str
+        :param team: int
+        :param cur_hp: current hit points (if not full)
+        :param cur_sp: current spirit points (if not full)
+        :param boosts: dict of current boosts (if not none)
         """
         self.pos = pos
+        if stats is None:
+            self.base_stats = {"str": 0, "dex": 0, "con": 0}
+        else:
+            self.base_stats = stats
+        if skills is None:
+            self.base_skills = {"melee": 0, "eva": 0, "speed": 0}
+        else:
+            self.base_skills = skills
         self.name = name
         self.team = team
-        self.base_stats = stats
-        self.base_skills = skills
         self.range = 1
+        self.max_hp = self.get_max_hp()
+        self.max_sp = self.get_max_sp()
+        if cur_hp is None:
+            self.cur_hp = self.max_hp
+        else:
+            self.cur_hp = cur_hp
+        if cur_sp is None:
+            self.cur_sp = self.max_sp
+        else:
+            self.cur_sp = cur_sp
+        self.boosts = {"att": 0,
+                       "eva": 0,
+                       "dam": 0,
+                       "prot": 0,
+                       "speed": 0}
+        if boosts is not None:
+            for k, v in boosts:
+                self.boosts[k] = v
+
+    def reset(self):
         self.max_hp = self.get_max_hp()
         self.cur_hp = self.max_hp
         self.max_sp = self.get_max_sp()
@@ -29,10 +59,19 @@ class Gladiator(object):
                        "dam": 0,
                        "prot": 0,
                        "speed": 0}
-        # available actions: {action: 0 - not allowed OR 1 - allowed}
-        self.actions = {"move": 1,
-                        "attack": 1,
-                        "boost": 1}
+
+    def get_init(self):
+        init = {"pos": self.pos,
+                "name": self.name,
+                "team": self.team,
+                "stats": self.base_stats,
+                "skills": self.base_skills,
+                # optional
+                "cur_hp": self.cur_hp,
+                "cur_sp": self.cur_sp,
+                "boosts": self.boosts
+                }
+        return init
 
     def get_stats(self):
         """
@@ -143,13 +182,15 @@ class Gladiator(object):
         [pd, ps] = target.get_protection()
         damage = 0
         protection = 0
-        if calc.dist(pos_o, pos_t) > self.range:
+        if dist(pos_o, pos_t) > self.range:
             return 0
         else:
-            hit = attack + random.randint(1, 20) - evasion - random.randint(1, 20)
+            hit = attack - evasion  # + random.randint(1, 20) - random.randint(1, 20)
             if hit > 0:
-                damage = sum([random.randint(1, ds) for _ in range(dd)])
-                protection = sum([random.randint(1, ps) for _ in range(pd)])
+                damage = dd * (1 + ds) / 2
+                protection = pd * (1 + ps) / 2
+                # damage = sum([random.randint(1, ds) for _ in range(dd)])
+                # protection = sum([random.randint(1, ps) for _ in range(pd)])
             return max(damage - protection, 0)
 
     def move(self, direction):
@@ -157,15 +198,24 @@ class Gladiator(object):
         :param direction: [int, int] direction vector (list)
         :return: None
         """
-        self.pos += direction
+        self.pos = [x + y for x, y in zip(self.pos, direction)]
         return None
 
     def get_cost(self, action, value):
-        if action == "move":
-            return self.get_speed()
+        """
+        :param action: (str)
+        :param target: NotImplemented
+        :param value: (int)
+        :return: (int) cost in turn counts of a given action, given its target and value.
+        """
+        cost = 1
+        if action == "stay":
+            cost = value
+        elif action == "move":
+            cost = 1
         elif action == "attack":
-            return self.get_speed()
+            cost = 1
         elif action == "boost":
-            return value * self.get_speed()
-        else:
-            return 0
+            cost = value
+        cost *= self.get_speed()
+        return cost
