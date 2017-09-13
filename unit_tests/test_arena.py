@@ -5,7 +5,6 @@ from games.arena.dungeon import Dungeon
 from games.arena.gladiator import Gladiator
 from games.arena.arena_agent import ArenaAgent
 
-from collections import deque
 import random
 
 

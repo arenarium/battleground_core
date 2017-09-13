@@ -13,7 +13,7 @@ class ArenaGameEngine(GameEngine):
     """
     An arena game engine based on an event queue.
     """
-    def __init__(self, num_players, type, gladiator_stats=[], size=None, state=None):
+    def __init__(self, num_players, type, gladiator_stats=None, size=None, state=None):
         """
         :param num_players: int
         :param type: str
@@ -45,6 +45,8 @@ class ArenaGameEngine(GameEngine):
         else:
             # set up state by first creating gladiators from specified list
             # if more gladiators are specified than needed, the rest is ignored.
+            if gladiator_stats is None:
+                gladiator_stats = []
             self.gladiators = [Gladiator(pos=g["pos"],
                                          name=g["name"],
                                          team=g["team"],
@@ -61,7 +63,7 @@ class ArenaGameEngine(GameEngine):
                     size = [[0, 10], [0, 10]]
             # if less gladiators are specified than needed, more are created on random positions
             if len(gladiator_stats) < num_players:
-                for n in range(0, num_players - len(gladiator_stats)):
+                for _ in range(0, num_players - len(gladiator_stats)):
                     # find free position
                     while True:
                         pos = [random.randint(size[0][0], size[0][1]),
@@ -201,17 +203,17 @@ class ArenaGameEngine(GameEngine):
                     # go through event_queue in reversed order to keep items
                     # from changing index by deleting items with lower index
                     index = len(self.event_queue) - 1
-                    for t,f in reversed(self.event_queue):
+                    for _, ev in reversed(self.event_queue):
                         # if gladiator is dead, delete it and all of his queued events.
-                        if (isinstance(f, Gladiator) and f.chp <= 0
-                            or isinstance(f, Event) and f.owner.chp <= 0):
+                        if (isinstance(ev, Gladiator) and ev.chp <= 0
+                            or isinstance(ev, Event) and ev.owner.chp <= 0):
                             del self.event_queue[index]
                         index -= 1
 
                 elif event.name is "move":
                     blocked = False
-                    for g in self.gladiators:
-                        if g.pos == event.owner.pos + event.target:
+                    for glad in self.gladiators:
+                        if glad.pos == [x + y for x, y in zip(event.owner.pos, event.target)]:
                             blocked = True
                     if not blocked:
                         event.owner.move(event.target)

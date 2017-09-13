@@ -46,8 +46,8 @@ class Gladiator(object):
                        "prot": 0,
                        "speed": 0}
         if boosts is not None:
-            for k, v in boosts:
-                self.boosts[k] = v
+            for att, val in boosts:
+                self.boosts[att] = val
 
     def reset(self):
         self.max_hp = self.get_max_hp()
@@ -112,9 +112,9 @@ class Gladiator(object):
         :return: [1 + boost, 2 + str]
         """
         stats = self.get_stats()
-        dd = 1 + self.boosts["dam"]
-        ds = 2 + stats["str"]
-        return [dd, ds]
+        d_dice = 1 + self.boosts["dam"]
+        d_side = 2 + stats["str"]
+        return [d_dice, d_side]
 
     def get_protection(self):
         """
@@ -122,9 +122,9 @@ class Gladiator(object):
         :return: [1 + boost, str]
         """
         stats = self.get_stats()
-        pd = 1 + self.boosts["prot"]
-        ps = 0 + stats["str"]
-        return [pd, ps]
+        p_dice = 1 + self.boosts["prot"]
+        p_side = 0 + stats["str"]
+        return [p_dice, p_side]
 
     def get_max_hp(self):
         """
@@ -161,12 +161,12 @@ class Gladiator(object):
                        boosting a key should reduce cur_sp by that amount
         :return: None
         """
-        for k, v in boosts.items():
+        for att, val in boosts.items():
             # cost for boosting: (1, 2, 3, 4, 5, ...) -> (1, 3, 6, 10, 15, ...)
-            cost = v * (v + 1) / 2
+            cost = val * (val + 1) / 2
             if cost <= self.cur_sp:
                 self.cur_sp -= cost
-                self.boosts[k] = v
+                self.boosts[att] = val
         return None
 
     def attack(self, target):
@@ -178,19 +178,19 @@ class Gladiator(object):
         pos_t = target.pos
         attack = self.get_attack()
         evasion = target.get_evasion()
-        [dd, ds] = self.get_damage()
-        [pd, ps] = target.get_protection()
+        [d_dice, d_side] = self.get_damage()
+        [p_dice, p_side] = target.get_protection()
         damage = 0
         protection = 0
         if dist(pos_o, pos_t) > self.range:
             return 0
         else:
             hit = attack - evasion  # + random.randint(1, 20) - random.randint(1, 20)
-            if hit > 0:
-                damage = dd * (1 + ds) / 2
-                protection = pd * (1 + ps) / 2
-                # damage = sum([random.randint(1, ds) for _ in range(dd)])
-                # protection = sum([random.randint(1, ps) for _ in range(pd)])
+            if hit >= 0:
+                damage = d_dice * (1 + d_side) / 2
+                protection = p_dice * (1 + p_side) / 2
+                # damage = sum([random.randint(1, d_side) for _ in range(d_dice)])
+                # protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
             return max(damage - protection, 0)
 
     def move(self, direction):
