@@ -17,7 +17,10 @@ class DynamicAgent(agent.Agent):
             for name, obj in inspect.getmembers(agent_module):
                 if inspect.isclass(obj):
                     agent_class = obj
-            self.agent_instance = agent_class(**kwargs)
+            if "settings" in kwargs:
+                self.agent_instance = agent_class(**kwargs["settings"])
+            else:
+                self.agent_instance = agent_class()
         elif queue_prefix is not None:
             raise NotImplementedError()
 

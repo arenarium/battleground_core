@@ -1,5 +1,8 @@
-import agent
-import dice_game
+from battleground import agent
+if __name__ == "__main__":
+    import dice_game
+else:
+    from . import dice_game
 import random
 
 
@@ -18,7 +21,7 @@ class SimpleAgent(agent.Agent):
                 and 2 not in my_game.state["rollables"]):
             available_move_names.remove("moveBunny")
 
-        max_hutch = max(my_game.state["hutches"])
+        max_hutch = max(1, max(my_game.state["hutches"]))
         if ("moveHutch" in available_move_names
                 and (max_hutch + 1) not in my_game.state["rollables"]):
             available_move_names.remove("moveHutch")

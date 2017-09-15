@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/vincentropy/battleground.svg?branch=master)](https://travis-ci.org/vincentropy/battleground)
+
 # battleground
 
 A platform for light-weight multi-player online games. Easy creation of games, user-interfaces, and automated NPCs.

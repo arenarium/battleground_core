@@ -1,9 +1,8 @@
 import React, {Component} from 'react'
-import { Grid, Row,Col,Panel, Button, PageHeader } from 'react-bootstrap';
+import { Grid, Row,Col,Panel, PageHeader } from 'react-bootstrap';
 import GameIndex from './GameIndex'
 import StateArrayViewer from './StateArrayViewer'
 import 'whatwg-fetch'
-var request = require('request');
 
 
 class GameList extends Component {

@@ -43,8 +43,8 @@ def test_game_moves():
     games_list = test_games_list()
     test_app = app.app.test_client()
 
-    game_id = games_list[0][0][1]
-    num_states = games_list[0][1]
+    game_id = games_list[0]["_id"]
+    num_states = games_list[0]["num_states"]
 
     reponse = test_app.get("/api/states/" + str(game_id))
     assert reponse.status_code == 200
