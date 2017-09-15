@@ -38,8 +38,7 @@ class ArenaGameEngine(GameEngine):
             self.current_player
             self.type
         """
-        super().__init__(type)
-        self.num_players = num_players
+        super().__init__(num_players, type)
         if state is not None:
             self.state = state
         else:

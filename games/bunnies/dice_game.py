@@ -29,8 +29,7 @@ class DiceGame(GameEngine):
           "lastRound": False
         }
         """
-        self.num_players = num_players
-        self.type = type
+        super().__init__(num_players, type)
         self.state = state
         if self.state is None:
             # if state is not provided, use default starting state

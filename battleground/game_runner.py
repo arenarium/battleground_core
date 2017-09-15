@@ -3,19 +3,18 @@ import copy
 
 
 class GameRunner(object):
-
-    def __init__(self, game_engine, players,save=True):
+    def __init__(self, game_engine, players, save=True):
         self.game_engine = game_engine
         self.players = list(players.values())
         self.player_ids = list(players.keys())
         self.game_states = []
-        self.save=save
+        self.save = save
 
     def run_game(self):
         self.game_engine.reset()
         state = self.game_engine.get_state()
-        self.game_states.append({"game_state":state,
-                                 "last_move":None,
+        self.game_states.append({"game_state": state,
+                                 "last_move": None,
                                  "player_ids": self.player_ids
                                  })
 
@@ -26,7 +25,7 @@ class GameRunner(object):
             self.game_engine.move(move)
             state = self.game_engine.get_state()
 
-            data_to_save ={}
+            data_to_save = {}
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
             data_to_save["player_ids"] = copy.deepcopy(self.player_ids)
@@ -40,5 +39,5 @@ class GameRunner(object):
                                         self.game_states)
         return self.game_engine.get_state()["scores"]
 
-    def broadcast(self,state):
+    def broadcast(self, state):
         pass
