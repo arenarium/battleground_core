@@ -41,6 +41,7 @@ def game_engine_factory(num_players, game_config):
 
 def start_session(config, save=True, game_delay=None):
     config_data = parse_config(config)
+    print(config_data["game"]["type"])
     players = get_players(config_data["players"])
     all_scores = []
     for i in range(config_data["num_games"]):
