@@ -1,7 +1,7 @@
 import copy
 import random
 
-from games.arena.calc import *
+from games.arena import calc
 
 
 class Gladiator(object):
@@ -113,7 +113,7 @@ class Gladiator(object):
         """
         stats = self.get_stats()
         d_dice = 1 + self.boosts["dam"]
-        d_side = 2 + stats["str"]
+        d_side = 20 + stats["str"]
         return [d_dice, d_side]
 
     def get_protection(self):
@@ -155,18 +155,29 @@ class Gladiator(object):
     def is_dead(self):
         return bool(self.cur_hp <= 0)
 
+    def get_boost_cost(self, attribute, value):
+        """
+        :param attribute:
+        :param value:
+        :return: (int) sp cost of boost of attribute by value
+        """
+        old_val = self.boosts[attribute]
+        new_val = old_val + value
+        cost = new_val * (new_val + 1) / 2 - old_val * (old_val + 1) / 2
+        return int(cost)
+
     def set_boosts(self, boosts):
         """
         :param boosts: dict containing keys and values to boost;
                        boosting a key should reduce cur_sp by that amount
         :return: None
         """
-        for att, val in boosts.items():
+        for attr, val in boosts.items():
             # cost for boosting: (1, 2, 3, 4, 5, ...) -> (1, 3, 6, 10, 15, ...)
-            cost = val * (val + 1) / 2
+            cost = self.get_boost_cost(attr, val)
             if cost <= self.cur_sp:
                 self.cur_sp -= cost
-                self.boosts[att] = val
+                self.boosts[attr] += val
         return None
 
     def attack(self, target):
@@ -182,7 +193,7 @@ class Gladiator(object):
         [p_dice, p_side] = target.get_protection()
         damage = 0
         protection = 0
-        if dist(pos_o, pos_t) > self.range:
+        if calc.dist(pos_o, pos_t) > self.range:
             return 0
         else:
             hit = attack - evasion  # + random.randint(1, 20) - random.randint(1, 20)
@@ -191,14 +202,14 @@ class Gladiator(object):
                 protection = p_dice * (1 + p_side) / 2
                 # damage = sum([random.randint(1, d_side) for _ in range(d_dice)])
                 # protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
-            return max(damage - protection, 0)
+            return int(max(damage - protection, 0))
 
     def move(self, direction):
         """
         :param direction: [int, int] direction vector (list)
         :return: None
         """
-        self.pos = [x + y for x, y in zip(self.pos, direction)]
+        self.pos = calc.add_tuples(self.pos, direction)
         return None
 
     def get_cost(self, action, value):
@@ -218,4 +229,4 @@ class Gladiator(object):
         elif action == "boost":
             cost = value
         cost *= self.get_speed()
-        return cost
+        return int(cost)

@@ -1,23 +1,34 @@
-from battleground.agent import Agent
-from games.arena.arena_game import ArenaGameEngine
+from battleground import agent
+# from games.arena.arena_game import ArenaGameEngine
+if __name__ == "__main__":
+    import arena_game
+else:
+    from . import arena_game
 
 import random
 
 
-class ArenaAgent(Agent):
+class ArenaAgent(agent.Agent):
+    def __init__(self):
+        super().__init__()
 
     def move(self, state):
-        # glad_stats = [g.get_init() for g in state["gladiators"]]
-        my_game = ArenaGameEngine(num_players=len(state["gladiators"]),
-                                             type="Arena",
-                                             state=state)
+        my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
+                                  type="test_arena",
+                                  state=state)
         my_gladiator = state["queue"][0]
-        names = my_game.get_move_names(my_gladiator)
-        targets = my_game.get_targets(my_gladiator)
-        values = my_game.get_values(my_gladiator)
-        name = random.choice(names)
-        target = random.choice(targets[name])
-        value = random.choice(values[name])
+        options = my_game.get_move_options(my_gladiator)
+
+        if "attack" in options.keys():
+            name = "attack"
+            targets = options["attack"]
+        else:
+            name, targets = random.choice(list(options.items()))
+        # don't attack yourself!!
+        del targets[targets.index(my_gladiator)]
+        target, values = random.choice(list(targets.items()))
+        value = random.choice(values)
+
         move = {"name": name,
                 "target": target,
                 "value": value}

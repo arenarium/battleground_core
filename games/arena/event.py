@@ -14,3 +14,13 @@ class Event(object):
         self.origin = origin
         self.target = target
         self.value = value
+
+    def get_init(self):
+        init = {"owner": self.owner,
+                "time_stamp": self.time_stamp,
+                "type": self.type,
+                "origin": self.origin,
+                "target": self.target,
+                "value": self.value
+                }
+        return init

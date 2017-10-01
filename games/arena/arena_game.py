@@ -1,11 +1,10 @@
 from battleground.game_engine import GameEngine
 
-from games.arena.calc import *
+from games.arena import calc
 from games.arena.dungeon import Dungeon
 from games.arena.event import Event
 from games.arena.gladiator import Gladiator
 
-import bisect
 import random
 
 
@@ -13,13 +12,15 @@ class ArenaGameEngine(GameEngine):
     """
     An arena game engine based on an event queue.
     """
-    def __init__(self, num_players, type, gladiator_stats=None, size=None, state=None):
+
+    def __init__(self, num_players, type,
+                 gladiator_stats=None, size=None, state=None):
         """
         :param num_players: int
         :param type: str
         :param gladiator_stats: list of dictionaries
                     each dict should have the form
-                    { "pos": [int, int],
+                    { "pos": (int, int),
                       "name": str,
                       "team": int,
                       "stats": {"str": int, "dex": int, "con": int},
@@ -29,10 +30,11 @@ class ArenaGameEngine(GameEngine):
                       "cur_sp": int,
                       "boosts": {"att": int, "eva": int, "dam": int, "prot": int, "speed": int}
                     }
-        :param size: [[int, int], [int, int]]
+        :param size: ((int, int), (int, int))
         :param state: {"gladiators": list of Gladiators,
                        "dungeon": Dungeon,
-                       "queue": (list) event_queue}
+                       "queue": (list) event_queue,
+                       "scores: (dict)}
             initializing:
             self.num_players
             self.current_player
@@ -57,16 +59,16 @@ class ArenaGameEngine(GameEngine):
                     positions = [g.pos for g in self.gladiators]
                     pos_x = [p[0] for p in positions]
                     pos_y = [p[1] for p in positions]
-                    size = [[min(pos_x), max(pos_x)], [min(pos_y), max(pos_y)]]
+                    size = ((min(pos_x), max(pos_x)), (min(pos_y), max(pos_y)))
                 else:
-                    size = [[0, 10], [0, 10]]
+                    size = ((0, 2), (0, 2))
             # if less gladiators are specified than needed, more are created on random positions
             if len(gladiator_stats) < num_players:
                 for _ in range(0, num_players - len(gladiator_stats)):
                     # find free position
                     while True:
-                        pos = [random.randint(size[0][0], size[0][1]),
-                               random.randint(size[1][0], size[1][1])]
+                        pos = (random.randint(size[0][0], size[0][1]),
+                               random.randint(size[1][0], size[1][1]))
                         if all(pos != g.pos for g in self.gladiators):
                             break
                     self.gladiators.append(Gladiator(pos=pos))
@@ -78,13 +80,23 @@ class ArenaGameEngine(GameEngine):
                                       key=lambda event: event[0])
             self.state = {"gladiators": self.gladiators,
                           "dungeon": self.dungeon,
-                          "queue": self.event_queue}
+                          "queue": self.event_queue,
+                          "scores": {i: 0 for i in range(num_players)}
+                          }
 
     def get_game_name(self):
         return self.type
 
     def get_state(self):
         return self.state
+
+    def get_save_state(self):
+        state = {"gladiators": [g.get_init() for g in self.gladiators],
+                 "dungeon": self.dungeon.get_init(),
+                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
+                 "scores": self.state["scores"]
+                 }
+        return state
 
     def get_current_player(self):
         """
@@ -107,68 +119,85 @@ class ArenaGameEngine(GameEngine):
                                   key=lambda event: event[0])
         self.state = {"gladiators": self.gladiators,
                       "dungeon": self.dungeon,
-                      "queue": self.event_queue}
+                      "queue": self.event_queue,
+                      "scores": {i: 0 for i in range(len(self.gladiators))}
+                      }
         return None
 
     def within_bounds(self, pos):
         return bool(self.dungeon.size[0][0] < pos[0] < self.dungeon.size[0][1]
-                and self.dungeon.size[1][0] < pos[1] < self.dungeon.size[1][1])
+                    and self.dungeon.size[1][0] < pos[1] < self.dungeon.size[1][1])
 
-    def get_move_names(self, gladiator):
+    def get_move_options(self, gladiator):
         """
         Used by agent to get available moves
         :param gladiator: Gladiator
-        :return:
+        :return: (dict) {name: {target: value}}
         """
-        names = ["stay"]
-        targets = self.get_targets(gladiator)
-        if len(targets["move"]) > 0:
-            names.append("move")
-        if len(targets["attack"]) > 0:
-            names.append("attack")
-        if gladiator.cur_sp > 0:
-            names.append("boost")
-        return names
+        options = {}
+        # add options for "stay"
+        options["stay"] = {(0, 0): [s / gladiator.get_speed() for s in range(1, gladiator.get_speed() + 1)]}
 
-    def get_targets(self, gladiator):
-        """
-        Used by agent to get available targets.
-        :param gladiator: Gladiator
-        :return: (dict) of targets
-        """
-        directions = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
-        targets = {"stay": [[0,0]],
-                   "move": [d for d in directions
-                            if self.within_bounds(gladiator.pos + d)],
-                   "attack": [g for g in self.gladiators
-                              if dist(gladiator.pos, g.pos) <= gladiator.range
-                                 and g is not gladiator],
-                   "boost": [k for k,v in gladiator.boosts.items()]
-                   }
-        return targets
+        # add options for "move"
+        directions = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
+        targets = [d for d in directions
+                   if self.within_bounds(calc.add_tuples(gladiator.pos, d))]
+        default_values = [0]
+        if len(targets) > 0:
+            options["move"] = {t: default_values for t in targets}
 
-    def get_values(self, gladiator):
-        """
-        Used by agent to get available values.
-        :param gladiator: Gladiator
-        :return: (dict) of values
-        """
-        values = {"stay": [1/s for s in range(1, gladiator.get_speed() + 1)],
-                  "move": 0,
-                  "attack": 0,
-                  "boost": [sp for sp in range(1, gladiator.max_sp + 1)
-                            if gladiator.get_cost("boost", sp) <= gladiator.cur_sp]
-                  }
-        return values
+        # add options for "attack"
+        targets = [g for g in self.gladiators
+                   if calc.dist(gladiator.pos, g.pos) <= gladiator.range
+                   and g is not gladiator]
+        default_values = [0]
+        if len(targets) > 0:
+            options["attack"] = {t: default_values for t in targets}
+
+        # add options for "boost"
+        targets = {}
+        for attr, val in gladiator.boosts.items():
+            values = list(range(-gladiator.get_boost_cost(attr, val),
+                                gladiator.cur_sp + 1))
+            if len(values) > 0:
+                targets[attr] = values
+        if len(targets) > 0:
+            options["boost"] = targets
+
+        return options
 
     def move(self, move):
         """
-        Do a move on behalf of the current player.
+        Execute a move on behalf of the current player.
         Go through event_queue handling all events until getting to next player.
         :param move: dict {"name": str of name of move,
-                           "target": Gladiator or position [int, int] or (str) attribute,
-                           "value": int
+                           "target": Gladiator or position (int, int) or (str) attribute,
+                           "value": float
         :return:
+        """
+        self.move_queue(move)
+
+        while isinstance(self.event_queue[0][1], Event):
+            (event_time, event) = self.event_queue.pop(0)
+            # handle events
+            if event.type is "stay":
+                pass
+            elif event.type is "attack":
+                self.move_attack(event)
+            elif event.type is "move":
+                self.move_move(event)
+            elif event.type is "boost":
+                self.move_boost(event)
+
+        self.dungeon.shrink_dungeon(self.state)
+        self.current_player = self.get_current_player()
+        return None
+
+    def move_queue(self, move):
+        """
+        Queue move and player into event_queue.
+        :param move:
+        :return: None
         """
         assert "name" in move
         assert "target" in move
@@ -179,57 +208,82 @@ class ArenaGameEngine(GameEngine):
         value = move["value"]
 
         (time, glad) = self.event_queue.pop(0)
+        event_queue_keys = [event[0] for event in self.event_queue]
 
         glad_event_time = time + glad.get_cost(name, value)  # + calc.noise()
         glad_event = Event(owner=glad,
-                      time_stamp=glad_event_time,
-                      type=name,
-                      origin=glad.pos,
-                      target=target,
-                      value=value)
+                           time_stamp=glad_event_time,
+                           type=name,
+                           origin=glad.pos,
+                           target=target,
+                           value=value)
         if name is not "stay":
-            bisect.insort(self.event_queue, (glad_event_time, glad_event))
-        bisect.insort_right(self.event_queue, (glad_event_time, glad))
+            calc.insort_right(self.event_queue,
+                         event_queue_keys,
+                         (glad_event_time, glad_event),
+                         keyfunc=lambda e: e[0])
+        calc.insort_right(self.event_queue,
+                     event_queue_keys,
+                     (glad_event_time, glad),
+                     keyfunc=lambda e: e[0])
+        return None
 
-        if isinstance(self.event_queue[0][1], Event):
-            (event_time, event) = self.event_queue.pop(0)
+    def move_attack(self, event):
+        """
+        Owner attacks target. If target dies, it's removed from event_queue
+        :param event:
+        :return: None
+        """
+        # attack function is checking if target is within range
+        event.target.cur_hp -= event.owner.attack(event.target)
+        # go through event_queue in reversed order to keep items
+        # from changing index by deleting items with lower index
+        index = len(self.event_queue) - 1
+        for _, ev in reversed(self.event_queue):
+            # if gladiator is dead, delete it and all of his queued events.
+            if (isinstance(ev, Gladiator) and ev.cur_hp <= 0
+                or isinstance(ev, Event) and ev.owner.cur_hp <= 0):
+                del self.event_queue[index]
+                # Each kill gives one score point, dying sets score to zero.
+                if isinstance(ev, Gladiator):
+                    ind_loser = self.gladiators.index(ev)
+                    self.state["scores"][ind_loser] = 0
+                    ind_winner = self.gladiators.index(event.owner)
+                    self.state["scores"][ind_winner] += 1
+            index -= 1
+        return None
 
-            while isinstance(event, Event):
-                # handle events
-                if event.name is "attack":
-                    # attack function is checking if target is within range
-                    event.target.chp -= event.owner.attack(event.target)
-                    # go through event_queue in reversed order to keep items
-                    # from changing index by deleting items with lower index
-                    index = len(self.event_queue) - 1
-                    for _, ev in reversed(self.event_queue):
-                        # if gladiator is dead, delete it and all of his queued events.
-                        if (isinstance(ev, Gladiator) and ev.chp <= 0
-                            or isinstance(ev, Event) and ev.owner.chp <= 0):
-                            del self.event_queue[index]
-                        index -= 1
+    def move_move(self, event):
+        """
+        Moves owner of event by target vector (if space is free.)
+        :param event:
+        :return:
+        """
+        blocked = False
+        #for glad in self.gladiators:
+        #    if glad.pos == calc.add_tuples(event.owner.pos, event.target):
+        #        blocked = True
+        if not blocked:
+            event.owner.move(event.target)
+        return None
 
-                elif event.name is "move":
-                    blocked = False
-                    for glad in self.gladiators:
-                        if glad.pos == [x + y for x, y in zip(event.owner.pos, event.target)]:
-                            blocked = True
-                    if not blocked:
-                        event.owner.move(event.target)
-
-                elif event.name is "boost":
-                    event.owner.set_boosts(event.target, event.value)
-
-                (event_time, event) = self.event_queue.pop(0)
-
-        # shrink dungeon
-        positions = [g.pos for g in self.gladiators]
-        pos_x = [p[0] for p in positions]
-        pos_y = [p[1] for p in positions]
-        self.dungeon.size = [[min(pos_x), max(pos_x)], [min(pos_y), max(pos_y)]]
-
-        self.current_player = self.get_current_player()
-
+    @staticmethod
+    def move_boost(event):
+        """
+        Boosts target of owner of event by event value.
+        :param event:
+        :return: None
+        """
+        if isinstance(event.target, list):
+            targets = event.target
+        else:
+            targets = [event.target]
+        if isinstance(event.value, list):
+            values = event.value
+        else:
+            values = [event.value]
+        boosts = dict(zip(targets, values))
+        event.owner.set_boosts(boosts)
         return None
 
     def game_over(self):
