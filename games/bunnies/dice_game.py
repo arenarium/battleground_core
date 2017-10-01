@@ -47,6 +47,12 @@ class DiceGame(GameEngine):
         """
         return self.state
 
+    def get_save_state(self):
+        """
+        :returns self.state
+        """
+        return self.state
+
     def get_current_player(self):
         """
         :returns (int) current player ID

@@ -22,6 +22,9 @@ class BasicGameEngine(GameEngine):
     def get_state(self):
         return {"scores": self.scores, "turn": self.turn}
 
+    def get_save_state(self):
+        return {"scores": self.scores, "turn": self.turn}
+
     def move(self, move):
         """
         Do you move on behalf of the current player
