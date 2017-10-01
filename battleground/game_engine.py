@@ -23,7 +23,6 @@ class GameEngine(object):
         """
         This will be used by the game runner to determine which player should
         make the next move
-        (only turn-based games!)
         :returns index of players list of GameRunner
         """
         raise NotImplementedError()
@@ -37,7 +36,6 @@ class GameEngine(object):
     def move(self, move):
         """
         Do a move on behalf of the current player
-        (only turn-based games!)
         """
         raise NotImplementedError()
 

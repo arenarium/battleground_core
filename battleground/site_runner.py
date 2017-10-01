@@ -19,7 +19,7 @@ def parse_config(config):
 
 
 def get_players(players_config):
-    ## TODO: retreive player ID to use as key to dictionary
+    # TODO: retrieve player ID to use as key to dictionary
     agents = []
     for player in players_config:
         agents.append(DynamicAgent(**player))
