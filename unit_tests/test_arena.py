@@ -1,5 +1,6 @@
 from battleground.game_runner import GameRunner
 
+from games.arena import calc
 from games.arena.arena_game import ArenaGameEngine
 from games.arena.dungeon import Dungeon
 from games.arena.gladiator import Gladiator
@@ -20,16 +21,14 @@ def test_engine():
     assert "dungeon" in state
     assert "queue" in state
     assert isinstance(age.get_current_player(), int)
-    assert isinstance(age.within_bounds([0, 0]), bool)
-    assert isinstance(age.get_move_names(gladiator=state["gladiators"][0]), list)
-    assert isinstance(age.get_targets(gladiator=state["gladiators"][0]), dict)
-    assert isinstance(age.get_values(gladiator=state["gladiators"][0]), dict)
+    assert isinstance(age.within_bounds((0, 0)), bool)
+    assert isinstance(age.get_move_options(gladiator=age.gladiators[0]), dict)
     assert isinstance(age.game_over(), bool)
 
 
 def test_dungeon():
-    size = [[random.randint(1, 20), random.randint(21, 50)],
-            [random.randint(1, 20), random.randint(21, 50)]]
+    size = ((random.randint(1, 20), random.randint(21, 50)),
+            (random.randint(1, 20), random.randint(21, 50)))
     dun = Dungeon(size)
     assert dun.size == size
     # assert isinstance(dun.world, list)
@@ -37,9 +36,9 @@ def test_dungeon():
 
 
 def test_gladiator():
-    pos = [random.randint(1, 100), random.randint(1, 100)]
+    pos = (random.randint(1, 100), random.randint(1, 100))
     glad = Gladiator(pos=pos)
-    assert isinstance(glad.pos, list)
+    assert isinstance(glad.pos, tuple)
     assert isinstance(glad.name, str)
     assert isinstance(glad.get_init(), dict)
     assert isinstance(glad.get_stats(), dict)
@@ -60,7 +59,7 @@ def test_gladiator():
     assert glad.set_boosts({"speed": random.randint(1, 3)}) is None
     assert glad.cur_sp < glad.max_sp
     assert glad.boosts["speed"] > 0
-    assert glad.move([1, 0]) is None
+    assert glad.move((1, 0)) is None
     assert len(glad.pos) == 2
     assert all([isinstance(glad.get_cost(action, value), int)
                 for action, value in {"stay": 0,
@@ -68,7 +67,7 @@ def test_gladiator():
                                       "attack": 0,
                                       "boost": random.randint(1, 10)}.items()
                 ])
-    new_pos = [x + y for x, y in zip(pos, [1, 0])]
+    new_pos = calc.add_tuples(pos, (1, 0))
     stats = {"str": random.randint(1, 3),
              "dex": random.randint(1, 3),
              "con": random.randint(1, 3)}
@@ -86,7 +85,7 @@ def test_gladiator():
     assert vlad.base_skills == skills
     assert vlad.cur_hp == 1
     assert vlad.cur_sp == 1
-    assert isinstance(vlad.attack(glad), float)
+    assert isinstance(vlad.attack(glad), int)
 
 
 def test_player():

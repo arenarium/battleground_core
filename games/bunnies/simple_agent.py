@@ -1,18 +1,19 @@
 from battleground import agent
+import random
 if __name__ == "__main__":
     import dice_game
 else:
     from . import dice_game
-import random
 
 
 class SimpleAgent(agent.Agent):
     def __init__(self, threshold=20):
+        super().__init__()
         self.threshold = threshold
 
     @staticmethod
     def move(state):
-        my_game = dice_game.DiceGame(num_players=2, type="Bunnies", state=state)
+        my_game = dice_game.DiceGame(num_players=len(state["scores"]), type="Bunnies", state=state)
 
         available_move_names = {k for k, v in my_game.state["allowedMoves"].items() if v == 1}
         # caught these two cases in _do_move_bunny or _do_move_hutch functions
@@ -46,3 +47,6 @@ class SimpleAgent(agent.Agent):
                 "value": chosen_move_value}
 
         return move
+
+    def observe(self, state):
+        raise NotImplementedError()
