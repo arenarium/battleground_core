@@ -19,5 +19,12 @@
     "local_path":"games.bunnies.dice_game",
     "class_name":"DiceGame",
     "settings":{}
+  },
+  {
+    "name":"Arena Game",
+    "type":"arena_game",
+    "local_path":"games.arena.arena_game",
+    "class_name":"ArenaGameEngine",
+    "settings":{}
   }
 ]

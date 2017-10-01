@@ -34,5 +34,14 @@
     "class_name":"SimpleAgent",
     "remote_path":null,
     "settings":{}
+  },
+  "gladiator_1":{
+    "game_type":["arena_game"],
+    "owner":"core",
+    "name":"gladiator_1",
+    "local_path":"games.arena.arena_agent",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
   }
 }
