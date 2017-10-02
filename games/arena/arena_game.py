@@ -41,48 +41,74 @@ class ArenaGameEngine(GameEngine):
             self.type
         """
         super().__init__(num_players, type)
-        if state is not None:
-            self.state = state
+        if state is not None and "gladiators" in state:
+            self.gladiators = state["gladiators"]
         else:
-            # set up state by first creating gladiators from specified list
-            # if more gladiators are specified than needed, the rest is ignored.
-            if gladiator_stats is None:
-                gladiator_stats = []
-            self.gladiators = [Gladiator(pos=g["pos"],
-                                         name=g["name"],
-                                         team=g["team"],
-                                         stats=g["stats"],
-                                         skills=g["skills"])
-                               for g in gladiator_stats[0:num_players]]
+            self.gladiators = self._init_gladiators(num_players=num_players,
+                                                    gladiator_stats=gladiator_stats)
+        if state is not None and "dungeon" in state:
+            self.dungeon = state["dungeon"]
+        else:
             if size is None:
-                if len(gladiator_stats) > 0:
-                    positions = [g.pos for g in self.gladiators]
-                    pos_x = [p[0] for p in positions]
-                    pos_y = [p[1] for p in positions]
-                    size = ((min(pos_x), max(pos_x)), (min(pos_y), max(pos_y)))
-                else:
-                    size = ((0, 2), (0, 2))
-            # if less gladiators are specified than needed, more are created on random positions
-            if len(gladiator_stats) < num_players:
-                for _ in range(0, num_players - len(gladiator_stats)):
-                    # find free position
-                    while True:
-                        pos = (random.randint(size[0][0], size[0][1]),
-                               random.randint(size[1][0], size[1][1]))
-                        if all(pos != g.pos for g in self.gladiators):
-                            break
-                    self.gladiators.append(Gladiator(pos=pos))
+                size = self._get_dungeon_size(self.gladiators)
             self.dungeon = Dungeon(size=size)
-            # initialize event queue by sorting gladiators by their speed
-            # returns list of tuples
+        if state is not None and "queue" in state:
+            self.event_queue = state["queue"]
+        else:
             self.event_queue = sorted([(g.get_speed(),  # + calc.noise(),
                                         g) for g in self.gladiators],
                                       key=lambda event: event[0])
-            self.state = {"gladiators": self.gladiators,
-                          "dungeon": self.dungeon,
-                          "queue": self.event_queue,
-                          "scores": {i: 0 for i in range(num_players)}
-                          }
+        if state is not None and "scores" in state:
+            self.scores = state["scores"]
+        else:
+            self.scores = {i: 0 for i in range(num_players)}
+
+        self.state = {"gladiators": self.gladiators,
+                      "dungeon": self.dungeon,
+                      "queue": self.event_queue,
+                      "scores": self.scores
+                      }
+
+    def _init_gladiators(self, num_players, gladiator_stats):
+        """
+        :param num_players: int
+        :param gladiator_stats: list of dicts, see __init__
+        :return: list of Gladiator objects
+        """
+        if gladiator_stats is None:
+            gladiator_stats = []
+        gladiators = [Gladiator(pos=g["pos"],
+                                name=g["name"],
+                                team=g["team"],
+                                stats=g["stats"],
+                                skills=g["skills"])
+                      for g in gladiator_stats[0:num_players]]
+        # This could potentially lead to a misbehavior when more gladiators
+        # need to be added than free squares are available!
+        if len(gladiator_stats) > 0:
+            size = self._get_dungeon_size(gladiators)
+        else:
+            size = ((0, 2), (0, 2))
+        # if less gladiators are specified than needed, more are created on random positions
+        if len(gladiator_stats) < num_players:
+            for _ in range(0, num_players - len(gladiator_stats)):
+                # find free position
+                while True:
+                    pos = (random.randint(size[0][0], size[0][1]),
+                           random.randint(size[1][0], size[1][1]))
+                    if all(pos != g.pos for g in gladiators):
+                        break
+                gladiators.append(Gladiator(pos=pos))
+        return gladiators
+
+    @staticmethod
+    def _get_dungeon_size(gladiators):
+        positions = [g.pos for g in gladiators]
+        pos_x = [p[0] for p in positions]
+        pos_y = [p[1] for p in positions]
+        size = ((min(pos_x)-1, max(pos_x)+1),
+                (min(pos_y)-1, max(pos_y)+1))
+        return size
 
     def get_game_name(self):
         return self.type
@@ -90,13 +116,26 @@ class ArenaGameEngine(GameEngine):
     def get_state(self):
         return self.state
 
-    def get_save_state(self):
-        state = {"gladiators": [g.get_init() for g in self.gladiators],
-                 "dungeon": self.dungeon.get_init(),
-                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
-                 "scores": self.state["scores"]
-                 }
-        return state
+    @staticmethod
+    def decode_state(state):
+        return {"gladiators": [g.get_init() for g in state["gladiators"]],
+                "dungeon": state["dungeon"].get_init(),
+                "queue": [(t, e.get_init()) for t, e in state["queue"]],
+                "scores": state["scores"]
+                }
+
+    @staticmethod
+    def decode_move(move):
+        name = move["name"]
+        if isinstance(move["target"], Gladiator):
+            target = move["target"].get_init()
+        else:
+            target = move["target"]
+        value = move["value"]
+
+        return {"name": name,
+                "target": target,
+                "value": value}
 
     def get_current_player(self):
         """
@@ -124,9 +163,10 @@ class ArenaGameEngine(GameEngine):
                       }
         return None
 
-    def within_bounds(self, pos):
-        return bool(self.dungeon.size[0][0] < pos[0] < self.dungeon.size[0][1]
-                    and self.dungeon.size[1][0] < pos[1] < self.dungeon.size[1][1])
+    @staticmethod
+    def within_bounds(pos, size):
+        return bool(    size[0][0] < pos[0] < size[0][1]
+                    and size[1][0] < pos[1] < size[1][1])
 
     def get_move_options(self, gladiator):
         """
@@ -136,12 +176,14 @@ class ArenaGameEngine(GameEngine):
         """
         options = {}
         # add options for "stay"
-        options["stay"] = {(0, 0): [s / gladiator.get_speed() for s in range(1, gladiator.get_speed() + 1)]}
+        speed = gladiator.get_speed()
+        options["stay"] = {(0, 0): [s / speed  for s in range(1, speed + 1)]}
 
         # add options for "move"
         directions = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
         targets = [d for d in directions
-                   if self.within_bounds(calc.add_tuples(gladiator.pos, d))]
+                   if self.within_bounds(calc.add_tuples(gladiator.pos, d),
+                                         self.dungeon.size)]
         default_values = [0]
         if len(targets) > 0:
             options["move"] = {t: default_values for t in targets}
@@ -219,13 +261,13 @@ class ArenaGameEngine(GameEngine):
                            value=value)
         if name is not "stay":
             calc.insort_right(self.event_queue,
-                         event_queue_keys,
-                         (glad_event_time, glad_event),
-                         keyfunc=lambda e: e[0])
+                              event_queue_keys,
+                              (glad_event_time, glad_event),
+                              keyfunc=lambda e: e[0])
         calc.insort_right(self.event_queue,
-                     event_queue_keys,
-                     (glad_event_time, glad),
-                     keyfunc=lambda e: e[0])
+                          event_queue_keys,
+                          (glad_event_time, glad),
+                          keyfunc=lambda e: e[0])
         return None
 
     def move_attack(self, event):
@@ -290,5 +332,5 @@ class ArenaGameEngine(GameEngine):
         """
         Check if the game is over
         """
-        num_glads = sum([1 for g in self.event_queue if isinstance(g, Gladiator)])
+        num_glads = sum([1 for (t, g) in self.event_queue if isinstance(g, Gladiator)])
         return bool(num_glads <= 1)

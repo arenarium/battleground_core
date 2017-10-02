@@ -12,8 +12,9 @@ class GameRunner(object):
 
     def run_game(self):
         # self.game_engine.reset()
-        state = self.game_engine.get_save_state()
-        self.game_states.append({"game_state": state,
+        state = self.game_engine.get_state()
+        save_state = self.game_engine.decode_state(state)
+        self.game_states.append({"game_state": save_state,
                                  "last_move": None,
                                  "player_ids": self.player_ids
                                  })
@@ -21,14 +22,16 @@ class GameRunner(object):
         player_index = self.game_engine.get_current_player()
 
         while not self.game_engine.game_over():
-            engine_state = self.game_engine.get_state()
-            move = self.players[player_index].move(engine_state)
+            state = self.game_engine.get_state()
+            move = self.players[player_index].move(state)
             self.game_engine.move(move)
-            state = self.game_engine.get_save_state()
+
+            save_state = self.game_engine.decode_state(state)
+            save_move = self.game_engine.decode_move(move)
 
             data_to_save = {}
-            data_to_save["game_state"] = copy.deepcopy(state)
-            data_to_save["last_move"] = copy.deepcopy(move)
+            data_to_save["game_state"] = copy.deepcopy(save_state)
+            data_to_save["last_move"] = copy.deepcopy(save_move)
             data_to_save["player_ids"] = copy.deepcopy(self.player_ids)
 
             self.game_states.append(data_to_save)

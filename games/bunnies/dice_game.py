@@ -47,11 +47,13 @@ class DiceGame(GameEngine):
         """
         return self.state
 
-    def get_save_state(self):
-        """
-        :returns self.state
-        """
-        return self.state
+    @staticmethod
+    def decode_state(state):
+        return state
+
+    @staticmethod
+    def decode_move(move):
+        return move
 
     def get_current_player(self):
         """

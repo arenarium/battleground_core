@@ -49,6 +49,12 @@ class Gladiator(object):
             for att, val in boosts:
                 self.boosts[att] = val
 
+    def __hash__(self):
+        return hash(self.pos)
+
+    def __eq__(self, other):
+        return self.get_init() == other.get_init()
+
     def reset(self):
         self.max_hp = self.get_max_hp()
         self.cur_hp = self.max_hp
@@ -64,6 +70,7 @@ class Gladiator(object):
         init = {"pos": self.pos,
                 "name": self.name,
                 "team": self.team,
+                "range": self.range,
                 "stats": self.base_stats,
                 "skills": self.base_skills,
                 # optional

@@ -14,9 +14,9 @@ class ArenaAgent(agent.Agent):
 
     def move(self, state):
         my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
-                                  type="test_arena",
-                                  state=state)
-        my_gladiator = state["queue"][0]
+                                             type="test_arena",
+                                             state=state)
+        my_gladiator = state["queue"][0][1]
         options = my_game.get_move_options(my_gladiator)
 
         if "attack" in options.keys():
@@ -24,8 +24,6 @@ class ArenaAgent(agent.Agent):
             targets = options["attack"]
         else:
             name, targets = random.choice(list(options.items()))
-        # don't attack yourself!!
-        del targets[targets.index(my_gladiator)]
         target, values = random.choice(list(targets.items()))
         value = random.choice(values)
 

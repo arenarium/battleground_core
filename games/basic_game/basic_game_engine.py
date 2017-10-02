@@ -22,8 +22,13 @@ class BasicGameEngine(GameEngine):
     def get_state(self):
         return {"scores": self.scores, "turn": self.turn}
 
-    def get_save_state(self):
-        return {"scores": self.scores, "turn": self.turn}
+    @staticmethod
+    def decode_state(state):
+        return state
+
+    @staticmethod
+    def decode_move(move):
+        return move
 
     def move(self, move):
         """
