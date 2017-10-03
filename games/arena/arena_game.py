@@ -127,10 +127,7 @@ class ArenaGameEngine(GameEngine):
     @staticmethod
     def decode_move(move):
         name = move["name"]
-        if isinstance(move["target"], Gladiator):
-            target = move["target"].get_init()
-        else:
-            target = move["target"]
+        target = move["target"]
         value = move["value"]
 
         return {"name": name,
@@ -165,8 +162,8 @@ class ArenaGameEngine(GameEngine):
 
     @staticmethod
     def within_bounds(pos, size):
-        return bool(    size[0][0] < pos[0] < size[0][1]
-                    and size[1][0] < pos[1] < size[1][1])
+        return bool(    size[0][0] <= pos[0] <= size[0][1]
+                    and size[1][0] <= pos[1] <= size[1][1])
 
     def get_move_options(self, gladiator):
         """
@@ -177,7 +174,7 @@ class ArenaGameEngine(GameEngine):
         options = {}
         # add options for "stay"
         speed = gladiator.get_speed()
-        options["stay"] = {(0, 0): [s / speed  for s in range(1, speed + 1)]}
+        options["stay"] = {(0, 0): [1]} #[s / speed  for s in range(1, speed + 1)]}
 
         # add options for "move"
         directions = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
@@ -189,9 +186,11 @@ class ArenaGameEngine(GameEngine):
             options["move"] = {t: default_values for t in targets}
 
         # add options for "attack"
-        targets = [g for g in self.gladiators
+        # targets are indices of gladiators
+        targets = [self.gladiators.index(g) for g in self.gladiators
                    if calc.dist(gladiator.pos, g.pos) <= gladiator.range
-                   and g is not gladiator]
+                      and not g.is_dead()
+                      and g is not gladiator]
         default_values = [0]
         if len(targets) > 0:
             options["attack"] = {t: default_values for t in targets}
@@ -203,7 +202,7 @@ class ArenaGameEngine(GameEngine):
                                 gladiator.cur_sp + 1))
             if len(values) > 0:
                 targets[attr] = values
-        if len(targets) > 0:
+        if len(targets) > 0 and False:
             options["boost"] = targets
 
         return options
@@ -250,10 +249,11 @@ class ArenaGameEngine(GameEngine):
         value = move["value"]
 
         (time, glad) = self.event_queue.pop(0)
+        glad_index = self.gladiators.index(glad)
         event_queue_keys = [event[0] for event in self.event_queue]
 
         glad_event_time = time + glad.get_cost(name, value)  # + calc.noise()
-        glad_event = Event(owner=glad,
+        glad_event = Event(owner=glad_index,
                            time_stamp=glad_event_time,
                            type=name,
                            origin=glad.pos,
@@ -276,22 +276,23 @@ class ArenaGameEngine(GameEngine):
         :param event:
         :return: None
         """
+        target = self.gladiators[event.target]
+        attacker = self.gladiators[event.owner]
         # attack function is checking if target is within range
-        event.target.cur_hp -= event.owner.attack(event.target)
+        target.cur_hp -= attacker.attack(target)
         # go through event_queue in reversed order to keep items
         # from changing index by deleting items with lower index
         index = len(self.event_queue) - 1
         for _, ev in reversed(self.event_queue):
             # if gladiator is dead, delete it and all of his queued events.
             if (isinstance(ev, Gladiator) and ev.cur_hp <= 0
-                or isinstance(ev, Event) and ev.owner.cur_hp <= 0):
+                or isinstance(ev, Event) and self.gladiators[ev.owner].cur_hp <= 0):
                 del self.event_queue[index]
                 # Each kill gives one score point, dying sets score to zero.
                 if isinstance(ev, Gladiator):
                     ind_loser = self.gladiators.index(ev)
                     self.state["scores"][ind_loser] = 0
-                    ind_winner = self.gladiators.index(event.owner)
-                    self.state["scores"][ind_winner] += 1
+                    self.state["scores"][event.owner] += 1
             index -= 1
         return None
 
@@ -306,7 +307,7 @@ class ArenaGameEngine(GameEngine):
         #    if glad.pos == calc.add_tuples(event.owner.pos, event.target):
         #        blocked = True
         if not blocked:
-            event.owner.move(event.target)
+            self.gladiators[event.owner].move(event.target)
         return None
 
     @staticmethod
