@@ -10,6 +10,9 @@ class Dungeon(object):
         init = {"size": self.size}
         return init
 
+    def reset(self):
+        pass
+
     def shrink_dungeon(self, state):
         # shrink dungeon
         positions = [g.pos for g in state["gladiators"]]

@@ -20,9 +20,10 @@ def test_engine():
     assert "gladiators" in state
     assert "dungeon" in state
     assert "queue" in state
+    assert "scores" in state
     assert isinstance(age.get_current_player(), int)
-    assert isinstance(age.within_bounds((0, 0)), bool)
-    assert isinstance(age.get_move_options(gladiator=age.gladiators[0]), dict)
+    assert isinstance(age.within_bounds((0, 0), age.dungeon.size), bool)
+    assert isinstance(age.get_move_options(gladiator_index=0), dict)
     assert isinstance(age.game_over(), bool)
 
 
@@ -89,7 +90,21 @@ def test_gladiator():
 
 
 def test_player():
-    assert True
+    age = ArenaGameEngine(num_players=3, type="Pit")
+    state = age.get_state()
+    current_player = age.get_current_player()
+    options = age.get_move_options(current_player)
+    agent = ArenaAgent()
+    move = agent.move(state)
+    assert "name" in move
+    assert "target" in move
+    assert "value" in move
+    name = move["name"]
+    target = move["target"]
+    value = move["value"]
+    assert name in options.keys()
+    assert target in options[name].keys()
+    assert value in options[name][target]
 
 
 def test_game():

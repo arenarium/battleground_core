@@ -47,14 +47,6 @@ class DiceGame(GameEngine):
         """
         return self.state
 
-    @staticmethod
-    def decode_state(state):
-        return state
-
-    @staticmethod
-    def decode_move(move):
-        return move
-
     def get_current_player(self):
         """
         :returns (int) current player ID

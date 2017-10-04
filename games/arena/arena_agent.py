@@ -16,7 +16,7 @@ class ArenaAgent(agent.Agent):
         my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
                                              type="test_arena",
                                              state=state)
-        my_gladiator = state["queue"][0][1]
+        my_gladiator = state["queue"][0][1]["owner"]
         options = my_game.get_move_options(my_gladiator)
 
         if "attack" in options.keys():

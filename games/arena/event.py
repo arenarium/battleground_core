@@ -1,6 +1,6 @@
 class Event(object):
 
-    def __init__(self, owner, time_stamp, type, origin=None, target=None, value=None):
+    def __init__(self, owner, type, time_stamp=0, origin=None, target=None, value=None):
         """
         :param owner: (Gladiator)
         :param time_stamp: (float)
@@ -9,17 +9,17 @@ class Event(object):
         :param target: Gladiator OR [int, int] position OR (str) attribute to boost
         """
         self.owner = owner
-        self.time_stamp = time_stamp
         self.type = type
+        self.time_stamp = time_stamp
         self.origin = origin
         self.target = target
         self.value = value
 
     def get_init(self):
         init = {"owner": self.owner,
-                "time_stamp": self.time_stamp,
                 "type": self.type,
-                "origin": self.origin,
+                # "time_stamp": self.time_stamp,
+                # "origin": self.origin,
                 "target": self.target,
                 "value": self.value
                 }

@@ -46,25 +46,8 @@ class Gladiator(object):
                        "prot": 0,
                        "speed": 0}
         if boosts is not None:
-            for att, val in boosts:
+            for att, val in boosts.items():
                 self.boosts[att] = val
-
-    def __hash__(self):
-        return hash(self.pos)
-
-    def __eq__(self, other):
-        return self.get_init() == other.get_init()
-
-    def reset(self):
-        self.max_hp = self.get_max_hp()
-        self.cur_hp = self.max_hp
-        self.max_sp = self.get_max_sp()
-        self.cur_sp = self.max_sp
-        self.boosts = {"att": 0,
-                       "eva": 0,
-                       "dam": 0,
-                       "prot": 0,
-                       "speed": 0}
 
     def get_init(self):
         init = {"pos": self.pos,
@@ -79,6 +62,18 @@ class Gladiator(object):
                 "boosts": self.boosts
                 }
         return init
+
+    def reset(self):
+        self.max_hp = self.get_max_hp()
+        self.cur_hp = self.max_hp
+        self.max_sp = self.get_max_sp()
+        self.cur_sp = self.max_sp
+        self.boosts = {"att": 0,
+                       "eva": 0,
+                       "dam": 0,
+                       "prot": 0,
+                       "speed": 0}
+        return None
 
     def get_stats(self):
         """
