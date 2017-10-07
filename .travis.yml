@@ -11,7 +11,7 @@ install:
 - cd ../..
 before_script:
 - export PYTHONPATH=$PYTHONPATH:$(pwd)
-- docker-compose -f docker-compose-ui.yml -f docker-compose.prod.yml up --build -d
+- docker-compose -f docker-compose-ui.yml -f docker-compose.run.yml up --build -d
 - docker build -t battleground/battleground .
 - docker run --network=host battleground/battleground python start.py
 script: docker run --network=host battleground/battleground pytest unit_tests
@@ -21,11 +21,6 @@ after_success:
 - test $TRAVIS_BRANCH = "master" &&
   test $TRAVIS_PULL_REQUEST = "false" &&
   ./deploy_scripts/do_deploy.sh
-env:
-  global:
-  - secure: vgBfw0UiYND6rhu3cKK4LgTeiizDS+VaU8Vq5lmGzezZPqAlvmQbd0Olr6Ls4P3LB6uvroINIsSiA9pjk6YhqQkwHvnubmF6WX4X4Hk74SyaRpHLoQxVpC3/uyINwF1oA0cywrmPyPsyP/E6APLbfCcv7zkUs1MX6EbWlg3XIyKvK56QRbZ2shu2KKDtTPV0PbQDC3Fy1mSEx33BZFMJcvj1xcWc/qJdYwPvcjLRGldfAPArsRdswLg0ch/AbmZJcvHDva5RfNBGWsQz3LuGcdC7fv2UipyK+r8uRl86rlBk0c1LcowFD0a16tGKU+aB8HUcF7GrXAPNA9HP1Pd/q9rxaaQZX3Q+9M+5i0dEEKXQjKUBMKgmSk3xgQdkfGYcggR7gidtYwgfd3JTmaxwBHlcSQspeO/oAQrcb65ZlmLonA8XJXMuagmMpdHt9t32wxwCYAnmP+HgOcEJpO6bjDfcqOAGbthAoKYvJIdhTWuOmTvikS6DS2wg/MgkSm69cDyT6h8ai4hxYSz3H+LpiyFD8QtxxGPBz9HRkTXPIPIZ1F2lWpcGx5efT2dfWSUZdAgChvSFjw87uBrXQTE3B/e7Yh7FRjTnVGQQo6fFd0vteReUuspOIbT0+DycS7oGZHDuNKuwSIN698LvVHe0b67mVjR7IGttSPHtPUZt+js=
-  - secure: vXmDH+WznGd5RcQ5FTw9LMmGzrlyP5USwkdYyg96uQ5o7Zj2AIbEr2ycIDjhrPC3kWmXftFfJtx39RQ/u3enAJqpo/7+qFbVkT2jLvFv98ndrDuFBdZM0eRQn4RkZLQb7db2KvrP6hN05j+SZB/zQZFXztiTlbE0CPXsD86gKsZPlodeP+Cfp4z1Y+9dGKVgLi3XeTTojoRiaOdUqMh25tAVTlGdREXaI5RCEsVb0yAUiCpUOndqTo75Wf7sNQdlxeZzzm7su1Fyz1DEVu27Xh3Mewj+ljJNsoEU6kIO/mpRbVXLA7gsO2fVBBztP0LJQZMJFNnCp0EjJ15c1K/1s9WrSzKtWGMhatugnJk/TDnO5DCqvJdUOWMkVFBISRcCf2a7mwZqYZDwae8QhqE4pPMpnb84k5ewlOUMQC4igFpIVf+c5LkRJMLg2cwjYCP7OViKy278NsqpbVjaiamvUgmO97qHFWnqbBXyDQziVEj3+4/KM3zuMmrYepp8BMTECfKPdb6yBYAxbpT8BTg+k2UB+2fRyxvQFhAWjO+pRtw6HmAvQNMcY4qxQ2j9ZsNJxNwKK/eJ0EsIWGpCIhkBt/DZRzxAUYuC0w7d4ZgVl2NHiPV8LCT309doVwmC0KOFx+vYInIIwYx9f/5qbp6anbgXUb2jxk20Pv/zlRFyHnk=
-  - secure: Q2iLHyXkmdxPPeEOcRQkD9Fe1KHGOIG3O5Qesv52oEMtDpqCKHLl9AE8Y0jnYHTMrNnBD3AQLCxcvUKobROZNBR9wE3VYA4DPD+obnjxw7Vt939ilSjG5jLPEf8h3QUQLUOFQORCfGV+jlm3XwZhTfg8DsgdEdzQy8OSq3QCN/7++eXtACj4zCCVkj0tYAEofgdG/GHr9awXxrigibi/FMOGk5xdzqrGHqp+qILiU7y2FDoy+ne3LaLUgWyh0tJ5+3xNkRjpiWQqtv7zuoyW2YPGfLOj7ynAk1L1JeXwuc+E88o0F5HF+VxsexV33CPHxqv8xUp5TL5KG05YHUBekIr7gHRrR97ju+szTuKk4Gm7hZ8vtP/EhI6y3RSmPmMlgaLN66h8OOr2NYQSv+gZFzoqasv3uqXzs5R8ukA1S1eczxDdkCblLWEHj3BYhmavdF9tyvZKNLUZ/bug7Qq/HZ0O1SKS9pV/4GWnH3C9kbjUDB5XSP7qO4nXQcNU/I6RqjWwvTg+5didqVfd7aPdQwACCLo4HJMksZ7hA2xCyNSscZ5Bn27CxwTY/tIlaA4090crLkAoKRqDyExOSjf658bsbFfIQjCTJrNv9a/95Tbdzxe3WgwNa/Q5YKXFz9hNCa0WTjbmtHuzLP/AaC04kWzdgrTOSbJjFG6AbPAbxNM=
 before_install:
 - openssl aes-256-cbc -K $encrypted_1645300b04d0_key -iv $encrypted_1645300b04d0_iv
   -in deploy_key.enc -out deploy_key -d
