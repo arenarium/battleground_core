@@ -33,12 +33,13 @@ def test_save_data(db_handle):
     agent_id = agent_data.get_agent_id(owner,name,game_type,db_handle)
     assert len(str(agent_id)) == 24
 
-    data_id = agent_data.save_agent_data(agent_id, data, db_handle=db_handle)
-    assert len(str(data_id)) == 24
+    agent_data.save_agent_data(agent_id, data,"data", db_handle=db_handle)
 
-    loaded_data = agent_data.load_agent_data(agent_id, db_handle=db_handle)
-
+    loaded_data = agent_data.load_agent_data(agent_id,"data", db_handle=db_handle)
     assert loaded_data == data
+
+    loaded_data = agent_data.load_agent_data(agent_id,"blah", db_handle=db_handle)
+    assert loaded_data is None
 
 
 def test_save_game_result(db_handle):

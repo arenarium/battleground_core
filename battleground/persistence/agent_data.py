@@ -30,24 +30,23 @@ def get_agent_id(owner, name, game_type, db_handle=None):
     return agent_id
 
 
-def save_agent_data(agent_id, data, db_handle=None):
+def save_agent_data(agent_id, data, key, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
-    collection = db_handle.agent_data
-    doc = {"agent_id": agent_id, "data": data}
-    data_id = collection.insert_one(doc).inserted_id
-    return data_id
+    collection = db_handle.agents
+    update_spec = {"$set":{key: data}}
+    data_id = collection.update_one({"_id":agent_id},update_spec)
 
 
-def load_agent_data(agent_id, db_handle=None):
+def load_agent_data(agent_id, key, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
-    collection = db_handle.agent_data
-    result = list(collection.find({"agent_id": agent_id}))
-    if len(result)>0:
-        return result[0]["data"]
-    else:
-        return None
+    collection = db_handle.agents
+    doc = collection.find_one(agent_id)
+    if doc is not None:
+        if key in doc:
+            return doc[key]
+    return None
 
 
 def save_game_result(agent_id, game_id, game_type, score, win,db_handle=None):
