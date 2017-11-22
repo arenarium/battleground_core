@@ -11,11 +11,11 @@ class ArenaGameEngine(GameEngine):
     An arena game engine based on an event queue.
     """
 
-    def __init__(self, num_players, type="Arena", modules=None, state=None):
+    def __init__(self, num_players=2, type="Arena", mods=None, state=None):
         """
         :param num_players: int
         :param type: str
-        :param modules: list
+        :param mods: list
         :param state: {"gladiators": list of gladiator_stats (see Gladiator class),
                        "dungeon": {},
                        "queue": (list) event_queue,
@@ -25,46 +25,65 @@ class ArenaGameEngine(GameEngine):
             self.current_player
             self.type
         """
-        super().__init__(num_players, type)
-        if state is not None and "gladiators" in state:
+        super().__init__(num_players=num_players, type=type)
+
+        # init gladiators
+        if state is not None \
+                and "gladiators" in state:
             stats = state["gladiators"]
         else:
-            stats = None
-        self.gladiators = self.init_gladiators(num_players=num_players,
-                                               gladiator_stats=stats)
-        self.dungeon = Dungeon()
-        if state is not None and "queue" in state:
+            stats = []
+        self.gladiators = [Gladiator(**g) for g in stats[0:num_players]]
+
+        if len(stats) < num_players:
+            for _ in range(0, num_players - len(stats)):
+                new_stats = self.init_new_gladiator_stats(self.gladiators)
+                print(new_stats)
+                self.gladiators.append(Gladiator(**new_stats))
+
+        # init dungeon
+        if state is not None \
+                and "dungeon" in state:
+            dungeon_stats = state["dungeon"]
+        else:
+            dungeon_stats = self.init_new_dungeon_stats(self.gladiators)
+        self.dungeon = Dungeon(**dungeon_stats)
+
+        # init event_queue
+        if state is not None \
+                and "queue" in state:
             self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
         else:
             self.event_queue = sorted([(g.get_initiative(),  # + calc.noise(),
                                         self._init_event(g))
                                        for g in self.gladiators],
                                       key=lambda event: event[0])
-        if state is not None and "scores" in state:
+
+        # init scores
+        if state is not None \
+                and "scores" in state:
             self.scores = state["scores"]
         else:
             self.scores = {i: 0 for i in range(num_players)}
 
+        # init state
         self.state = {"gladiators": self.gladiators,
                       "dungeon": self.dungeon,
                       "queue": self.event_queue,
                       "scores": self.scores
                       }
 
-    def init_gladiators(self, num_players, gladiator_stats):
+    def init_new_gladiator_stats(self, *args, **kwargs):
         """
-        :param num_players: int
-        :param gladiator_stats: list of dicts, see __init__
-        :return: list of Gladiator objects
+        :return: list of stats to create Gladiator object
         """
-        if gladiator_stats is None:
-            gladiator_stats = []
-        gladiators = [Gladiator(**g) for g in gladiator_stats[0:num_players]]
-        # if less gladiators are specified than needed, more are created on random positions
-        if len(gladiator_stats) < num_players:
-            for _ in range(0, num_players - len(gladiator_stats)):
-                gladiators.append(Gladiator())
-        return gladiators
+        return {}
+
+    def init_new_dungeon_stats(self, *args, **kwargs):
+        """
+        :return: list of stats to create Dungeon object
+        """
+        return {}
 
     def _init_event(self, event):
         if isinstance(event, Gladiator):
@@ -147,6 +166,7 @@ class ArenaGameEngine(GameEngine):
         while self.event_queue[0][1].type is not "gladiator":
             (event_time, event) = self.event_queue.pop(0)
             self.handle_event(event)
+            self.update_scores(event.owner)
 
         self.current_player = self.get_current_player()
         return None
@@ -185,16 +205,12 @@ class ArenaGameEngine(GameEngine):
                       type=name,
                       target=target,
                       value=value)
-        if name is not "stay":
-            calc.insort_right(self.event_queue,
-                              event_queue_keys,
-                              (event_time, event),
-                              keyfunc=lambda e: e[0])
-
+        calc.insort_right(self.event_queue,
+                          event_queue_keys,
+                          (event_time, event),
+                          keyfunc=lambda e: e[0])
         next_glad_event = Event(owner=glad_index,
-                                type="gladiator",
-                                target=None,
-                                value=None)
+                                type="gladiator")
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, next_glad_event),
@@ -209,20 +225,26 @@ class ArenaGameEngine(GameEngine):
         """
         target = self.gladiators[event.target]
         attacker = self.gladiators[event.owner]
-        # attack function is checking if target is within range
         target.cur_hp -= attacker.attack(target)
+        self.remove_dead()
+        return None
+
+    def remove_dead(self):
         # go through event_queue in reversed order to keep items
         # from changing index by deleting items with lower index
         index = len(self.event_queue) - 1
         for _, ev in reversed(self.event_queue):
-            # if gladiator is dead, delete it and all of his queued events.
+            # if gladiator is dead, delete it and all of its queued events.
             if self.gladiators[ev.owner].cur_hp <= 0:
                 del self.event_queue[index]
-                # Each kill gives one score point, dying sets score to zero.
-                if ev.type is "gladiator":
-                    self.state["scores"][ev.owner] = 0
-                    self.state["scores"][event.owner] += 1
             index -= 1
+        return None
+
+    def update_scores(self, glad):
+        # Each kill gives one score point, dying sets score to zero.
+        if ev.type is "gladiator":
+            self.state["scores"][ev.owner] = 0
+            self.state["scores"][event.owner] += 1
         return None
 
     def game_over(self):

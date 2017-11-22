@@ -6,7 +6,7 @@ class Gladiator(object):
 
     def __init__(self,
                  stats=None, skills=None, name="Nameless", team=1, cur_hp=None,
-                 **kwargs):
+                 *args, **kwargs):
         """
         :param stats: dict {"str": int, "dex": int, "con": int}
         :param skills: dict {"melee": int, "eva": int, "speed": int}
@@ -14,12 +14,17 @@ class Gladiator(object):
         :param team: int
         :param cur_hp: current hit points (if not full)
         """
+        print("base")
         if stats is None:
-            self.base_stats = {"str": 0, "dex": 0, "con": 0}
+            self.base_stats = {"str": 0,
+                               "dex": 0,
+                               "con": 0}
         else:
             self.base_stats = stats
         if skills is None:
-            self.base_skills = {"melee": 0, "eva": 0, "speed": 0}
+            self.base_skills = {"melee": 0,
+                                "eva": 0,
+                                "speed": 0}
         else:
             self.base_skills = skills
         self.name = name
@@ -140,7 +145,7 @@ class Gladiator(object):
             # protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
         return int(max(damage - protection, 0))
 
-    def get_cost(self, action, value):
+    def get_cost(self, action, value, *args, **kwargs):
         """
         :param action: (str)
         :param target: NotImplemented

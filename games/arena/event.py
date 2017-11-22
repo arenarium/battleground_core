@@ -1,6 +1,6 @@
 class Event(object):
 
-    def __init__(self, owner, type, time_stamp=0, target=None, value=None):
+    def __init__(self, owner, type, time_stamp=0, target=None, value=None, *args, **kwargs):
         """
         :param owner: (int) gladiator index
         :param time_stamp: (float)

@@ -9,45 +9,44 @@ import random
 
 
 class ArenaGameEngine(ArenaGameEngine):
+
+    #assert "get_move_options" in dir(games.arena.arena_game)
+    #assert "handle_event" in dir(games.arena.arena_game)
+
     def __init__(self, state=None, *args, **kwargs):
         """
         :param state: {"dungeon": {"size": int},
                        ...}
         """
-        super().__init__(self, state=state, *args, **kwargs)
-        # is redefining init_gladiators also changing behavior for __init__ now?
-        if state is not None and "dungeon" in state and "size" in state["dungeon"]:
-            size = state["dungeon"]["size"]
-        else:
-            size = self.get_dungeon_size(self.gladiators)
-        self.dungeon = Dungeon(size=size)
+        super().__init__(state=state, *args, **kwargs)
 
-    def init_gladiators(self, num_players, gladiator_stats):
+    def init_new_gladiator_stats(self, gladiators, *args, **kwargs):
         """
-        :param num_players: int
-        :param gladiator_stats: list of dicts, see __init__
-        :return: list of Gladiator objects
+        :param gladiators: list of Gladiators
+        :return: Gladiator
         """
-        if gladiator_stats is None:
-            gladiator_stats = []
-        gladiators = [Gladiator(**g) for g in gladiator_stats[0:num_players]]
-        # if less gladiators are specified than needed, more are created on random positions
-        if len(gladiator_stats) < num_players:
-            # This could potentially lead to a misbehavior when more gladiators
-            # need to be added than free squares are available!
-            if len(gladiator_stats) > 0:
-                size = self.get_dungeon_size(gladiators)
-            else:
-                size = ((0, 2), (0, 2))
-            for _ in range(0, num_players - len(gladiator_stats)):
-                # find free position
-                while True:
-                    pos = (random.randint(size[0][0], size[0][1]),
-                           random.randint(size[1][0], size[1][1]))
-                    if all(pos != g.pos for g in gladiators):
-                        break
-                gladiators.append(Gladiator(pos=pos))
-        return gladiators
+        stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
+
+        print(len(gladiators))
+        [print(g.get_init()) for g in gladiators]
+
+        if len(gladiators) > 0:
+            size = self.get_dungeon_size(gladiators)
+        else:
+            size = ((0, 2), (0, 2))
+        # find free position
+        while True:
+            pos = (random.randint(size[0][0], size[0][1]),
+                   random.randint(size[1][0], size[1][1]))
+            if all(pos != g.pos for g in gladiators):
+                break
+        stats["pos"] = pos
+        return stats
+
+    def init_new_dungeon_stats(self, gladiators, *args, **kwargs):
+        stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
+        stats["size"] = self.get_dungeon_size(gladiators)
+        return stats
 
     @staticmethod
     def get_dungeon_size(gladiators):
@@ -70,7 +69,7 @@ class ArenaGameEngine(ArenaGameEngine):
         :return: (dict) {name: {target: value}}
         """
         gladiator = self.gladiators[gladiator_index]
-        options = super().get_move_options(self, gladiator_index)
+        options = super().get_move_options(gladiator_index=gladiator_index)
 
         # add options for "move"
         directions = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
@@ -97,7 +96,7 @@ class ArenaGameEngine(ArenaGameEngine):
         if event.type is "move":
             self.move_move(event)
         else:
-            super().handle_event(self, event)
+            super().handle_event(event=event)
 
         self.dungeon.shrink_dungeon(self.state)
         return None
@@ -122,11 +121,11 @@ class Dungeon(Dungeon):
         """
         :param size: ((int, int), (int, int))
         """
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.size = size
 
     def get_init(self):
-        init = super().get_init(self)
+        init = super().get_init()
         init["size"] = self.size
         return init
 
@@ -148,26 +147,27 @@ class Event(Event):
         :param target: (int) Gladiator index OR (int, int) position
         :param origin: (int, int) position
         """
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.origin = origin
 
     def get_init(self):
-        init = super().get_init(self)
+        init = super().get_init()
         init["origin"] = self.origin
         return init
 
 
 class Gladiator(Gladiator):
-    def __init__(self, pos, *args, **kwargs):
+    def __init__(self, pos=(0, 0), *args, **kwargs):
         """
         :param pos: (int, int)
         """
-        super().__init__(self, *args, **kwargs)
+        print("super")
+        super().__init__(*args, **kwargs)
         self.pos = pos
         self.range = 1
 
     def get_init(self):
-        init = super().get_init(self)
+        init = super().get_init()
         init["pos"] = self.pos
         init["range"] = self.range
         return init
@@ -182,7 +182,7 @@ class Gladiator(Gladiator):
         if calc.dist(pos_o, pos_t) > self.range:
             return 0
         else:
-            return super().attack(self, target)
+            return super().attack(target=target)
 
     def move(self, direction):
         """
@@ -192,7 +192,7 @@ class Gladiator(Gladiator):
         self.pos = calc.add_tuples(self.pos, direction)
         return None
 
-    def get_cost(self, action, value):
+    def get_cost(self, action, *args, **kwargs):
         """
         :param action: (str)
         :param target: NotImplemented
@@ -202,5 +202,5 @@ class Gladiator(Gladiator):
         if action == "move":
             cost = self.get_speed()
         else:
-            cost = super().get_cost(self, action, value)
+            cost = super().get_cost(action=action, *args, **kwargs)
         return int(cost)

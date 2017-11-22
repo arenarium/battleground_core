@@ -5,7 +5,7 @@ from games.arena.gladiator import *
 
 class ArenaGameEngine(ArenaGameEngine):
     def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_move_options(self, gladiator_index):
         """
@@ -14,12 +14,12 @@ class ArenaGameEngine(ArenaGameEngine):
         :return: (dict) {name: {target: value}}
         """
         gladiator = self.gladiators[gladiator_index]
-        options = super().get_move_options(self, gladiator_index)
+        options = super().get_move_options(gladiator_index=gladiator_index)
 
         # add options for "boost"
         targets = {}
         for attr, val in gladiator.boosts.items():
-            values = list(range(-gladiator.get_boost_cost(attr, val),
+            values = list(range(-gladiator.get_boost_cost(attr=attr, val=val),
                                 gladiator.cur_sp + 1))
             if len(values) > 0:
                 targets[attr] = values
@@ -30,9 +30,9 @@ class ArenaGameEngine(ArenaGameEngine):
 
     def handle_event(self, event):
         if event.type is "boost":
-            self.move_boost(event)
+            self.move_boost(event=event)
         else:
-            super().handle_event(self, event)
+            super().handle_event(event=event)
         return None
 
     def move_boost(self, event):
@@ -50,7 +50,7 @@ class ArenaGameEngine(ArenaGameEngine):
         else:
             values = [event.value]
         boosts = dict(zip(targets, values))
-        self.gladiators[event.owner].set_boosts(boosts)
+        self.gladiators[event.owner].set_boosts(boosts=boosts)
         return None
 
 
@@ -60,7 +60,7 @@ class Gladiator(Gladiator):
         :param cur_sp: current spirit points (if not full)
         :param boosts: dict of current boosts (if not none)
         """
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.max_sp = self.get_max_sp()
         if cur_sp is None:
             self.cur_sp = self.max_sp
@@ -76,13 +76,13 @@ class Gladiator(Gladiator):
                 self.boosts[att] = val
 
     def get_init(self):
-        init = super().get_init(self)
+        init = super().get_init()
         init["cur_sp"] = self.cur_sp
         init["boosts"] = self.boosts
         return init
 
     def reset(self):
-        super().reset(self)
+        super().reset()
         self.max_sp = self.get_max_sp()
         self.cur_sp = self.max_sp
         self.boosts = {"att": 0,
@@ -96,14 +96,14 @@ class Gladiator(Gladiator):
         """
         :return: melee + boost
         """
-        att = super().get_attack(self) + self.boosts["att"]
+        att = super().get_attack() + self.boosts["att"]
         return att
 
     def get_evasion(self):
         """
         :return: eva + boost
         """
-        eva = super().get_evasion(self) + self.boosts["eva"]
+        eva = super().get_evasion() + self.boosts["eva"]
         return eva
 
     def get_damage(self):
@@ -111,7 +111,7 @@ class Gladiator(Gladiator):
         returns list of [damage dice, damage sides]
         :return: [1 + boost, 2 + str]
         """
-        [d_dice, d_side] = super().get_damage(self)
+        [d_dice, d_side] = super().get_damage()
         d_dice = d_dice + self.boosts["dam"]
         return [d_dice, d_side]
 
@@ -120,7 +120,7 @@ class Gladiator(Gladiator):
         returns list of [protection dice, protection sides]
         :return: [1 + boost, str]
         """
-        [p_dice, p_side] = super().get_protection(self)
+        [p_dice, p_side] = super().get_protection()
         p_dice = p_dice + self.boosts["prot"]
         return [p_dice, p_side]
 
@@ -137,7 +137,7 @@ class Gladiator(Gladiator):
         """
         :return: 21 - speed - boost
         """
-        speed = super().get_speed(self) - self.boosts["speed"]
+        speed = super().get_speed() - self.boosts["speed"]
         return speed
 
     def get_boost_cost(self, attribute, value):
@@ -159,13 +159,13 @@ class Gladiator(Gladiator):
         """
         for attr, val in boosts.items():
             # cost for boosting: (1, 2, 3, 4, 5, ...) -> (1, 3, 6, 10, 15, ...)
-            cost = self.get_boost_cost(attr, val)
+            cost = self.get_boost_cost(attribute=attr, value=val)
             if cost <= self.cur_sp:
                 self.cur_sp -= cost
                 self.boosts[attr] += val
         return None
 
-    def get_cost(self, action, value):
+    def get_cost(self, action, value, *args, **kwargs):
         """
         :param action: (str)
         :param target: NotImplemented
@@ -175,5 +175,6 @@ class Gladiator(Gladiator):
         if action == "boost":
             cost = value * self.get_speed()
         else:
-            cost = super().get_cost(self, action, value)
+            cost = super().get_cost(action=action, value=value,
+                                    *args, **kwargs)
         return int(cost)
