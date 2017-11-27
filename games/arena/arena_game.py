@@ -1,5 +1,6 @@
-from battleground.game_engine import GameEngine
+import copy
 
+from battleground.game_engine import GameEngine
 from games.arena import calc
 from games.arena.dungeon import Dungeon
 from games.arena.event import Event
@@ -11,11 +12,14 @@ class ArenaGameEngine(GameEngine):
     An arena game engine based on an event queue.
     """
 
-    def __init__(self, num_players=2, type="Arena", mods=None, state=None):
+    dungeon_class = Dungeon
+    event_class = Event
+    gladiator_class = Gladiator
+
+    def __init__(self, num_players=2, type="Arena", state=None):
         """
         :param num_players: int
         :param type: str
-        :param mods: list
         :param state: {"gladiators": list of gladiator_stats (see Gladiator class),
                        "dungeon": {},
                        "queue": (list) event_queue,
@@ -33,13 +37,12 @@ class ArenaGameEngine(GameEngine):
             stats = state["gladiators"]
         else:
             stats = []
-        self.gladiators = [Gladiator(**g) for g in stats[0:num_players]]
+        self.gladiators = [self.gladiator_class(**g) for g in stats[0:num_players]]
 
         if len(stats) < num_players:
             for _ in range(0, num_players - len(stats)):
                 new_stats = self.init_new_gladiator_stats(self.gladiators)
-                print(new_stats)
-                self.gladiators.append(Gladiator(**new_stats))
+                self.gladiators.append(self.gladiator_class(**new_stats))
 
         # init dungeon
         if state is not None \
@@ -47,7 +50,7 @@ class ArenaGameEngine(GameEngine):
             dungeon_stats = state["dungeon"]
         else:
             dungeon_stats = self.init_new_dungeon_stats(self.gladiators)
-        self.dungeon = Dungeon(**dungeon_stats)
+        self.dungeon = self.dungeon_class(**dungeon_stats)
 
         # init event_queue
         if state is not None \
@@ -75,21 +78,27 @@ class ArenaGameEngine(GameEngine):
 
     def init_new_gladiator_stats(self, *args, **kwargs):
         """
-        :return: list of stats to create Gladiator object
+        :return: list of stats to create Gladiator object at start of the game
         """
         return {}
 
     def init_new_dungeon_stats(self, *args, **kwargs):
         """
-        :return: list of stats to create Dungeon object
+        :return: list of stats to create Dungeon object at start of the game
         """
         return {}
 
     def _init_event(self, event):
-        if isinstance(event, Gladiator):
-            return Event(owner=self.gladiators.index(event),
-                         type="gladiator")
-        return Event(**event)
+        """
+        Instantiates an Event of type "gladiator" if event is a Gladiator instance
+        or, if event is a dict, using its keys to instantiate an Event with those parameters.
+        :param event: EITHER Gladiator OR dict
+        :return: Event instance
+        """
+        if isinstance(event, self.gladiator_class):
+            return self.event_class(owner=self.gladiators.index(event),
+                                    type="gladiator")
+        return self.event_class(**event)
 
     def get_game_name(self):
         return self.type
@@ -115,6 +124,7 @@ class ArenaGameEngine(GameEngine):
     def reset(self):
         """
         Initialize the game to the starting point
+        :return: None
         """
         [g.reset() for g in self.gladiators]
         self.dungeon.reset()
@@ -161,17 +171,22 @@ class ArenaGameEngine(GameEngine):
                            "value": float
         :return:
         """
-        self.move_queue(move)
+        self.queue_move(move)
 
         while self.event_queue[0][1].type is not "gladiator":
             (event_time, event) = self.event_queue.pop(0)
+            queue_copy = copy.deepcopy(self.event_queue)
             self.handle_event(event)
-            self.update_scores(event.owner)
+            self.update_scores(player=event.owner, old_queue=queue_copy)
 
         self.current_player = self.get_current_player()
         return None
 
     def handle_event(self, event):
+        """
+        :param event:
+        :return: None
+        """
         if event.type is "stay":
             pass
         elif event.type is "attack":
@@ -180,7 +195,7 @@ class ArenaGameEngine(GameEngine):
             pass
         return None
 
-    def move_queue(self, move):
+    def queue_move(self, move):
         """
         Queue move and player into event_queue.
         :param move:
@@ -199,18 +214,18 @@ class ArenaGameEngine(GameEngine):
         glad = self.gladiators[glad_index]
         event_queue_keys = [ev[0] for ev in self.event_queue]
 
-        event_time = time + glad.get_cost(name, value)  # + calc.noise()
+        event_time = time + glad.get_cost(action=name, target=target, value=value)  # + calc.noise()
 
-        event = Event(owner=glad_index,
-                      type=name,
-                      target=target,
-                      value=value)
+        event = self.event_class(owner=glad_index,
+                                 type=name,
+                                 target=target,
+                                 value=value)
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, event),
                           keyfunc=lambda e: e[0])
-        next_glad_event = Event(owner=glad_index,
-                                type="gladiator")
+        next_glad_event = self.event_class(owner=glad_index,
+                                           type="gladiator")
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, next_glad_event),
@@ -230,26 +245,41 @@ class ArenaGameEngine(GameEngine):
         return None
 
     def remove_dead(self):
+        """
+        Removes events of gladiators that are dead.
+        :return: None
+        """
         # go through event_queue in reversed order to keep items
         # from changing index by deleting items with lower index
         index = len(self.event_queue) - 1
         for _, ev in reversed(self.event_queue):
             # if gladiator is dead, delete it and all of its queued events.
-            if self.gladiators[ev.owner].cur_hp <= 0:
+            if self.gladiators[ev.owner].is_dead():
                 del self.event_queue[index]
             index -= 1
         return None
 
-    def update_scores(self, glad):
-        # Each kill gives one score point, dying sets score to zero.
-        if ev.type is "gladiator":
-            self.state["scores"][ev.owner] = 0
-            self.state["scores"][event.owner] += 1
+    def update_scores(self, player, old_queue):
+        """
+        Updates scores of player based on difference between old_queue and self.event_queue.
+        It is assumed that all these changes are due to player.
+        :param player: (int) player index
+        :param old_queue: event_queue before event(s) happened
+        :return: None
+        """
+        # get all events that were removed from event_queue
+        queue_complement = set(old_queue) - set(self.event_queue)
+        for _, ev in queue_complement:
+            # Each kill gives one score point, dying sets score to zero.
+            if ev.type is "gladiator":
+                self.state["scores"][ev.owner] = 0
+                self.state["scores"][player] += 1
         return None
 
     def game_over(self):
         """
         Check if the game is over
+        :return: (bool)
         """
         num_glads = sum([1 for (t, g) in self.event_queue if g.type is "gladiator"])
         return bool(num_glads <= 1)

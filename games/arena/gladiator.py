@@ -14,7 +14,6 @@ class Gladiator(object):
         :param team: int
         :param cur_hp: current hit points (if not full)
         """
-        print("base")
         if stats is None:
             self.base_stats = {"str": 0,
                                "dex": 0,
@@ -145,7 +144,7 @@ class Gladiator(object):
             # protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
         return int(max(damage - protection, 0))
 
-    def get_cost(self, action, value, *args, **kwargs):
+    def get_cost(self, action, target, value, *args, **kwargs):
         """
         :param action: (str)
         :param target: NotImplemented
