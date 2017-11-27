@@ -1,17 +1,14 @@
 
-from games.arena.arena_game import *
-from games.arena.dungeon import *
-from games.arena.event import *
-from games.arena.gladiator import *
+from games.arena import arena_game
+from games.arena import dungeon
+from games.arena import event
+from games.arena import gladiator
 from games.arena import calc
 
 import random
 
 
-class ArenaGameEngine(ArenaGameEngine):
-
-    #assert "get_move_options" in dir(games.arena.arena_game)
-    #assert "handle_event" in dir(games.arena.arena_game)
+class ArenaGameEngine(arena_game.ArenaGameEngine):
 
     def __init__(self, state=None, *args, **kwargs):
         """
@@ -23,12 +20,9 @@ class ArenaGameEngine(ArenaGameEngine):
     def init_new_gladiator_stats(self, gladiators, *args, **kwargs):
         """
         :param gladiators: list of Gladiators
-        :return: Gladiator
+        :return: list of stats to create Gladiator object at start of the game
         """
         stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
-
-        print(len(gladiators))
-        [print(g.get_init()) for g in gladiators]
 
         if len(gladiators) > 0:
             size = self.get_dungeon_size(gladiators)
@@ -44,6 +38,9 @@ class ArenaGameEngine(ArenaGameEngine):
         return stats
 
     def init_new_dungeon_stats(self, gladiators, *args, **kwargs):
+        """
+        :return: list of stats to create Dungeon object at start of the game
+        """
         stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
         stats["size"] = self.get_dungeon_size(gladiators)
         return stats
@@ -116,7 +113,7 @@ class ArenaGameEngine(ArenaGameEngine):
         return None
 
 
-class Dungeon(Dungeon):
+class Dungeon(dungeon.Dungeon):
     def __init__(self, size, *args, **kwargs):
         """
         :param size: ((int, int), (int, int))
@@ -138,7 +135,7 @@ class Dungeon(Dungeon):
         return None
 
 
-class Event(Event):
+class Event(event.Event):
     def __init__(self, origin=None, *args, **kwargs):
         """
         :param owner: (int) gladiator index
@@ -156,12 +153,11 @@ class Event(Event):
         return init
 
 
-class Gladiator(Gladiator):
+class Gladiator(gladiator.Gladiator):
     def __init__(self, pos=(0, 0), *args, **kwargs):
         """
         :param pos: (int, int)
         """
-        print("super")
         super().__init__(*args, **kwargs)
         self.pos = pos
         self.range = 1

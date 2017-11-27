@@ -1,9 +1,9 @@
 
-from games.arena.arena_game import *
-from games.arena.gladiator import *
+from games.arena import arena_game
+from games.arena import gladiator
 
 
-class ArenaGameEngine(ArenaGameEngine):
+class ArenaGameEngine(arena_game.ArenaGameEngine):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -54,7 +54,7 @@ class ArenaGameEngine(ArenaGameEngine):
         return None
 
 
-class Gladiator(Gladiator):
+class Gladiator(gladiator.Gladiator):
     def __init__(self, cur_sp=None, boosts=None, *args, **kwargs):
         """
         :param cur_sp: current spirit points (if not full)
