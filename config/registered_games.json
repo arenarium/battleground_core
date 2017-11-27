@@ -1,3 +1,4 @@
+
 [
   {
     "name":"Basic Game 25",
@@ -21,10 +22,31 @@
     "settings":{}
   },
   {
-    "name":"Arena Game",
-    "type":"arena_game",
-    "local_path":"games.arena.arena_game",
-    "class_name":"ArenaGameEngine",
+    "name": "Arena Game (Basic)",
+    "type": "arena_game",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Mod Basic)",
+    "type": "arena_game",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":[]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Mod Boosts)",
+    "type": "arena_game",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.boosts"
+                         ]
+            },
     "settings":{}
   }
 ]
