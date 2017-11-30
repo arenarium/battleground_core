@@ -19,7 +19,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # add options for "boost"
         targets = {}
         for attr, val in gladiator.boosts.items():
-            values = list(range(-gladiator.get_boost_cost(attr=attr, val=val),
+            values = list(range(-gladiator.get_boost_cost(attribute=attr, value=val),
                                 gladiator.cur_sp + 1))
             if len(values) > 0:
                 targets[attr] = values

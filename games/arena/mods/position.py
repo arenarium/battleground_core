@@ -84,6 +84,10 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                        and not g.is_dead()
                        and g is not gladiator)]
         default_values = [None]
+        # make sure no attack target from super() slips through
+        if "attack" in options and len(targets) == 0:
+            del options["attack"]
+        # otherwise overwrite target list
         if len(targets) > 0:
             options["attack"] = {t: default_values for t in targets}
 
