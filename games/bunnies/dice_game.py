@@ -35,24 +35,6 @@ class DiceGame(GameEngine):
             # if state is not provided, use default starting state
             self.reset()
 
-    def get_game_name(self):
-        """
-        :returns (char) the name of this game (i.e. game type)
-        """
-        return "Bunnies"
-
-    def get_state(self):
-        """
-        :returns self.state
-        """
-        return self.state
-
-    def get_current_player(self):
-        """
-        :returns (int) current player ID
-        """
-        return self.state["currentPlayer"]
-
     def reset(self):
         """
         (re)set game into initial state
@@ -79,6 +61,45 @@ class DiceGame(GameEngine):
         self.state["lastPlayer"] = -1
         self.state["lastRound"] = False
         return self.state
+
+    def get_game_name(self):
+        """
+        :returns (char) the name of this game (i.e. game type)
+        """
+        return "Bunnies"
+
+    def get_state(self):
+        """
+        :returns self.state
+        """
+        return self.state
+
+    def get_move_options(self, *args, **kwargs):
+        options = {}
+        for key, value in self.state["allowedMoves"].items():
+            if value == 1:
+                max_hutch = max(1, max(self.state["hutches"]))
+
+                if key == "roll":
+                    options[key] = [None]
+                elif key == "stay":
+                    options[key] = [None]
+                elif key == "reset":
+                    options[key] = [None]
+                elif key == "moveBunny" and (1 in self.state["rollables"] or 2 in self.state["rollables"]):
+                    options[key] = [self.state["rollables"].index(d)
+                                    for d in self.state["rollables"] if d == 1 or d == 2]
+                elif key == "moveHutch" and (max_hutch + 1) in self.state["rollables"]:
+                    options[key] = [self.state["rollables"].index(d)
+                                    for d in self.state["rollables"] if d == max_hutch + 1]
+
+        return options
+
+    def get_current_player(self):
+        """
+        :returns (int) current player ID
+        """
+        return self.state["currentPlayer"]
 
     def _get_num_bunnies(self):
         """
