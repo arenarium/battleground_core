@@ -4,31 +4,28 @@ import inspect
 
 def base_factory(cls_name, mod_modules):
     mod_list = []
-    for module in mod_modules:
+
+    def mod_list_appender(module):
         for name, obj in inspect.getmembers(module):
             if name is cls_name and inspect.isclass(obj):
                 mod_list.append(obj)
+        return None
+
+    for module in mod_modules:
+        mod_list_appender(module)
     # add base classes to mod_list
     if cls_name is "Dungeon":
         module = importlib.import_module("games.arena.dungeon")
-        for name, obj in inspect.getmembers(module):
-            if name is cls_name and inspect.isclass(obj):
-                mod_list.append(obj)
+        mod_list_appender(module)
     elif cls_name is "Event":
         module = importlib.import_module("games.arena.event")
-        for name, obj in inspect.getmembers(module):
-            if name is cls_name and inspect.isclass(obj):
-                mod_list.append(obj)
+        mod_list_appender(module)
     elif cls_name is "Gladiator":
         module = importlib.import_module("games.arena.gladiator")
-        for name, obj in inspect.getmembers(module):
-            if name is cls_name and inspect.isclass(obj):
-                mod_list.append(obj)
+        mod_list_appender(module)
     elif cls_name is "ArenaGameEngine":
         module = importlib.import_module("games.arena.arena_game")
-        for name, obj in inspect.getmembers(module):
-            if name is cls_name and inspect.isclass(obj):
-                mod_list.append(obj)
+        mod_list_appender(module)
 
     base_list = tuple(mod_list)
     return base_list
