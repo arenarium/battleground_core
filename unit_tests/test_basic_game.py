@@ -17,8 +17,8 @@ def test_engine():
 
 def test_player():
     player = basic_agent.BasicAgent()
-    move = player.move(None)
-    assert isinstance(move,dict)
+    move = player.move([1], None)
+    assert isinstance(move, dict)
     assert "value" in move.keys()
 
 

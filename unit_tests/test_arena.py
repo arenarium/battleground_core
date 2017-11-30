@@ -62,13 +62,13 @@ def test_gladiator():
     # assert glad.boosts["speed"] > 0
     # assert glad.move((1, 0)) is None
     # assert len(glad.pos) == 2
-    assert all([isinstance(glad.get_cost(action, value), int)
-                for action, value in {"stay": 0,
-                                      "attack": 0,
-                                      # "move": 0,
-                                      # "boost": random.randint(1, 10)
-                                      }.items()
-                ])
+
+    options = {"stay": {None: 0},
+               "attack": {0: None}
+               }
+    for action, targets in options.items():
+        for target, value in targets.items():
+            assert isinstance(glad.get_cost(action, target, value), int)
     # new_pos = calc.add_tuples(pos, (1, 0))
     stats = {"str": random.randint(1, 3),
              "dex": random.randint(1, 3),
@@ -96,7 +96,7 @@ def test_player():
     current_player = age.get_current_player()
     options = age.get_move_options(current_player)
     agent = ArenaAgent()
-    move = agent.move(state)
+    move = agent.move(options, state)
     assert "name" in move
     assert "target" in move
     assert "value" in move
