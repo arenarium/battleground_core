@@ -22,8 +22,8 @@ class BasicGameEngine(GameEngine):
     def get_state(self):
         return {"scores": self.scores, "turn": self.turn}
 
-    def get_save_state(self):
-        return {"scores": self.scores, "turn": self.turn}
+    def get_move_options(self, *args, **kwargs):
+        return range(5, 20)
 
     def move(self, move):
         """

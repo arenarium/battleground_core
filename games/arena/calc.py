@@ -29,6 +29,7 @@ def dist(pos_a, pos_b):
 def noise():
     """
     noise function for solving clash in sorting of event_queue
+    :returns (float) in [0.001, 0.999]
     """
     return random.randint(1, 999) / 1000
 

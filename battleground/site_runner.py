@@ -33,9 +33,21 @@ def game_engine_factory(num_players, game_config):
         if name == game_config["class_name"] and inspect.isclass(obj):
             engine_class = obj
             break
+    if "mods" in game_config:
+        try:
+            builder_path = game_config["mods"]["builder_path"]
+            builder_module = importlib.import_module(builder_path)
+            engine_class = builder_module.modded_class_factory(engine_class,
+                                                               game_config["mods"]["mod_paths"])
+        except NameError:
+            pass
     engine_instance = engine_class(num_players=num_players,
                                    type=game_config["type"],
                                    **game_config["settings"])
+    #
+    # Idea: instead of modding the class, it might be a better idea to mod the instance:
+    #
+    # engine_instance = modded_instance_factory(engine_instance, game_config["mods"])
     return engine_instance
 
 

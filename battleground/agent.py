@@ -4,7 +4,7 @@ class Agent(object):
     def __init__(self, data=None, **kwargs):
         pass
 
-    def move(self, state):
+    def move(self, options, state):
         raise NotImplementedError()
 
     def observe(self, state):
