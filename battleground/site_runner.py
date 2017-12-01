@@ -5,6 +5,7 @@ import inspect
 from .dynamic_agent import DynamicAgent
 from .game_runner import GameRunner
 import time
+from .persistence import agent_data
 
 
 def parse_config(config):
@@ -18,12 +19,13 @@ def parse_config(config):
     return data
 
 
-def get_players(players_config):
+def get_players(players_config, game_type):
     # TODO: retrieve player ID to use as key to dictionary
-    agents = []
+    agents = {}
     for player in players_config:
-        agents.append(DynamicAgent(**player))
-    return dict(enumerate(agents))
+        agent_id = str(agent_data.get_agent_id(player["owner"],player["name"],game_type))
+        agents[agent_id]= DynamicAgent(**player)
+    return agents
 
 
 def game_engine_factory(num_players, game_config):
@@ -42,7 +44,7 @@ def game_engine_factory(num_players, game_config):
 def start_session(config, save=True, game_delay=None):
     config_data = parse_config(config)
     print(config_data["game"]["type"])
-    players = get_players(config_data["players"])
+    players = get_players(config_data["players"], config_data["game"]["type"])
     all_scores = []
     for i in range(config_data["num_games"]):
         engine = game_engine_factory(len(players), config_data["game"])
