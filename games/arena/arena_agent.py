@@ -12,12 +12,14 @@ class ArenaAgent(agent.Agent):
     def __init__(self):
         super().__init__()
 
-    def move(self, options, state):
+    def move(self, state):
         # my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
         #                                      type="test_arena",
         #                                      state=state)
         # my_gladiator = state["queue"][0][1]["owner"]
         # options = my_game.get_move_options(my_gladiator)
+
+        options = state["move_options"]
 
         if "attack" in options.keys():
             name = "attack"
