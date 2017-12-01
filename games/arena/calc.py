@@ -4,6 +4,7 @@ calculation module for arena_game
 
 from bisect import bisect_right
 import random
+import math
 
 
 def add_tuples(tuple_a, tuple_b):
@@ -45,3 +46,5 @@ def insort_right(seq, keys, item, keyfunc):
     seq.insert(index, item)          # insert the item itself in the corresponding spot
     return None
 
+
+sqrt = math.sqrt

@@ -24,7 +24,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
 
-        if len(gladiators) > 0:
+        if gladiators:
             size = self.get_dungeon_size(gladiators)
         else:
             size = ((0, 2), (0, 2))
@@ -63,7 +63,13 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         Used by agent to get available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) {name: {target: value}}
+        :return: (dict) [{move: name,
+                          targets: [{target: target,
+                                     values: []
+                                     },
+                                    ]
+                          },
+                         ]
         """
         gladiator = self.gladiators[gladiator_index]
         options = super().get_move_options(gladiator_index=gladiator_index)
@@ -73,9 +79,13 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         targets = [d for d in directions
                    if self.within_bounds(calc.add_tuples(gladiator.pos, d),
                                          self.dungeon.size)]
-        default_values = [None]
-        if len(targets) > 0:
-            options["move"] = {t: default_values for t in targets}
+        if targets:
+            options_move = {"name": "move",
+                            "targets": [{"target": t,
+                                         "values": [None]}
+                                        for t in targets]
+                            }
+            options.append(options_move)
 
         # add options for "attack"
         # targets are indices of gladiators list
@@ -83,15 +93,31 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                    if (calc.dist(gladiator.pos, g.pos) <= gladiator.range
                        and not g.is_dead()
                        and g is not gladiator)]
-        default_values = [None]
-        # make sure no attack target from super() slips through
-        if "attack" in options and len(targets) == 0:
-            del options["attack"]
-        # otherwise overwrite target list
-        if len(targets) > 0:
-            options["attack"] = {t: default_values for t in targets}
+        # replace attack option from super()
+        index = len(options) - 1
+        for option in reversed(options):
+            for _, value in option.items():
+                if value is "attack":
+                    del options[index]
+            index -= 1
+        if targets:
+            options_attack = {"name": "attack",
+                              "targets": [{"target": t,
+                                           "values": [None]}
+                                          for t in targets]
+                              }
+            options.append(options_attack)
 
         return options
+
+    def queue_move(self, move):
+        """
+        :param move:
+        :return: None
+        """
+        super().queue_move(move)
+        # TODO: Add correct origin attribute to queued events.
+        return None
 
     def handle_event(self, event):
         if event.type is "move":
@@ -109,11 +135,12 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         :return:
         """
         blocked = False
+        player = self.gladiators[event.owner]
         # for glad in self.gladiators:
-        #    if glad.pos == calc.add_tuples(event.owner.pos, event.target):
-        #        blocked = True
+        #     if glad.pos == calc.add_tuples(player.pos, event.target):
+        #         blocked = True
         if not blocked:
-            self.gladiators[event.owner].move(event.target)
+            player.move(event.target)
         return None
 
 

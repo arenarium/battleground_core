@@ -2,6 +2,8 @@
 from games.arena import arena_game
 from games.arena import gladiator
 
+from games.arena import calc
+
 
 class ArenaGameEngine(arena_game.ArenaGameEngine):
     def __init__(self, *args, **kwargs):
@@ -9,9 +11,15 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
 
     def get_move_options(self, gladiator_index):
         """
-        Used by agent to get available moves
+        Eventually used by agent to access available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) {name: {target: value}}
+        :return: (dict) [{move: name,
+                          targets: [{target: target,
+                                     values: []
+                                     },
+                                    ]
+                          },
+                         ]
         """
         gladiator = self.gladiators[gladiator_index]
         options = super().get_move_options(gladiator_index=gladiator_index)
@@ -19,12 +27,18 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # add options for "boost"
         targets = {}
         for attr, val in gladiator.boosts.items():
-            values = list(range(-gladiator.get_boost_cost(attribute=attr, value=val),
-                                gladiator.cur_sp + 1))
-            if len(values) > 0:
+            min = - val
+            max = gladiator.cur_sp + 1
+            values = list(range(min, max))
+            if values:
                 targets[attr] = values
-        if len(targets) > 0 and False:
-            options["boost"] = targets
+        if targets:
+            options_boost = {"name": "boost",
+                             "targets": [{"target": t,
+                                          "values": v}
+                                         for t, v in targets.items()]
+                             }
+            options.append(options_boost)
 
         return options
 
@@ -151,6 +165,17 @@ class Gladiator(gladiator.Gladiator):
         new_val = old_val + value
         cost = new_val * (new_val + 1) / 2 - old_val * (old_val + 1) / 2
         return int(cost)
+
+    def get_boost_value(self, attribute, cur_sp):
+        """
+        :param attribute:
+        :param cur_sp: available sp to pay the boost
+        :return: (int) value attribute is able to be boosted given cur_sp
+                 (inverse of the cost function)
+        """
+        old_val = self.boosts[attribute]
+        value = - 1/2 - old_val + calc.sqrt(1 + 8 * cur_sp + 4 * old_val * (1 + old_val))/2
+        return int(value)
 
     def set_boosts(self, boosts):
         """

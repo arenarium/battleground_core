@@ -95,6 +95,6 @@ class Gladiator(gladiator.Gladiator):
         :return: observed init_state
         """
         for key, _ in init_state:
-            if self.get_perception_p() < random.uniform(0,1):
-                init_state[key] = None
+            if self.get_perception_p() < random.uniform(0, 1):
+                init_state[key] = "?"
         return init_state

@@ -148,21 +148,38 @@ class ArenaGameEngine(GameEngine):
         """
         Used by agent to get available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) {name: {target: value}}
+        :return: (dict) [{move: name,
+                          targets: [{target: target,
+                                     values: []
+                                     },
+                                    ]
+                          },
+                         ]
         """
         gladiator = self.gladiators[gladiator_index]
-        options = {}
+        options = []
         # add options for "stay"
         speed = gladiator.get_speed()
-        options["stay"] = {None: [1]}  # [s / speed  for s in range(1, speed + 1)]}
+        values = [1]  # [s / speed for s in range(1, speed + 1, int(speed / 3))]
+        # values.append(1)
+        options_stay = {"name": "stay",
+                        "targets": [{"target": None,
+                                     "values": values}
+                                    ]
+                        }
+        options.append(options_stay)
 
         # add options for "attack"
         # targets are indices of gladiators list
         targets = [self.gladiators.index(g) for g in self.gladiators
                    if (not g.is_dead() and g is not gladiator)]
-        default_values = [None]
-        if len(targets) > 0:
-            options["attack"] = {t: default_values for t in targets}
+        if targets:
+            options_attack = {"name": "attack",
+                              "targets": [{"target": t,
+                                           "values": [None]}
+                                          for t in targets]
+                              }
+            options.append(options_attack)
 
         return options
 
@@ -213,12 +230,15 @@ class ArenaGameEngine(GameEngine):
         target = move["target"]
         value = move["value"]
 
-        (time, glad_event) = self.event_queue.pop(0)
+        (t, glad_event) = self.event_queue.pop(0)
+        time = int(t)
         glad_index = glad_event.owner
         glad = self.gladiators[glad_index]
         event_queue_keys = [ev[0] for ev in self.event_queue]
 
-        event_time = time + glad.get_cost(action=name, target=target, value=value)  # + calc.noise()
+        event_time = (time
+                      + glad.get_cost(action=name, target=target, value=value))
+                    # + calc.noise())
 
         event = self.event_class(owner=glad_index,
                                  type=name,

@@ -21,13 +21,11 @@ class ArenaAgent(agent.Agent):
 
         options = state["move_options"]
 
-        if "attack" in options.keys():
-            name = "attack"
-            targets = options["attack"]
-        else:
-            name, targets = random.choice(list(options.items()))
-        target, values = random.choice(list(targets.items()))
-        value = random.choice(values)
+        option = random.choice(options)
+        name = option["name"]
+        target_dict = random.choice(option["targets"])
+        target = target_dict["target"]
+        value = random.choice(target_dict["values"])
 
         move = {"name": name,
                 "target": target,
