@@ -37,9 +37,15 @@ python start.py --dynamic -d
 ```
 
 ### frontend
+first time?:
+```
+cd ui/frontend
+npm install
+```
+
 to start a development server:
 ```
-cd ui/frontent
+cd ui/frontend
 npm start
 ```
 
