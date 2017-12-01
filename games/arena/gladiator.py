@@ -89,7 +89,7 @@ class Gladiator(object):
         """
         stats = self.get_stats()
         d_dice = 1
-        d_side = 20 + stats["str"]
+        d_side = 10 + stats["str"]
         return [d_dice, d_side]
 
     def get_protection(self):
@@ -113,7 +113,7 @@ class Gladiator(object):
 
     def get_speed(self):
         """
-        :return: 21 - speed - boost
+        :return: 21 - speed
         """
         skills = self.get_skills()
         speed = 21 - skills["speed"]
@@ -136,12 +136,18 @@ class Gladiator(object):
         [p_dice, p_side] = target.get_protection()
         damage = 0
         protection = 0
-        hit = attack - evasion  # + random.randint(1, 20) - random.randint(1, 20)
+        hit = attack - evasion + random.randint(1, 20) - random.randint(1, 20)
         if hit >= 0:
-            damage = d_dice * (1 + d_side) / 2
-            protection = p_dice * (1 + p_side) / 2
-            # damage = sum([random.randint(1, d_side) for _ in range(d_dice)])
-            # protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
+            # damage = d_dice * (1 + d_side) / 2
+            # protection = p_dice * (1 + p_side) / 2
+            if d_dice:
+                damage = 1
+            else:
+                damage = sum([random.randint(1, d_side) for _ in range(d_dice)])
+            if p_dice:
+                protection = 0
+            else:
+                protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
         return int(max(damage - protection, 0))
 
     def get_cost(self, action, target, value, *args, **kwargs):
