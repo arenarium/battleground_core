@@ -105,7 +105,7 @@ class ArenaGameEngine(GameEngine):
 
     def get_state(self):
         """
-        :return: dict parsed state
+        :return: (dict) parsed state
         """
         return {"gladiators": [g.get_init() for g in self.gladiators],
                 "dungeon": self.dungeon.get_init(),
@@ -181,7 +181,7 @@ class ArenaGameEngine(GameEngine):
             (event_time, event) = self.event_queue.pop(0)
             queue_copy = copy.deepcopy(self.event_queue)
             self.handle_event(event)
-            self.update_scores(player=event.owner, old_queue=queue_copy)
+            # self.update_scores(player=event.owner, old_queue=queue_copy)
 
         self.current_player = self.get_current_player()
         return None
@@ -222,6 +222,7 @@ class ArenaGameEngine(GameEngine):
 
         event = self.event_class(owner=glad_index,
                                  type=name,
+                                 time_stamp=time,
                                  target=target,
                                  value=value)
         calc.insort_right(self.event_queue,
@@ -229,7 +230,8 @@ class ArenaGameEngine(GameEngine):
                           (event_time, event),
                           keyfunc=lambda e: e[0])
         next_glad_event = self.event_class(owner=glad_index,
-                                           type="gladiator")
+                                           type="gladiator",
+                                           time_stamp=time)
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, next_glad_event),
@@ -245,23 +247,29 @@ class ArenaGameEngine(GameEngine):
         target = self.gladiators[event.target]
         attacker = self.gladiators[event.owner]
         target.cur_hp -= attacker.attack(target)
-        self.remove_dead()
+        corpse_count = self.remove_dead()
+        self.state["scores"][event.owner] += corpse_count
         return None
 
     def remove_dead(self):
         """
         Removes events of gladiators that are dead.
-        :return: None
+        :return: number of corpses
         """
+        corpse_count = 0
         # go through event_queue in reversed order to keep items
         # from changing index by deleting items with lower index
         index = len(self.event_queue) - 1
         for _, ev in reversed(self.event_queue):
             # if gladiator is dead, delete it and all of its queued events.
             if self.gladiators[ev.owner].is_dead():
+                # Dying sets score to zero.
+                if ev.type is "gladiator":
+                    self.state["scores"][ev.owner] = 0
+                    corpse_count += 1
                 del self.event_queue[index]
             index -= 1
-        return None
+        return corpse_count
 
     def update_scores(self, player, old_queue):
         """
@@ -272,13 +280,14 @@ class ArenaGameEngine(GameEngine):
         :return: None
         """
         # get all events that were removed from event_queue
-        queue_complement = set(old_queue) - set(self.event_queue)
-        for _, ev in queue_complement:
-            # Each kill gives one score point, dying sets score to zero.
-            if ev.type is "gladiator":
-                self.state["scores"][ev.owner] = 0
-                self.state["scores"][player] += 1
-        return None
+        # queue_complement = set(old_queue) - set(self.event_queue)
+        # for _, ev in queue_complement:
+        #     # Each kill gives one score point, dying sets score to zero.
+        #     if ev.type is "gladiator":
+        #         self.state["scores"][ev.owner] = 0
+        #         self.state["scores"][player] += 1
+        # return None
+        raise NotImplementedError()
 
     def game_over(self):
         """
