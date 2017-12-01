@@ -18,7 +18,7 @@ config/*.json
 
 To run this configuration, start the database server (if you have not yet done so):
 ```
-docker-compose -f docker-compose-ui.yml up -d
+docker-compose -f docker-compose.ui.yml up -d
 ```
 
 then start the site runner:
