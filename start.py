@@ -17,6 +17,9 @@ def get_dynamic_players(game_type, n):
         if game_type in player["game_type"]:
             qualifying_players.append(player)
 
+    if not qualifying_players:
+        raise IndexError("No qualifying players found.")
+
     players = []
     for i in range(n):
         players.append(random.choice(qualifying_players))
@@ -59,7 +62,7 @@ def go():
             print("running new dynamic config ...")
             delay = 60 if args.d else 0
             config = generate_dynamic_config(delay)
-            # print(config)
+            print("type: " + config["game"]["type"])
             site_runner.start_session(config)
         else:
             site_runner.start_session(args.config)
