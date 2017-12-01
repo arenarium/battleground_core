@@ -26,8 +26,8 @@ class DynamicAgent(agent.Agent):
         elif queue_prefix is not None:
             raise NotImplementedError()
 
-    def move(self, options, state):
-        return self.agent_instance.move(options, state)
+    def move(self, state):
+        return self.agent_instance.move(state)
 
     def observe(self, state):
         raise NotImplementedError()

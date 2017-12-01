@@ -11,7 +11,7 @@ class SimpleAgent(agent.Agent):
         super().__init__()
         self.threshold = threshold
 
-    def move(self, options, state):
+    def move(self, state):
         # my_game = dice_game.DiceGame(num_players=len(state["scores"]), type="Bunnies", state=state)
         #
         # available_move_names = {k for k, v in my_game.state["allowedMoves"].items() if v == 1}
@@ -42,6 +42,7 @@ class SimpleAgent(agent.Agent):
         # else:  # otherwise doesn't matter
         #     chosen_move_value = 0
 
+        options = state["move_options"]
         name, values = random.choice(list(options.items()))
         value = random.choice(values)
 

@@ -13,4 +13,4 @@ def test_dynamic_agent():
     da = DynamicAgent(**config)
 
     assert isinstance(da.agent_instance, BasicAgent)
-    assert isinstance(da.move([0], None), dict)
+    assert isinstance(da.move(None), dict)

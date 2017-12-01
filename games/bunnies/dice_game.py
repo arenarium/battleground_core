@@ -68,13 +68,15 @@ class DiceGame(GameEngine):
         """
         return "Bunnies"
 
-    def get_state(self, *args, **kwargs):
+    def get_state(self):
         """
         :returns self.state
         """
-        return self.state
+        state = self.state
+        state["move_options"] = self.get_move_options()
+        return state
 
-    def get_move_options(self, *args, **kwargs):
+    def get_move_options(self):
         options = {}
         for key, value in self.state["allowedMoves"].items():
             if value == 1:

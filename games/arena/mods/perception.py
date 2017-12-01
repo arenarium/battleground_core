@@ -10,25 +10,29 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_state(self, observer):
-        return {"gladiators": [g.get_init(observer) for g in self.gladiators],
-                "dungeon": self.dungeon.get_init(observer),
-                "queue": [(t, e.get_init(observer)) for t, e in self.event_queue],
-                "scores": self.scores
-                }
+    def get_state(self, observer=None):
+        state = {"gladiators": [g.get_init(observer) for g in self.gladiators],
+                 "dungeon": self.dungeon.get_init(observer),
+                 "queue": [(t, e.get_init(observer)) for t, e in self.event_queue],
+                 "scores": self.scores,
+                 "move_options": self.get_move_options(self.get_current_player())
+                 }
+        return state
 
 
 class Dungeon(dungeon.Dungeon):
-    def get_init(self, observer):
+    def get_init(self, observer=None):
         init = super().get_init()
-        init = observer.observe(init)
+        if observer is not None:
+            init = observer.observe(init)
         return init
 
 
 class Event(event.Event):
-    def get_init(self, observer):
+    def get_init(self, observer=None):
         init = super().get_init()
-        init = observer.observe(init)
+        if observer is not None:
+            init = observer.observe(init)
         return init
 
 
@@ -44,10 +48,11 @@ class Gladiator(gladiator.Gladiator):
             self.boosts["perception"] = 0
         # setting boosts["perception"] through boosts input is done in boosts mod
 
-    def get_init(self, observer):
+    def get_init(self, observer=None):
         init = super().get_init()
         init["perception"] = self.perception
-        init = observer.observe(init)
+        if observer is not None:
+            init = observer.observe(init)
         return init
 
     def reset(self):
@@ -58,6 +63,10 @@ class Gladiator(gladiator.Gladiator):
         return None
 
     def get_perception(self):
+        """
+        Get current perception value
+        :return: (int) perception
+        """
         boost = 0
         if hasattr(self, "boosts"):
             boost = self.boosts["perception"]
@@ -65,6 +74,12 @@ class Gladiator(gladiator.Gladiator):
         return perc
 
     def get_perception_p(self):
+        """
+        Get probability to observe something depending on current perception value
+        perception:   -3,  -2,  -1,  0 ,   1,   2,   3
+        probability: 1/5, 1/4, 1/3, 1/2, 2/3, 3/4, 4/5
+        :return: (float) probability
+        """
         perc = self.get_perception()
         if perc < 0:
             p = 1 / (2 - perc)

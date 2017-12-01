@@ -19,11 +19,9 @@ class BasicGameEngine(GameEngine):
         self.current_player = 0
         self.turn = 0
 
-    def get_state(self, *args, **kwargs):
-        return {"scores": self.scores, "turn": self.turn}
-
-    def get_move_options(self, *args, **kwargs):
-        return range(5, 20)
+    def get_state(self):
+        return {"scores": self.scores,
+                "turn": self.turn}
 
     def move(self, move):
         """

@@ -16,10 +16,7 @@ class GameEngine(object):
         """
         return self.type
 
-    def get_state(self, *args, **kwargs):
-        raise NotImplementedError()
-
-    def get_move_options(self, *args, **kwargs):
+    def get_state(self):
         raise NotImplementedError()
 
     def get_current_player(self):
