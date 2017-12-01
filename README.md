@@ -52,7 +52,7 @@ npm start
 then navigate to http://localhost:3000
 
 ## Getting Started With Development
-We reccomend you set up a virtual machine using [Vagrant](https://www.vagrantup.com/) and the provided Vagrantfile. Once you have Vagrant (and its requirements) installed you can use vagrant to run unit-tests.
+We recommend you set up a virtual machine using [Vagrant](https://www.vagrantup.com/) and the provided Vagrantfile. Once you have Vagrant (and its requirements) installed you can use vagrant to run unit-tests.
 
 
 ### Unit tests
