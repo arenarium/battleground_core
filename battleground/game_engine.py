@@ -16,7 +16,7 @@ class GameEngine(object):
         """
         return self.type
 
-    def get_state(self):
+    def get_state(self, *args, **kwargs):
         raise NotImplementedError()
 
     def get_move_options(self, *args, **kwargs):

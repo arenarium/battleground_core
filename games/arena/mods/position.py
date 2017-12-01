@@ -125,8 +125,8 @@ class Dungeon(dungeon.Dungeon):
         super().__init__(*args, **kwargs)
         self.size = size
 
-    def get_init(self):
-        init = super().get_init()
+    def get_init(self, *args, **kwargs):
+        init = super().get_init(*args, **kwargs)
         init["size"] = self.size
         return init
 
@@ -151,8 +151,8 @@ class Event(event.Event):
         super().__init__(*args, **kwargs)
         self.origin = origin
 
-    def get_init(self):
-        init = super().get_init()
+    def get_init(self, *args, **kwargs):
+        init = super().get_init(*args, **kwargs)
         init["origin"] = self.origin
         return init
 
@@ -166,8 +166,8 @@ class Gladiator(gladiator.Gladiator):
         self.pos = pos
         self.range = 1
 
-    def get_init(self):
-        init = super().get_init()
+    def get_init(self, *args, **kwargs):
+        init = super().get_init(*args, **kwargs)
         init["pos"] = self.pos
         init["range"] = self.range
         return init

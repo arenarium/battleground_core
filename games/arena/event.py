@@ -13,7 +13,7 @@ class Event(object):
         self.target = target
         self.value = value
 
-    def get_init(self):
+    def get_init(self, *args, **kwargs):
         init = {"owner": self.owner,
                 "type": self.type,
                 "time_stamp": self.time_stamp,

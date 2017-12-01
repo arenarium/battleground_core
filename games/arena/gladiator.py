@@ -34,7 +34,7 @@ class Gladiator(object):
         else:
             self.cur_hp = cur_hp
 
-    def get_init(self):
+    def get_init(self, *args, **kwargs):
         init = {"name": self.name,
                 "team": self.team,
                 "stats": self.base_stats,

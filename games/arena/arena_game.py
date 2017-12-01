@@ -103,7 +103,10 @@ class ArenaGameEngine(GameEngine):
     def get_game_name(self):
         return self.type
 
-    def get_state(self):
+    def get_state(self, *args, **kwargs):
+        """
+        :return: dict parsed state
+        """
         return {"gladiators": [g.get_init() for g in self.gladiators],
                 "dungeon": self.dungeon.get_init(),
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],

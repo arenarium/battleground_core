@@ -22,7 +22,7 @@ class GameRunner(object):
 
         while not self.game_engine.game_over():
             move_options = self.game_engine.get_move_options(player_index)
-            state = self.game_engine.get_state()
+            state = self.game_engine.get_state(player_index)
             move = self.players[player_index].move(move_options, state)
             self.game_engine.move(move)
 

@@ -75,8 +75,8 @@ class Gladiator(gladiator.Gladiator):
             for att, val in boosts.items():
                 self.boosts[att] = val
 
-    def get_init(self):
-        init = super().get_init()
+    def get_init(self, *args, **kwargs):
+        init = super().get_init(*args, **kwargs)
         init["cur_sp"] = self.cur_sp
         init["boosts"] = self.boosts
         return init
@@ -127,7 +127,7 @@ class Gladiator(gladiator.Gladiator):
     def get_max_sp(self):
         """
         :return: 10 + a compounding 10% bonus per point of con
-                 (10, 11, 12, 13, 14, 16)
+                 (10, 11, 12, 13, 14, 16, ...)
         """
         stats = self.get_stats()
         msp = int(10 * (1.1 ** stats["con"]))
@@ -145,6 +145,7 @@ class Gladiator(gladiator.Gladiator):
         :param attribute:
         :param value:
         :return: (int) sp cost of boost of attribute by value
+                 (0, 1, 3, 6, 10, 15, 21, ...)
         """
         old_val = self.boosts[attribute]
         new_val = old_val + value

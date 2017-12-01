@@ -68,7 +68,7 @@ class DiceGame(GameEngine):
         """
         return "Bunnies"
 
-    def get_state(self):
+    def get_state(self, *args, **kwargs):
         """
         :returns self.state
         """
