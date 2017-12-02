@@ -1,16 +1,18 @@
 from .game_data import get_client, get_db_handle
 import bson
 
-def get_agents(owner,db_handle=None):
+
+def get_agents(owner, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
     collection = db_handle.agents
     result = collection.find({"owner": owner})
     return list(result)
 
+
 def insert_new_agent(owner, name, game_type, db_handle):
     collection = db_handle.agents
-    doc = {"owner": owner, "name": name,"game_type":game_type}
+    doc = {"owner": owner, "name": name, "game_type": game_type}
     agent_id = collection.insert_one(doc).inserted_id
     return agent_id
 
@@ -22,9 +24,9 @@ def get_agent_id(owner, name, game_type, db_handle=None):
         agent_id = insert_new_agent(owner, name, game_type, db_handle)
     else:
         collection = db_handle.agents
-        result = list(collection.find({"owner": owner, "name": name,"game_type":game_type}))
-        if len(result)>0:
-            agent_id =  result[0]["_id"]
+        result = list(collection.find({"owner": owner, "name": name, "game_type": game_type}))
+        if len(result) > 0:
+            agent_id = result[0]["_id"]
         else:
             agent_id = insert_new_agent(owner, name, game_type, db_handle)
     return agent_id
@@ -38,8 +40,9 @@ def save_agent_data(agent_id, data, key, db_handle=None):
         agent_id = bson.ObjectId(str(agent_id))
 
     collection = db_handle.agents
-    update_spec = {"$set":{key: data}}
-    data_id = collection.update_one({"_id":agent_id},update_spec)
+    update_spec = {"$set": {key: data}}
+    data_id = collection.update_one({"_id": agent_id}, update_spec)
+    return data_id
 
 
 def load_agent_data(agent_id, key, db_handle=None):
@@ -57,7 +60,7 @@ def load_agent_data(agent_id, key, db_handle=None):
     return None
 
 
-def save_game_result(agent_id, game_id, game_type, score, win,db_handle=None):
+def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
     collection = db_handle.agents
@@ -66,7 +69,7 @@ def save_game_result(agent_id, game_id, game_type, score, win,db_handle=None):
         agent_id = bson.ObjectId(str(agent_id))
 
     result = list(collection.find({"_id": agent_id}))
-    if len(result)>0:
+    if len(result) > 0:
         agent = result[0]
     else:
         raise Exception("agent not found: {}".format(agent_id))
@@ -75,11 +78,11 @@ def save_game_result(agent_id, game_id, game_type, score, win,db_handle=None):
         num_games = agent["results"]["num_games"]
         avg_score = agent["results"]["avg_score"]
         agent["results"]["num_games"] += 1
-        agent["results"]["avg_score"] = (avg_score*num_games+score)/(num_games+1)
+        agent["results"]["avg_score"] = (avg_score * num_games + score) / (num_games + 1)
         if win:
-            agent["results"]["num_wins"] +=1
+            agent["results"]["num_wins"] += 1
     else:
-        agent["results"]={}
+        agent["results"] = {}
         agent["results"]["num_games"] = 1
         agent["results"]["avg_score"] = score
         agent["results"]["num_wins"] = 1 if win else 0
@@ -87,7 +90,7 @@ def save_game_result(agent_id, game_id, game_type, score, win,db_handle=None):
     collection.save(agent)
 
 
-def load_game_results(game_type,db_handle=None):
+def load_game_results(game_type, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
     collection = db_handle.agents
@@ -97,6 +100,7 @@ def load_game_results(game_type,db_handle=None):
 
     for agent in result:
         if "results" in agent:
-            stats.append((agent["owner"], agent["name"], agent["results"]["num_wins"]/agent["results"]["num_games"]))
+            win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
+            stats.append((agent["owner"], agent["name"], win_rate))
 
     return stats

@@ -14,17 +14,18 @@ def parse_config(config):
     try:
         with open(config, "r") as f:
             data = json.load(f)
-    except:
+    except Exception as e:
         data = json.loads(config)
     return data
 
 
 def get_players(players_config, game_type):
-    # TODO: retrieve player ID to use as key to dictionary
     agents = {}
     for player in players_config:
-        agent_id = str(agent_data.get_agent_id(player["owner"],player["name"],game_type))
-        agents[agent_id]= DynamicAgent(**player)
+        agent_id = agent_data.get_agent_id(player["owner"],
+                                           player["name"],
+                                           game_type)
+        agents[str(agent_id)] = DynamicAgent(**player)
     return agents
 
 
