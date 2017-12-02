@@ -50,10 +50,16 @@ def start_session(config, save=True, game_delay=None):
         engine = game_engine_factory(len(players), config_data["game"])
         gr = GameRunner(engine, players=players, save=save)
         scores = gr.run_game()
+
         if game_delay is None:
             time.sleep(config_data["game_delay"])
         else:
             time.sleep(game_delay)
         print(scores)
         all_scores.append(scores)
+
+    for id, player in players.items():
+        agent_data.save_agent_data(agent_id=id,
+                                   data=player.get_data_to_save(),
+                                   key="memory")
     return all_scores
