@@ -33,6 +33,12 @@ def get_agent_id(owner, name, game_type, db_handle=None):
     return agent_id
 
 
+def save_agent_code(owner, name, game_type, code):
+    agent_id = get_agent_id(owner, name, game_type)
+    save_agent_data(agent_id, data=code, key="code")
+    return agent_id
+
+
 def save_agent_data(agent_id, data, key, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")

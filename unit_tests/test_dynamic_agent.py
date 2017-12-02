@@ -26,16 +26,20 @@ def test_dynamic_agent_database():
         "local_path": "games.basic_game.basic_agent",
         "remote_path": None
     }
-
+    # create an agent ID
     agent_id = agent_data.get_agent_id(owner=config["owner"],
                                        name=config["name"],
                                        game_type=["game_type"])
+
+    # load file
     module_path = config["local_path"].replace(".", "/") + ".py"
     with open(module_path, 'r') as f:
         code_string = f.read()
 
+    # save to database
     agent_data.save_agent_data(agent_id, code_string, "code")
 
+    # test loading from database
     da = DynamicAgent(owner=config["owner"],
                       name=config["name"],
                       game_type=["game_type"],
