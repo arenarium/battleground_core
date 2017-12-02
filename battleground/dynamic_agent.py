@@ -1,6 +1,5 @@
 from . import agent
 import importlib
-import sys
 import inspect
 from .persistence import agent_data
 import random

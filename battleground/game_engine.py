@@ -1,5 +1,6 @@
 """
-This is an interface for the game engine class.On the engine for a specific game
+This is an interface for the game engine class.
+An the engine for a specific game
 Should implement these functions.
 """
 

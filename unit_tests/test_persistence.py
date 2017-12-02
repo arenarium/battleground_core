@@ -1,6 +1,5 @@
 import pytest
 from battleground.persistence import game_data
-import uuid
 import random
 
 
