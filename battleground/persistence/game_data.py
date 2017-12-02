@@ -65,7 +65,10 @@ def save_game_meta_data(game_type, num_states, utc_time=None, db_handle=None):
         db_handle = get_db_handle()
     if utc_time is None:
         utc_time = str(datetime.datetime.utcnow())
-    doc = {"game_type": game_type, "utc_time": utc_time, "num_states": num_states}
+    doc = {
+        "game_type": game_type,
+        "utc_time": utc_time,
+        "num_states": num_states}
     game_id = db_handle.games.insert_one(doc).inserted_id
     return game_id
 

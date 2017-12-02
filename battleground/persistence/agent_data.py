@@ -1,4 +1,4 @@
-from .game_data import get_client, get_db_handle
+from .game_data import get_db_handle
 import bson
 
 
@@ -24,7 +24,8 @@ def get_agent_id(owner, name, game_type, db_handle=None):
         agent_id = insert_new_agent(owner, name, game_type, db_handle)
     else:
         collection = db_handle.agents
-        result = list(collection.find({"owner": owner, "name": name, "game_type": game_type}))
+        result = list(collection.find(
+            {"owner": owner, "name": name, "game_type": game_type}))
         if len(result) > 0:
             agent_id = result[0]["_id"]
         else:
@@ -78,7 +79,8 @@ def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
         num_games = agent["results"]["num_games"]
         avg_score = agent["results"]["avg_score"]
         agent["results"]["num_games"] += 1
-        agent["results"]["avg_score"] = (avg_score * num_games + score) / (num_games + 1)
+        agent["results"]["avg_score"] = (
+            avg_score * num_games + score) / (num_games + 1)
         if win:
             agent["results"]["num_wins"] += 1
     else:
@@ -100,7 +102,8 @@ def load_game_results(game_type, db_handle=None):
 
     for agent in result:
         if "results" in agent:
-            win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
+            win_rate = agent["results"]["num_wins"] / \
+                agent["results"]["num_games"]
             stats.append((agent["owner"], agent["name"], win_rate))
 
     return stats

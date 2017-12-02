@@ -40,16 +40,16 @@ class GameRunner(object):
 
         if self.save:
             # save game states and player stats to the DB.
-            game_id = game_data.save_game_history(self.game_engine.get_game_name(),
-                                        self.game_states)
+            game_id = game_data.save_game_history(
+                self.game_engine.get_game_name(), self.game_states)
             for i in range(len(self.players)):
                 player = self.players[i]
                 agent_id = self.player_ids[i]
                 score = scores[i]
-                agent_data.save_game_result(agent_id,game_id,
+                agent_data.save_game_result(agent_id, game_id,
                                             self.game_engine.type,
                                             score,
-                                            max(scores)==score)
+                                            max(scores) == score)
 
         return scores
 
