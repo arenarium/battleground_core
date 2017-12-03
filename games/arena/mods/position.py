@@ -110,14 +110,18 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
 
         return options
 
-    def queue_move(self, move):
+    def init_queued_event_stats(self, time, glad_event, move):
         """
-        :param move:
-        :return: None
+        As super(), but adds information about the position at event creation.
+        :param time: time the event is created
+        :param glad_event: event the gladiator is called
+        :param move: move the gladiator wants to queue
+        :return: dict of stats for instantiation of event.
         """
-        super().queue_move(move)
-        # TODO: Add correct origin attribute to queued events.
-        return None
+        stats = super().init_queued_event_stats(time, glad_event, move)
+        glad = self.gladiators[glad_event.owner]
+        stats["origin"] = glad.pos
+        return stats
 
     def handle_event(self, event):
         if event.type is "move":
