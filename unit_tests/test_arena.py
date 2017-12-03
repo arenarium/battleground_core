@@ -21,26 +21,18 @@ def test_engine():
     assert "dungeon" in state
     assert "queue" in state
     assert "scores" in state
+    assert "move_options" in state
     assert isinstance(age.get_current_player(), int)
-    # assert isinstance(age.within_bounds((0, 0), age.dungeon.size), bool)
-    assert isinstance(age.get_move_options(gladiator_index=0), list)
     assert isinstance(age.game_over(), bool)
 
 
 def test_dungeon():
-    assert True
-    # size = ((random.randint(1, 20), random.randint(21, 50)),
-    #         (random.randint(1, 20), random.randint(21, 50)))
-    # dun = Dungeon(size)
-    # assert dun.size == size
-    # assert isinstance(dun.world, list)
-    # assert len(dun.world) == size[0]
+    dungeon = Dungeon()
+    assert isinstance(dungeon.get_init(), dict)
 
 
 def test_gladiator():
-    # pos = (random.randint(1, 100), random.randint(1, 100))
     glad = Gladiator()
-    # assert isinstance(glad.pos, tuple)
     assert isinstance(glad.name, str)
     assert isinstance(glad.get_init(), dict)
     assert isinstance(glad.get_stats(), dict)
@@ -52,17 +44,8 @@ def test_gladiator():
     assert isinstance(glad.get_max_hp(), int)
     assert isinstance(glad.max_hp, int)
     assert isinstance(glad.cur_hp, int)
-    # assert isinstance(glad.get_max_sp(), int)
-    # assert isinstance(glad.max_sp, int)
-    # assert isinstance(glad.cur_sp, int)
     assert isinstance(glad.is_dead(), bool)
     assert 0 < glad.get_speed()
-    # assert isinstance(glad.boosts, dict)
-    # assert glad.set_boosts({"speed": random.randint(1, 3)}) is None
-    # assert glad.cur_sp < glad.max_sp
-    # assert glad.boosts["speed"] > 0
-    # assert glad.move((1, 0)) is None
-    # assert len(glad.pos) == 2
 
     options = {"stay": {None: 0},
                "attack": {0: None}
@@ -70,7 +53,6 @@ def test_gladiator():
     for action, targets in options.items():
         for target, value in targets.items():
             assert isinstance(glad.get_cost(action, target, value), int)
-    # new_pos = calc.add_tuples(pos, (1, 0))
     stats = {"str": random.randint(1, 3),
              "dex": random.randint(1, 3),
              "con": random.randint(1, 3)}
@@ -81,13 +63,11 @@ def test_gladiator():
     team = random.randint(1, 10)
     vlad = Gladiator(stats=stats, skills=skills,
                      name=name, team=team, cur_hp=1, cur_sp=1)
-    # assert vlad.pos == new_pos
     assert vlad.name == name
     assert vlad.team == team
     assert vlad.base_stats == stats
     assert vlad.base_skills == skills
     assert vlad.cur_hp == 1
-    # assert vlad.cur_sp == 1
     assert isinstance(vlad.attack(glad), int)
 
 
