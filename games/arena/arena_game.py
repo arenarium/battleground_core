@@ -240,11 +240,9 @@ class ArenaGameEngine(GameEngine):
                       + glad.get_cost(action=name, target=target, value=value))
                     # + calc.noise())
 
-        event = self.event_class(owner=glad_index,
-                                 type=name,
-                                 time_stamp=time,
-                                 target=target,
-                                 value=value)
+        event_stats = self.init_queued_event_stats(time=time, glad_event=glad_event, move=move)
+
+        event = self.event_class(**event_stats)
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, event),
@@ -257,6 +255,20 @@ class ArenaGameEngine(GameEngine):
                           (event_time, next_glad_event),
                           keyfunc=lambda e: e[0])
         return None
+
+    def init_queued_event_stats(self, time, glad_event, move):
+        """
+        :param time: time the event is created
+        :param glad_event: event the gladiator is called
+        :param move: move the gladiator wants to queue
+        :return: dict of stats for instantiation of event.
+        """
+        stats = {"owner": glad_event.owner,
+                 "type": move["name"],
+                 "time_stamp": time,
+                 "target": move["target"],
+                 "value": move["value"]}
+        return stats
 
     def move_attack(self, event):
         """
