@@ -22,8 +22,10 @@ class GameRunner(object):
 
         while not self.game_engine.game_over():
             engine_state = self.game_engine.get_state()
+
             move = self.players[player_index].move(engine_state)
             self.game_engine.move(move)
+
             state = self.game_engine.get_save_state()
 
             data_to_save = {}
@@ -33,6 +35,7 @@ class GameRunner(object):
 
             self.game_states.append(data_to_save)
             self.broadcast(data_to_save)
+
             player_index = self.game_engine.get_current_player()
 
         # the final scores
@@ -52,5 +55,7 @@ class GameRunner(object):
 
         return scores
 
-    def broadcast(self, state):
-        pass
+    def broadcast(self, data):
+        state = data["game_state"]
+        for player in self.players:
+            player.observe(state)

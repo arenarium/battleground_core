@@ -1,23 +1,22 @@
 from battleground.agent import Agent
 
 
-class BasicAgent(Agent):
-    def __init__(self, data=None):
-        super().__init__()
-        if data is None:
-            self.data = {"guess": 5}
-        else:
-            self.data = data
+class PeristentAgent(Agent):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.my_turn_num = None
+        self.default_mem = {"guess": 5}
 
     def move(self, state):
-        return {"value": self.data["guess"]}
+        memory = self.get_memory(default=self.default_mem)
+        self.my_turn_num = state["turn"]
+        return {"value": memory["guess"]}
 
     def observe(self, state):
-        raise NotImplementedError()
-
-    def get_data_to_save(self):
-        """
-        the value returned here will be passed as the "data" parameter on the
-        next initialization of the agent.
-        """
-        return self.data
+        memory = self.get_memory(default=self.default_mem)
+        self.set_memory(memory)
+        if state["turn"] - 1 == self.my_turn_num:
+            last_roll = state["last_roll"]
+            delta = last_roll - memory["guess"]
+            memory["guess"] += delta * 0.01
+            self.set_memory(memory)

@@ -18,9 +18,10 @@ class BasicGameEngine(GameEngine):
         self.scores = [0] * self.num_players
         self.current_player = 0
         self.turn = 0
+        self.roll = None
 
     def get_state(self):
-        return {"scores": self.scores, "turn": self.turn}
+        return {"scores": self.scores, "turn": self.turn, "last_roll": self.roll}
 
     def get_save_state(self):
         return self.get_state()
@@ -32,9 +33,9 @@ class BasicGameEngine(GameEngine):
         assert "value" in move
 
         value = move["value"]
-        roll = random.randint(1, self.max)
+        self.roll = random.randint(1, self.max)
 
-        if value < roll:
+        if value < self.roll:
             self.scores[self.current_player] += value
             if not self.last_round and self.scores[self.current_player] >= 100:
                 self.last_round = True

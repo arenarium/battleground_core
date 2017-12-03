@@ -7,8 +7,8 @@ else:
 
 
 class SimpleAgent(agent.Agent):
-    def __init__(self, threshold=20):
-        super().__init__()
+    def __init__(self, threshold=20, **kwargs):
+        super().__init__(**kwargs)
         self.threshold = threshold
 
     @staticmethod

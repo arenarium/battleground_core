@@ -47,7 +47,9 @@ class DynamicAgent(agent.Agent):
 
         if code_string is None:
             error_message = "No code found in database for owner: {}, name: {}, type: {}"
-            error_message = error_message.format(self.owner, self.name, self.game_type)
+            error_message = error_message.format(self.owner,
+                                                 self.name,
+                                                 self.game_type)
             raise Exception(error_message)
 
         # generate random temporary file name
@@ -64,7 +66,6 @@ class DynamicAgent(agent.Agent):
         # load the module
         return self._load_from_file()
 
-
     def _load_from_file(self):
         """loads agent code from a file specified at runtime"""
 
@@ -75,17 +76,16 @@ class DynamicAgent(agent.Agent):
             if inspect.isclass(obj):
                 agent_class = obj
 
-        agent_memory = agent_data.load_agent_data(self.agent_id, "memory")
         if self.settings is not None:
-            return agent_class(data=agent_memory, **self.settings)
+            return agent_class(**self.settings)
         else:
-            return agent_class(data=agent_memory)
+            return agent_class()
 
     def move(self, state):
         return self.agent_instance.move(state)
 
     def observe(self, state):
-        return self.agent_instance.observe()
+        return self.agent_instance.observe(state)
 
-    def get_data_to_save():
+    def get_data_to_save(self):
         return self.agent_instance.get_data_to_save()
