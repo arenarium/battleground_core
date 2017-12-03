@@ -7,7 +7,7 @@ class BasicAgent(Agent):
         super().__init__()
 
     def move(self, state):
-        return {"value": random.randint(5,20)}
+        return {"value": random.randint(5, 20)}
 
     def observe(self, state):
         raise NotImplementedError()

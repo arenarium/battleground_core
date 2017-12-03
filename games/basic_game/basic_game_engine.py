@@ -23,7 +23,7 @@ class BasicGameEngine(GameEngine):
         return {"scores": self.scores, "turn": self.turn}
 
     def get_save_state(self):
-        return {"scores": self.scores, "turn": self.turn}
+        return self.get_state()
 
     def move(self, move):
         """
