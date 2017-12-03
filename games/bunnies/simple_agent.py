@@ -47,6 +47,3 @@ class SimpleAgent(agent.Agent):
                 "value": chosen_move_value}
 
         return move
-
-    def observe(self, state):
-        raise NotImplementedError()
