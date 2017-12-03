@@ -1,8 +1,7 @@
+import math
 
 from games.arena import arena_game
 from games.arena import gladiator
-
-from games.arena import calc
 
 
 class ArenaGameEngine(arena_game.ArenaGameEngine):
@@ -27,9 +26,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # add options for "boost"
         targets = {}
         for attr, val in gladiator.boosts.items():
-            min = - val
-            max = gladiator.cur_sp + 1
-            values = list(range(min, max))
+            min_range = - val
+            max_range = gladiator.cur_sp + 1
+            values = list(range(min_range, max_range))
             if values:
                 targets[attr] = values
         if targets:
@@ -174,7 +173,7 @@ class Gladiator(gladiator.Gladiator):
                  (inverse of the cost function)
         """
         old_val = self.boosts[attribute]
-        value = - 1/2 - old_val + calc.sqrt(1 + 8 * cur_sp + 4 * old_val * (1 + old_val))/2
+        value = - 1/2 - old_val + math.sqrt(1 + 8 * cur_sp + 4 * old_val * (1 + old_val))/2
         return int(value)
 
     def set_boosts(self, boosts):

@@ -1,21 +1,21 @@
 import pytest
 from battleground.persistence import game_data
-import uuid
+# import uuid
 import random
 
 
 @pytest.fixture(scope="module")
 def db_handle():
     """temporary database for testing"""
-    c = game_data.get_client()
+    client = game_data.get_client()
     db_handle = game_data.get_db_handle("test_db_handle")
     yield db_handle
-    c.drop_database("test_db_handle")
+    client.drop_database("test_db_handle")
 
 
 def test_connection():
-    c = game_data.get_client()
-    connection_info = c.server_info()
+    client = game_data.get_client()
+    connection_info = client.server_info()
     print(connection_info)
     assert isinstance(connection_info, dict)
 
@@ -23,9 +23,9 @@ def test_connection():
 def test_game_id(db_handle):
     """generate a unique ID"""
 
-    id1 = game_data.save_game_meta_data("test_game",num_states=0,db_handle=db_handle)
+    id1 = game_data.save_game_meta_data("test_game", num_states=0, db_handle=db_handle)
     assert len(str(id1)) == 24
-    id2 = game_data.save_game_meta_data("test_game2",num_states=0,db_handle=db_handle)
+    id2 = game_data.save_game_meta_data("test_game2", num_states=0, db_handle=db_handle)
     assert len(str(id2)) == 24
     assert id1 != id2
 
@@ -35,7 +35,7 @@ def test_save_state(db_handle):
 
     test_state = {"game_state": {"k_a": "v_a", "k_b": 2, "k_c": None},
                   "last_move": {"move": "a move"}}
-    game_id = game_data.save_game_meta_data("test_game2",num_states=0,db_handle=db_handle)
+    game_id = game_data.save_game_meta_data("test_game2", num_states=0, db_handle=db_handle)
     state_ids = game_data.save_game_states(
         game_id, "test_game", [test_state], db_handle=db_handle).inserted_ids
     assert len(state_ids) == 1
@@ -93,7 +93,6 @@ def test_game_list_selector(db_handle):
     data = game_data.get_games_list(db_handle=db_handle, game_type="test_game")
     assert data.count() > 0
     assert len(str(data[0]["_id"])) == 24
-
 
 
 if __name__ == "__main__":

@@ -80,12 +80,12 @@ class Gladiator(gladiator.Gladiator):
         probability: 1/5, 1/4, 1/3, 1/2, 2/3, 3/4, 4/5
         :return: (float) probability
         """
-        perc = self.get_perception()
-        if perc < 0:
-            p = 1 / (2 - perc)
+        perception = self.get_perception()
+        if perception < 0:
+            probability = 1 / (2 - perception)
         else:
-            p = 1 - 1 / (2 + perc)
-        return p
+            probability = 1 - 1 / (2 + perception)
+        return probability
 
     def observe(self, init_state):
         """

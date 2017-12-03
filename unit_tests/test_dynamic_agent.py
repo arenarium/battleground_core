@@ -10,7 +10,7 @@ def test_dynamic_agent():
         "remote_path": None
     }
 
-    da = DynamicAgent(**config)
+    dynamic_agent = DynamicAgent(**config)
 
-    assert isinstance(da.agent_instance, BasicAgent)
-    assert isinstance(da.move(None), dict)
+    assert isinstance(dynamic_agent.agent_instance, BasicAgent)
+    assert isinstance(dynamic_agent.move(None), dict)

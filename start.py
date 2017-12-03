@@ -5,7 +5,7 @@ import time
 from battleground import site_runner
 
 
-def get_dynamic_players(game_type, n):
+def get_dynamic_players(game_type, number_of_players):
     """
     this is a light-weight local version to pick players for a game.
     in deployment this should be replaced with a database query.
@@ -13,7 +13,7 @@ def get_dynamic_players(game_type, n):
     with open("config/registered_players.json", 'r') as conf:
         registered_players = json.load(conf)
     qualifying_players = []
-    for name, player in registered_players.items():
+    for _, player in registered_players.items():
         if game_type in player["game_type"]:
             qualifying_players.append(player)
 
@@ -21,7 +21,7 @@ def get_dynamic_players(game_type, n):
         raise IndexError("No qualifying players found.")
 
     players = []
-    for i in range(n):
+    for _ in range(number_of_players):
         players.append(random.choice(qualifying_players))
     return players
 

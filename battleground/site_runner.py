@@ -1,7 +1,7 @@
 import json
-import os
 import importlib
 import inspect
+# import os
 from .dynamic_agent import DynamicAgent
 from .game_runner import GameRunner
 import time
@@ -11,9 +11,9 @@ def parse_config(config):
     if isinstance(config, dict):
         return config
     try:
-        with open(config, "r") as f:
-            data = json.load(f)
-    except:
+        with open(config, "r") as file:
+            data = json.load(file)
+    except OSError:
         data = json.loads(config)
     return data
 
@@ -55,10 +55,10 @@ def start_session(config, save=True, game_delay=None):
     config_data = parse_config(config)
     players = get_players(config_data["players"])
     all_scores = []
-    for i in range(config_data["num_games"]):
+    for _ in range(config_data["num_games"]):
         engine = game_engine_factory(len(players), config_data["game"])
-        gr = GameRunner(engine, players=players, save=save)
-        scores = gr.run_game()
+        game_runner = GameRunner(engine, players=players, save=save)
+        scores = game_runner.run_game()
         if game_delay is None:
             time.sleep(config_data["game_delay"])
         else:
