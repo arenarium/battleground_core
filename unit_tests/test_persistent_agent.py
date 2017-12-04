@@ -43,7 +43,6 @@ def test_with_engine():
     for game_num in range(2):
         engine = BasicGameEngine(num_players=num_players, type=game_type)
 
-
         for i in range(num_players):
             owner = "core"
             name = "basic_persistent_{}".format(i)
@@ -51,6 +50,7 @@ def test_with_engine():
             players[str(agent_id)] = PeristentAgent()
 
         scores = site_runner.run_session(engine, players, 4, save=True)
+        assert len(scores) > 0
 
         for agent_id, player in players.items():
             db_memory = agent_data.load_agent_data(agent_id, "memory")

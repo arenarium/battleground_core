@@ -3,8 +3,6 @@ import copy
 
 num_players = 2
 
-# state = {"rollables": [1] * dice_game.NUM_DICE, "bunnies": [0] * dice_game.NUM_DICE, "hutches": [0] * dice_game.NUM_DICE, "movables": [1] * dice_game.NUM_DICE, "currentPlayer": 0, "scores": {0:0}, "extraBunnies": 0, "message": "", "allowedMoves": {"roll": 0, "stay": 0, "reset": 0, "moveBunny": 1, "moveHutch": 1}, "boardValue": 0,"lastPlayer": 2, "lastRound": False}
-
 STATE = {
     "rollables": [1] *
     dice_game.NUM_DICE,

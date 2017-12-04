@@ -71,3 +71,16 @@ def test_get_game_stats(db_handle):
 
     assert len(game_stats) > 0
     assert len(game_stats[0]) == 3
+
+
+def test_save_code(db_handle):
+    path = "games/basic_game/basic_persistent_agent.py"
+    with open(path, 'r') as f:
+        code = f.read()
+
+    agent_id = agent_data.save_agent_code(owner, name, game_type, code)
+    assert agent_id is not None
+
+    loaded_code = agent_data.load_agent_code(owner, name, game_type)
+
+    assert loaded_code == code

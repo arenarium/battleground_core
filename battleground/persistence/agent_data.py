@@ -33,10 +33,16 @@ def get_agent_id(owner, name, game_type, db_handle=None):
     return agent_id
 
 
-def save_agent_code(owner, name, game_type, code):
-    agent_id = get_agent_id(owner, name, game_type)
-    save_agent_data(agent_id, data=code, key="code")
+def save_agent_code(owner, name, game_type, code, db_handle=None):
+    agent_id = get_agent_id(owner, name, game_type, db_handle=db_handle)
+    save_agent_data(agent_id, data=code, key="code", db_handle=db_handle)
     return agent_id
+
+
+def load_agent_code(owner, name, game_type, db_handle=None):
+    agent_id = get_agent_id(owner, name, game_type, db_handle=db_handle)
+    code = load_agent_data(agent_id, key="code", db_handle=db_handle)
+    return code
 
 
 def save_agent_data(agent_id, data, key, db_handle=None):
