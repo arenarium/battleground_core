@@ -24,6 +24,8 @@ def get_players(players_config, game_type):
         agent_id = agent_data.get_agent_id(player["owner"],
                                            player["name"],
                                            game_type)
+        if "game_type" not in player:
+            player["game_type"] = game_type
         agents[str(agent_id)] = DynamicAgent(**player)
     return agents
 

@@ -74,4 +74,32 @@ pytest
 
 ## Developing your own games and NPCs
 
-...More to come.
+### adding an external agent from the command line to run locally
+
+in order to add agents that are not part of the core platform you need:
+- a python file that contains the code for your agent
+- a game configuration file
+
+examples of these can be found in
+```
+examples/external_agent/
+```
+
+first upload your agent code to the database:
+```
+python battleground/utils/save_agent.py \
+--owner my_name \
+--name my_external_agent \
+--type basic_game \
+examples/external_agent/basic_persistent_agent.py
+```
+
+then adjust create a game configuration you want to play for example like
+```
+examples/external_agent/game_config.json
+```
+
+start the game:
+```
+python start.py --config examples/external_agent/game_config.json
+```

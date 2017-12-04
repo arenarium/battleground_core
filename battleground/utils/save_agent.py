@@ -30,3 +30,5 @@ if __name__ == "__main__":
     parser.add_argument('path', help='file path')
 
     args = parser.parse_args()
+
+    go(args)
