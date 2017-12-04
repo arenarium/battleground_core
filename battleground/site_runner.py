@@ -74,7 +74,6 @@ def start_session(config, save=True, game_delay=None):
 
     players = get_players(config_data["players"], config_data["game"]["type"])
     engine = game_engine_factory(len(players), config_data["game"])
-
     all_scores = run_session(engine,
                              players,
                              num_games,

@@ -13,6 +13,7 @@ class PeristentAgent(Agent):
         return {"value": memory["guess"]}
 
     def observe(self, state):
+
         memory = self.get_memory(default=self.default_mem)
         self.set_memory(memory)
         if state["turn"] - 1 == self.my_turn_num:

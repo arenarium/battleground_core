@@ -18,7 +18,6 @@ class DynamicAgent(agent.Agent):
                  queue_prefix=None,
                  settings=None,
                  **kwargs):
-        super().__init__()
         self.owner = owner
         self.name = name
         self.game_type = game_type
@@ -37,6 +36,8 @@ class DynamicAgent(agent.Agent):
             self.agent_instance = self._load_from_file()
         elif queue_prefix is not None:
             raise NotImplementedError()
+
+        super().__init__()
 
     def _load_from_database(self):
         """
@@ -60,6 +61,7 @@ class DynamicAgent(agent.Agent):
         with open(module_path, 'w') as f:
             f.write(code_string)
 
+        importlib.invalidate_caches()
         # change path to module specifier
         self.local_path = module_path[:-3].replace("/", ".")
 
@@ -87,5 +89,8 @@ class DynamicAgent(agent.Agent):
     def observe(self, state):
         return self.agent_instance.observe(state)
 
-    def get_data_to_save(self):
-        return self.agent_instance.get_data_to_save()
+    def get_memory(self):
+        return self.agent_instance.get_memory()
+
+    def set_memory(self, data):
+        return self.agent_instance.set_memory(data)
