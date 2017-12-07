@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3e2e2e8f830f4cdd9b7f2425a070adc2)](https://www.codacy.com/app/0d26ae7a/battleground?utm_source=github.com&utm_medium=referral&utm_content=vincentropy/battleground&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/vincentropy/battleground.svg?branch=master)](https://travis-ci.org/vincentropy/battleground)
 
 # battleground
