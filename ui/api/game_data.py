@@ -1,4 +1,4 @@
-#from uuid import uuid4
+# from uuid import uuid4
 import pymongo
 from pymongo import MongoClient
 import bson
@@ -60,12 +60,12 @@ def save_game_states(game_id,
     return result
 
 
-def save_game_meta_data(game_type, num_states,utc_time=None,db_handle=None):
+def save_game_meta_data(game_type, num_states, utc_time=None, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle()
     if utc_time is None:
         utc_time = str(datetime.datetime.utcnow())
-    doc = {"game_type":game_type,"utc_time":utc_time,"num_states":num_states}
+    doc = {"game_type": game_type, "utc_time": utc_time, "num_states": num_states}
     game_id = db_handle.games.insert_one(doc).inserted_id
     return game_id
 
@@ -75,7 +75,7 @@ def save_game_history(game_type, game_states, db_handle=None):
     save a sequence of documents to the data-store.
     game_states: array of dict
         each array element will be stored as one document in the doc-store.
-        each key, value in each dict will be stord as key: json(value) in the document.
+        each key, value in each dict will be stored as key: json(value) in the document.
         expected keys are "game_state", "last_move" and "player_ids"
     """
 
@@ -83,7 +83,7 @@ def save_game_history(game_type, game_states, db_handle=None):
         db_handle = get_db_handle()
 
     game_id = save_game_meta_data(game_type=game_type,
-                                  num_states = len(game_states),
+                                  num_states=len(game_states),
                                   db_handle=db_handle)
 
     save_game_states(game_id=game_id,
@@ -99,12 +99,12 @@ def load_game_history(game_id, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle()
 
-    if not isinstance(game_id,bson.ObjectId):
+    if not isinstance(game_id, bson.ObjectId):
         game_id = bson.ObjectId(str(game_id))
 
     collection = db_handle.game_states
 
-    result = collection.find({"game_id":game_id})
+    result = collection.find({"game_id": game_id})
     data = result[:]
     states_in_sequence = [None] * result.count()
 
@@ -135,6 +135,6 @@ def get_games_list(game_type=None, db_handle=None):
         result = collection.find(sort=[('utc_time', pymongo.DESCENDING)])
     else:
         result = collection.find(sort=[('utc_time', pymongo.DESCENDING)],
-                                 filter={"game_type":game_type})
+                                 filter={"game_type": game_type})
 
     return result

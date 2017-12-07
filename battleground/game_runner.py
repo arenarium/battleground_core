@@ -1,4 +1,4 @@
-from .persistence import game_data
+from .persistence import game_data, agent_data
 import copy
 
 
@@ -22,8 +22,10 @@ class GameRunner(object):
 
         while not self.game_engine.game_over():
             engine_state = self.game_engine.get_state()
+
             move = self.players[player_index].move(engine_state)
             self.game_engine.move(move)
+
             state = self.game_engine.get_save_state()
 
             data_to_save = {}
@@ -33,12 +35,27 @@ class GameRunner(object):
 
             self.game_states.append(data_to_save)
             self.broadcast(data_to_save)
+
             player_index = self.game_engine.get_current_player()
 
-        if self.save:
-            game_data.save_game_history(self.game_engine.get_game_name(),
-                                        self.game_states)
-        return self.game_engine.get_state()["scores"]
+        # the final scores
+        scores = self.game_engine.get_state()["scores"]
 
-    def broadcast(self, state):
-        pass
+        if self.save:
+            # save game states and player stats to the DB.
+            game_id = game_data.save_game_history(self.game_engine.get_game_name(),
+                                                  self.game_states)
+            for i in range(len(self.players)):
+                agent_id = self.player_ids[i]
+                score = scores[i]
+                agent_data.save_game_result(agent_id, game_id,
+                                            self.game_engine.type,
+                                            score,
+                                            max(scores) == score)
+
+        return scores
+
+    def broadcast(self, data):
+        state = data["game_state"]
+        for player in self.players:
+            player.observe(state)

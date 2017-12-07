@@ -26,11 +26,9 @@
       "remote_path":null
     },
     {
-      "owner":"core",
-      "name":"basic_3",
-      "local_path":"games.basic_game.basic_agent",
-      "class_name":"BasicAgent",
-      "remote_path":null
+      "owner":"my_name",
+      "name":"my_external_agent",
+      "from_db": true
     }
   ]
 }

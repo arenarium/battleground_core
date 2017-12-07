@@ -1,10 +1,10 @@
 import json
-import os
 import importlib
 import inspect
 from .dynamic_agent import DynamicAgent
 from .game_runner import GameRunner
 import time
+from .persistence import agent_data
 
 
 def parse_config(config):
@@ -13,17 +13,21 @@ def parse_config(config):
     try:
         with open(config, "r") as f:
             data = json.load(f)
-    except:
+    except Exception as e:
         data = json.loads(config)
     return data
 
 
-def get_players(players_config):
-    # TODO: retrieve player ID to use as key to dictionary
-    agents = []
+def get_players(players_config, game_type):
+    agents = {}
     for player in players_config:
-        agents.append(DynamicAgent(**player))
-    return dict(enumerate(agents))
+        agent_id = agent_data.get_agent_id(player["owner"],
+                                           player["name"],
+                                           game_type)
+        if "game_type" not in player:
+            player["game_type"] = game_type
+        agents[str(agent_id)] = DynamicAgent(**player)
+    return agents
 
 
 def game_engine_factory(num_players, game_config):
@@ -39,19 +43,42 @@ def game_engine_factory(num_players, game_config):
     return engine_instance
 
 
-def start_session(config, save=True, game_delay=None):
-    config_data = parse_config(config)
-    print(config_data["game"]["type"])
-    players = get_players(config_data["players"])
+def run_session(engine, players, num_games, save=True, game_delay=None):
     all_scores = []
-    for i in range(config_data["num_games"]):
-        engine = game_engine_factory(len(players), config_data["game"])
+
+    for agent_id, player in players.items():
+        memory = agent_data.load_agent_data(agent_id=agent_id,
+                                            key="memory")
+        player.set_memory(memory)
+
+    for i in range(num_games):
         gr = GameRunner(engine, players=players, save=save)
         scores = gr.run_game()
-        if game_delay is None:
-            time.sleep(config_data["game_delay"])
-        else:
+
+        if game_delay is not None:
             time.sleep(game_delay)
+
         print(scores)
         all_scores.append(scores)
+        engine.reset()
+
+    for id, player in players.items():
+        agent_data.save_agent_data(agent_id=id,
+                                   data=player.get_memory(),
+                                   key="memory")
+    return all_scores
+
+
+def start_session(config, save=True, game_delay=None):
+    config_data = parse_config(config)
+    num_games = config_data["num_games"]
+    print(config_data["game"]["type"])
+
+    players = get_players(config_data["players"], config_data["game"]["type"])
+    engine = game_engine_factory(len(players), config_data["game"])
+    all_scores = run_session(engine,
+                             players,
+                             num_games,
+                             save=save,
+                             game_delay=game_delay)
     return all_scores

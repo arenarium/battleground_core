@@ -1,3 +1,7 @@
+// Containers are wrappers around components that implement mapping from
+// state variables to props
+// dispatch functions to props
+
 import { connect } from 'react-redux'
 import { fetchGames ,doAutoPlay} from '../actions'
 import App from '../components/App'

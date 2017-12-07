@@ -23,13 +23,18 @@ def get_dynamic_players(game_type, n):
     return players
 
 
-def generate_dynamic_config(game_delay):
+def generate_dynamic_config(game_delay, game_name=None, players=None):
     with open("config/registered_games.json", 'r') as conf:
         registered_games = json.load(conf)
 
-    game_spec = random.choice(registered_games)
+    if game_name is None:
+        game_spec = random.choice(registered_games)
+    else:
+        registered_games = {x["name"]: x for x in registered_games}
+        game_spec = registered_games[game_name]
 
-    players = get_dynamic_players(game_spec["type"], 3)
+    if players is None:
+        players = get_dynamic_players(game_spec["type"], 3)
 
     config = {
         "game": game_spec,

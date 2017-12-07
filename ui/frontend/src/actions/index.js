@@ -1,3 +1,7 @@
+// Actions are functions.
+// Actions are called by passing them to the dispatcher from a container.
+// dispatcher passes actions to reducers to update state.
+
 
 export const selectGame = id => {
   return {
@@ -51,6 +55,8 @@ export const receiveStates = (gameID,data) => {
   }
 }
 
+
+
 export const changeAutoPlay = () => {
   return {
     type: 'CHANGE_AUTOPLAY',
@@ -63,20 +69,6 @@ export const autoIncrementTurn = () => {
   }
 }
 
-
-
-
-// export function getGamesList() {
-//     fetch('/api/games/')
-//     .then((response) =>{
-//       return response.json()})
-//       .then((value)=>{
-//         this.setState({gameArray:value})
-//       })
-//       .catch(function(ex) {
-//         console.log('parsing failed', ex)
-//       })
-//   }
 
 export function fetchGames(gameType) {
   // Thunk middleware knows how to handle functions.
@@ -128,6 +120,9 @@ export function fetchStates(gameID) {
       )
   }
 }
+
+
+
 
 export function doAutoPlay(delayTime) {
   return function (dispatch) {

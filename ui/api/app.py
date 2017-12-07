@@ -7,6 +7,7 @@ from os import path, environ
 import json
 
 import game_data
+import agent_data
 
 app = Flask(__name__)
 
@@ -48,6 +49,12 @@ def get_games_types():
         doc["_id"] = str(doc["_id"])
         output.append(doc)
     return jsonify(output)
+
+
+@app.route("/api/stats/")
+def get_game_results():
+    data = agent_data.load_game_results(game_type="basic_game")
+    return jsonify(data)
 
 
 @app.route("/api/")
