@@ -84,7 +84,7 @@
     "settings":{}
   },
   {
-    "name": "Arena Game (Perc, Boo and Pos)",
+    "name": "Arena Game (Perception, Boosts and Position)",
     "type": "arena_game_pbp",
     "local_path": "games.arena.arena_game",
     "class_name": "ArenaGameEngine",

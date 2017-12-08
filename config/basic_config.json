@@ -12,22 +12,22 @@
   },
   "players":[
     {
-      "owner":"",
-      "name":"",
+      "owner":"core",
+      "name":"basic_1",
       "local_path":"games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null
     },
     {
-      "owner":"",
-      "name":"",
+      "owner":"core",
+      "name":"basic_2",
       "local_path":"games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null
     },
     {
-      "owner":"",
-      "name":"",
+      "owner":"core",
+      "name":"basic_3",
       "local_path":"games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null

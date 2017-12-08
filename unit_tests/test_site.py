@@ -1,10 +1,7 @@
-import pytest
-import json
-
 import battleground.site_runner as site_runner
 from battleground.dynamic_agent import DynamicAgent
-# from battleground.game_engine import GameEngine
 from games.basic_game.basic_game_engine import BasicGameEngine
+import json
 
 CONFIG_DATA_FILE = "config/basic_config.json"
 
@@ -33,7 +30,7 @@ def test_config_loader():
 
 def test_get_players():
     data = site_runner.parse_config(CONFIG_DATA_FILE)
-    players = site_runner.get_players(data["players"])
+    players = site_runner.get_players(data["players"], data["game"]["type"])
 
     assert isinstance(players, dict)
     assert len(players) == len(data["players"])
@@ -56,7 +53,8 @@ def test_get_engine():
 
 
 def test_run_session():
-    scores = site_runner.start_session(CONFIG_DATA_FILE, save=False, game_delay=0)
+    scores = site_runner.start_session(
+        CONFIG_DATA_FILE, save=False, game_delay=0)
     assert len(scores) > 0
     assert len(scores[0]) > 0
 

@@ -113,6 +113,12 @@ class ArenaGameEngine(GameEngine):
                 "move_options": self.get_move_options(self.get_current_player())
                 }
 
+    def get_save_state(self):
+        """
+        :return: (dict) parsed state
+        """
+        return self.get_state()
+
     def get_current_player(self):
         """
         This will be used by the game runner to determine which player should

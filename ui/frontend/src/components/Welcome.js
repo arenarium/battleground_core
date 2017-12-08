@@ -1,5 +1,6 @@
 import React from 'react'
 import { Jumbotron, Button } from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap'
 
 
 const Welcome = () =>(
@@ -8,7 +9,11 @@ const Welcome = () =>(
   <Jumbotron>
   <h2>Build,  Deploy,  Win.</h2>
   <p>Collaborative game-building and computer player proving ground.</p>
-  <Button>Watch</Button> or <Button>Join</Button>
+  <LinkContainer to="/games">
+  <Button>
+    Observe Games
+</Button>
+</LinkContainer> or <Button>Join</Button>
   </Jumbotron>
   </div>
 )
