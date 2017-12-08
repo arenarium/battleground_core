@@ -39,16 +39,16 @@ def modded_class_factory(engine_class, mod_paths=None):
         mod_module = importlib.import_module(mod_path)
         mod_modules.append(mod_module)
 
-    Dungeon = type("Dungeon", base_factory("Dungeon", mod_modules), {})
-    Event = type("Event", base_factory("Event", mod_modules), {})
-    Gladiator = type("Gladiator", base_factory("Gladiator", mod_modules), {})
-    ArenaGameEngine = type("ArenaGameEngine", base_factory("ArenaGameEngine", mod_modules), {})
+    dungeon_class = type("Dungeon", base_factory("Dungeon", mod_modules), {})
+    event_class = type("Event", base_factory("Event", mod_modules), {})
+    gladiator_class = type("Gladiator", base_factory("Gladiator", mod_modules), {})
+    engine_class = type("ArenaGameEngine", base_factory("ArenaGameEngine", mod_modules), {})
 
-    ArenaGameEngine.dungeon_class = Dungeon
-    ArenaGameEngine.event_class = Event
-    ArenaGameEngine.gladiator_class = Gladiator
+    engine_class.dungeon_class = dungeon_class
+    engine_class.event_class = event_class
+    engine_class.gladiator_class = gladiator_class
 
-    return ArenaGameEngine
+    return engine_class
 
 
 #

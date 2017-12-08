@@ -33,17 +33,17 @@ def test_dynamic_agent_database():
 
     # load file
     module_path = config["local_path"].replace(".", "/") + ".py"
-    with open(module_path, 'r') as f:
-        code_string = f.read()
+    with open(module_path, 'r') as file:
+        code_string = file.read()
 
     # save to database
     agent_data.save_agent_data(agent_id, code_string, "code")
 
     # test loading from database
-    da = DynamicAgent(owner=config["owner"],
-                      name=config["name"],
-                      game_type=["game_type"],
-                      from_db=True)
+    dynamic_agent = DynamicAgent(owner=config["owner"],
+                                 name=config["name"],
+                                 game_type=["game_type"],
+                                 from_db=True)
 
-    assert isinstance(da.agent_instance, Agent)
-    assert isinstance(da.move(None), dict)
+    assert isinstance(dynamic_agent.agent_instance, Agent)
+    assert isinstance(dynamic_agent.move(None), dict)

@@ -200,6 +200,7 @@ class Gladiator(gladiator.Gladiator):
         if action == "boost":
             cost = value * self.get_speed()
         else:
-            cost = super().get_cost(action=action, value=value,
+            cost = super().get_cost(action=action,
+                                    value=value,
                                     *args, **kwargs)
         return int(cost)

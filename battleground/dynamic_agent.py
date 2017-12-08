@@ -58,8 +58,8 @@ class DynamicAgent(agent.Agent):
         module_path = os.path.join(TEMP_MODULE_PATH, file_name)
 
         # write to temp file
-        with open(module_path, 'w') as f:
-            f.write(code_string)
+        with open(module_path, 'w') as file:
+            file.write(code_string)
 
         importlib.invalidate_caches()
         # change path to module specifier
@@ -89,7 +89,7 @@ class DynamicAgent(agent.Agent):
     def observe(self, state):
         return self.agent_instance.observe(state)
 
-    def get_memory(self):
+    def get_memory(self, **kwargs):
         return self.agent_instance.get_memory()
 
     def set_memory(self, data):

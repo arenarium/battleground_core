@@ -6,8 +6,8 @@ from flask import Flask, request, jsonify
 from os import path, environ
 import json
 
-import game_data
-import agent_data
+from battleground.persistence import game_data
+from battleground.persistence import agent_data
 
 app = Flask(__name__)
 

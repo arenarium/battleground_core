@@ -13,7 +13,7 @@ def parse_config(config):
     try:
         with open(config, "r") as file:
             data = json.load(file)
-    except Exception as e:
+    except OSError:
         data = json.loads(config)
     return data
 
@@ -74,8 +74,8 @@ def run_session(engine, players, num_games, save=True, game_delay=None):
         all_scores.append(scores)
         engine.reset()
 
-    for id, player in players.items():
-        agent_data.save_agent_data(agent_id=id,
+    for player_id, player in players.items():
+        agent_data.save_agent_data(agent_id=player_id,
                                    data=player.get_memory(),
                                    key="memory")
     return all_scores
