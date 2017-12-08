@@ -99,7 +99,7 @@ class Gladiator(gladiator.Gladiator):
         :param init_state: dict
         :return: observed init_state
         """
-        for key, _ in init_state:
+        for key, _ in init_state.items():
             if self.get_perception_p() < random.uniform(0, 1):
                 init_state[key] = "?"
         return init_state
