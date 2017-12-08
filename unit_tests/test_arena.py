@@ -84,9 +84,17 @@ def test_player():
     name = move["name"]
     target = move["target"]
     value = move["value"]
-    # assert name in options.keys()
-    # assert target in options[name].keys()
-    # assert value in options[name][target]
+
+    names = [option["name"] for option in options]
+    assert name in names
+    for option in options:
+        if option["name"] is name:
+            targets = [target_options["target"] for target_options in option["targets"]]
+            assert target in targets
+            for target_options in option["targets"]:
+                if target_options["target"] is target:
+                    values = target_options["values"]
+                    assert value in values
 
 
 def test_game():
