@@ -1,7 +1,7 @@
 from battleground.agent import Agent
 
 
-class PeristentAgent(Agent):
+class PersistentAgent(Agent):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.my_turn_num = None
