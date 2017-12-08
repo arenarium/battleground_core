@@ -10,7 +10,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_state(self, observer=None):
+    def get_state(self, observer="player"):
+        if observer is "player":
+            observer = self.gladiators[self.get_current_player()]
         state = {"gladiators": [g.get_init(observer) for g in self.gladiators],
                  "dungeon": self.dungeon.get_init(observer),
                  "queue": [(t, e.get_init(observer)) for t, e in self.event_queue],
@@ -18,6 +20,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                  "move_options": self.get_move_options(self.get_current_player())
                  }
         return state
+
+    def get_save_state(self):
+        return self.get_state(observer=None)
 
 
 class Dungeon(dungeon.Dungeon):
