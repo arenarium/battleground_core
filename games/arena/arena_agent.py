@@ -31,6 +31,3 @@ class ArenaAgent(agent.Agent):
                 "target": target,
                 "value": value}
         return move
-
-    def observe(self, state):
-        raise NotImplementedError()
