@@ -18,15 +18,19 @@ def parse_config(config):
     return data
 
 
-def get_players(players_config, game_type):
+def assign_agents(players_config, game_type):
     agents = {}
+    taken_ids = []
     for player in players_config:
         agent_id = agent_data.get_agent_id(owner=player["owner"],
                                            name=player["name"],
-                                           game_type=game_type)
+                                           game_type=game_type,
+                                           taken_ids=taken_ids)
+        player["agent_id"] = agent_id
         if "game_type" not in player:
-            player["game_type"] = game_type
+            player["game_type"] = [game_type]
         agents[str(agent_id)] = DynamicAgent(**player)
+        taken_ids.append(agent_id)
     return agents
 
 
@@ -86,7 +90,8 @@ def start_session(config, save=True, game_delay=None):
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
-    players = get_players(config_data["players"], config_data["game"]["type"])
+    players = assign_agents(players_config=config_data["players"],
+                            game_type=config_data["game"]["type"])
     engine = game_engine_factory(num_players=len(players),
                                  game_config=config_data["game"])
     all_scores = run_session(engine,

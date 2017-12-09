@@ -52,7 +52,7 @@ def generate_dynamic_config(game_delay, game_name=None, players=None):
 
 
 def go():
-    time.sleep(1)
+    # time.sleep(1)
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--config', type=str, default="config/basic_config.json")
     parser.add_argument('--dynamic', action='store_true')

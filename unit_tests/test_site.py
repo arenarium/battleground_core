@@ -28,9 +28,9 @@ def test_config_loader():
     assert "players" in data
 
 
-def test_get_players():
+def test_assign_agents():
     data = site_runner.parse_config(CONFIG_DATA_FILE)
-    players = site_runner.get_players(data["players"], data["game"]["type"])
+    players = site_runner.assign_agents(data["players"], data["game"]["type"])
 
     assert isinstance(players, dict)
     assert len(players) == len(data["players"])
