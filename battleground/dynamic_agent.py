@@ -23,9 +23,12 @@ class DynamicAgent(agent.Agent):
         self.game_type = game_type
         self.local_path = local_path
         self.settings = settings
-        self.agent_id = agent_data.get_agent_id(owner=self.owner,
-                                                name=self.name,
-                                                game_type=self.game_type)
+        if "agent_id" in kwargs:
+            self.agent_id = kwargs["agent_id"]
+        else:
+            self.agent_id = agent_data.get_agent_id(owner=self.owner,
+                                                    name=self.name,
+                                                    game_type=self.game_type)
 
         if not os.path.exists(TEMP_MODULE_PATH):
             os.mkdir(TEMP_MODULE_PATH)
