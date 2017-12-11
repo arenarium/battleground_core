@@ -137,8 +137,8 @@ class Gladiator(object):
         """
         :param attack: (int)
                probability to get hit depending on attack - evasion:
-                (  -5 ,  -4 ,   -3 ,  -2 ,   -1 ,  0 ,    1 ,   2 ,    3 ,   4 ,    5 )
-                (0.125, 0.18, 0.245, 0.32, 0.405, 0.5, 0.595, 0.68, 0.755, 0.82, 0.875)
+                ( -5 ,  -4 ,  -3 ,  -2 ,  -1 ,   0 ,   1 ,   2 ,   3 ,   4 ,   5 )
+                (0.15, 0.21, 0.28, 0.36, 0.45, 0.55, 0.64, 0.72, 0.79, 0.85, 0.90)
         :return: (bool)
         """
         hit = attack - self.get_evasion() + random.randint(1, 10) - random.randint(1, 10)
