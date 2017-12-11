@@ -119,23 +119,26 @@ class Gladiator(gladiator.Gladiator):
         eva = super().get_evasion() + self.boosts["eva"]
         return eva
 
-    def get_damage(self):
+    def get_base_damage(self):
         """
-        returns list of [damage dice, damage sides]
-        :return: [1 + boost, 2 + str]
+        :return: damage + boost
         """
-        [d_dice, d_side] = super().get_damage()
-        d_dice = d_dice + self.boosts["dam"]
-        return [d_dice, d_side]
+        damage = super().get_base_damage() + self.boosts["dam"]
+        return damage
 
-    def get_protection(self):
+    def get_base_protection(self):
         """
-        returns list of [protection dice, protection sides]
-        :return: [1 + boost, str]
+        :return: damage + boost
         """
-        [p_dice, p_side] = super().get_protection()
-        p_dice = p_dice + self.boosts["prot"]
-        return [p_dice, p_side]
+        protection = super().get_protection() + self.boosts["prot"]
+        return protection
+
+    def get_speed(self):
+        """
+        :return: 21 - speed - boost
+        """
+        speed = super().get_speed() - self.boosts["speed"]
+        return speed
 
     def get_max_sp(self):
         """
@@ -146,19 +149,12 @@ class Gladiator(gladiator.Gladiator):
         msp = int(10 * (1.1 ** stats["con"]))
         return msp
 
-    def get_speed(self):
-        """
-        :return: 21 - speed - boost
-        """
-        speed = super().get_speed() - self.boosts["speed"]
-        return speed
-
     def get_boost_cost(self, attribute, value):
         """
-        :param attribute:
-        :param value:
+        :param attribute: (str)
+        :param value: (1, 2, 3, 4, 5, ...)
         :return: (int) sp cost of boost of attribute by value
-                 (0, 1, 3, 6, 10, 15, 21, ...)
+                 cost: (1, 3, 6, 10, 15, ...)
         """
         old_val = self.boosts[attribute]
         new_val = old_val + value
@@ -179,11 +175,10 @@ class Gladiator(gladiator.Gladiator):
     def set_boosts(self, boosts):
         """
         :param boosts: dict containing keys and values to boost;
-                       boosting a key should reduce cur_sp by that amount
+                       boosting a key reduces cur_sp by corresponding cost
         :return: None
         """
         for attr, val in boosts.items():
-            # cost for boosting: (1, 2, 3, 4, 5, ...) -> (1, 3, 6, 10, 15, ...)
             cost = self.get_boost_cost(attribute=attr, value=val)
             if cost <= self.cur_sp:
                 self.cur_sp -= cost

@@ -1,5 +1,6 @@
 import copy
 import random
+import math
 
 
 class Gladiator(object):
@@ -26,6 +27,8 @@ class Gladiator(object):
                                 "speed": 0}
         else:
             self.base_skills = skills
+        self.damage = 5
+        self.protection = 0
         self.name = name
         self.team = team
         self.max_hp = self.get_max_hp()
@@ -82,25 +85,30 @@ class Gladiator(object):
         eva = skills["eva"]
         return eva
 
+    def get_base_damage(self):
+        return self.damage
+
+    def get_base_protection(self):
+        return self.protection
+
     def get_damage(self):
         """
-        returns list of [damage dice, damage sides]
-        :return: [1 + boost, 2 + str]
+        :return: base damage + a compounding 25% bonus per point of str
+                 (5, 6, 7, 9, 12, 15, ...)
         """
         stats = self.get_stats()
-        d_dice = 1
-        d_side = 10 + stats["str"]
-        return [d_dice, d_side]
+        damage = self.get_base_damage() * (1.25 ** stats["str"])
+        return int(damage)
 
     def get_protection(self):
         """
-        returns list of [protection dice, protection sides]
-        :return: [1 + boost, str]
+        :return: (base protection + log2(str)) + a compounding 25% bonus per point of str
+                 (0, 1, 2, 3, 5, 7, ...)
         """
         stats = self.get_stats()
-        p_dice = 1
-        p_side = 0 + stats["str"]
-        return [p_dice, p_side]
+        protection = (self.get_base_protection()
+                      + math.log2(1 + max(0, stats["str"]))) * (1.25 ** stats["str"])
+        return int(protection)
 
     def get_max_hp(self):
         """
@@ -125,29 +133,27 @@ class Gladiator(object):
     def is_dead(self):
         return bool(self.cur_hp <= 0)
 
+    def is_hit(self, attack):
+        """
+        :param attack: (int)
+               probability to get hit depending on attack - evasion:
+                (  -5 ,  -4 ,   -3 ,  -2 ,   -1 ,  0 ,    1 ,   2 ,    3 ,   4 ,    5 )
+                (0.125, 0.18, 0.245, 0.32, 0.405, 0.5, 0.595, 0.68, 0.755, 0.82, 0.875)
+        :return: (bool)
+        """
+        hit = attack - self.get_evasion() + random.randint(1, 10) - random.randint(1, 10)
+        return bool(hit >= 0)
+
     def attack(self, target):
         """
-        :param target: object that has an evasion score and protection tuple
+        :param target: object that has an is_hit() and a get_protection() method
         :return: (int) damage
         """
-        attack = self.get_attack()
-        evasion = target.get_evasion()
-        [d_dice, d_side] = self.get_damage()
-        [p_dice, p_side] = target.get_protection()
         damage = 0
         protection = 0
-        hit = attack - evasion + random.randint(1, 20) - random.randint(1, 20)
-        if hit >= 0:
-            # damage = d_dice * (1 + d_side) / 2
-            # protection = p_dice * (1 + p_side) / 2
-            if d_dice:
-                damage = 1
-            else:
-                damage = sum([random.randint(1, d_side) for _ in range(d_dice)])
-            if p_dice:
-                protection = 0
-            else:
-                protection = sum([random.randint(1, p_side) for _ in range(p_dice)])
+        if target.is_hit(attack=self.get_attack()):
+            damage = self.get_damage()
+            protection = target.get_protection()
         return int(max(damage - protection, 0))
 
     def get_cost(self, action, target, value, *args, **kwargs):
