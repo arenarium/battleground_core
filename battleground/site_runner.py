@@ -11,22 +11,26 @@ def parse_config(config):
     if isinstance(config, dict):
         return config
     try:
-        with open(config, "r") as f:
-            data = json.load(f)
-    except Exception as e:
+        with open(config, "r") as file:
+            data = json.load(file)
+    except OSError:
         data = json.loads(config)
     return data
 
 
-def get_players(players_config, game_type):
+def assign_agents(players_config, game_type):
     agents = {}
+    taken_ids = []
     for player in players_config:
-        agent_id = agent_data.get_agent_id(player["owner"],
-                                           player["name"],
-                                           game_type)
+        agent_id = agent_data.get_agent_id(owner=player["owner"],
+                                           name=player["name"],
+                                           game_type=game_type,
+                                           taken_ids=taken_ids)
+        player["agent_id"] = agent_id
         if "game_type" not in player:
-            player["game_type"] = game_type
+            player["game_type"] = [game_type]
         agents[str(agent_id)] = DynamicAgent(**player)
+        taken_ids.append(agent_id)
     return agents
 
 
@@ -37,23 +41,37 @@ def game_engine_factory(num_players, game_config):
         if name == game_config["class_name"] and inspect.isclass(obj):
             engine_class = obj
             break
+    if "mods" in game_config:
+        try:
+            builder_path = game_config["mods"]["builder_path"]
+            builder_module = importlib.import_module(builder_path)
+            engine_class = builder_module.modded_class_factory(engine_class,
+                                                               game_config["mods"]["mod_paths"])
+        except NameError:
+            pass
     engine_instance = engine_class(num_players=num_players,
                                    type=game_config["type"],
                                    **game_config["settings"])
+    #
+    # Idea: instead of modding the class, it might be a better idea to mod the instance:
+    #
+    # engine_instance = modded_instance_factory(engine_instance, game_config["mods"])
     return engine_instance
 
 
-def run_session(engine, players, num_games, save=True, game_delay=None):
+def run_session(engine, agent_player_dict, num_games, save=True, game_delay=None):
     all_scores = []
 
-    for agent_id, player in players.items():
+    for agent_id, player in agent_player_dict.items():
         memory = agent_data.load_agent_data(agent_id=agent_id,
                                             key="memory")
         player.set_memory(memory)
 
-    for i in range(num_games):
-        gr = GameRunner(engine, players=players, save=save)
-        scores = gr.run_game()
+    for _ in range(num_games):
+        game_runner = GameRunner(game_engine=engine,
+                                 agent_player_dict=agent_player_dict,
+                                 save=save)
+        scores = game_runner.run_game()
 
         if game_delay is not None:
             time.sleep(game_delay)
@@ -62,8 +80,8 @@ def run_session(engine, players, num_games, save=True, game_delay=None):
         all_scores.append(scores)
         engine.reset()
 
-    for id, player in players.items():
-        agent_data.save_agent_data(agent_id=id,
+    for agent_id, player in agent_player_dict.items():
+        agent_data.save_agent_data(agent_id=agent_id,
                                    data=player.get_memory(),
                                    key="memory")
     return all_scores
@@ -74,10 +92,12 @@ def start_session(config, save=True, game_delay=None):
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
-    players = get_players(config_data["players"], config_data["game"]["type"])
-    engine = game_engine_factory(len(players), config_data["game"])
+    agent_player_dict = assign_agents(players_config=config_data["players"],
+                                      game_type=config_data["game"]["type"])
+    engine = game_engine_factory(num_players=len(agent_player_dict),
+                                 game_config=config_data["game"])
     all_scores = run_session(engine,
-                             players,
+                             agent_player_dict,
                              num_games,
                              save=save,
                              game_delay=game_delay)

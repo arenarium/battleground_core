@@ -17,17 +17,22 @@ def insert_new_agent(owner, name, game_type, db_handle):
     return agent_id
 
 
-def get_agent_id(owner, name, game_type, db_handle=None):
+def get_agent_id(owner, name, game_type, db_handle=None, taken_ids=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
+    if taken_ids is None:
+        taken_ids = []
+
     if "agents" not in db_handle.collection_names():
         agent_id = insert_new_agent(owner, name, game_type, db_handle)
     else:
         collection = db_handle.agents
-        result = list(collection.find(
-            {"owner": owner, "name": name, "game_type": game_type}))
-        if len(result) > 0:
-            agent_id = result[0]["_id"]
+        result = list(collection.find({"owner": owner,
+                                       "name": name,
+                                       "game_type": game_type}))
+        agent_list = [agent for agent in result if agent["_id"] not in taken_ids]
+        if agent_list:
+            agent_id = agent_list[0]["_id"]
         else:
             agent_id = insert_new_agent(owner, name, game_type, db_handle)
     return agent_id
@@ -82,7 +87,7 @@ def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
         agent_id = bson.ObjectId(str(agent_id))
 
     result = list(collection.find({"_id": agent_id}))
-    if len(result) > 0:
+    if result:
         agent = result[0]
     else:
         raise Exception("agent not found: {}".format(agent_id))

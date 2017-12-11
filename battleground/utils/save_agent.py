@@ -8,8 +8,8 @@ def go(args):
     if not os.path.isfile(args.path):
         raise Exception("File '{}' not found.".format(args.path))
 
-    with open(args.path, 'r') as f:
-        code = f.read()
+    with open(args.path, 'r') as file:
+        code = file.read()
 
     agent_id = agent_data.save_agent_code(owner=args.owner,
                                           name=args.name,

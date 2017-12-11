@@ -7,8 +7,8 @@ CONFIG_DATA_FILE = "config/basic_config.json"
 
 
 def test_json():
-    with open(CONFIG_DATA_FILE, "r") as f:
-        data = json.load(f)
+    with open(CONFIG_DATA_FILE, "r") as file:
+        data = json.load(file)
     assert isinstance(data, dict)
 
 
@@ -18,8 +18,8 @@ def test_config_loader():
     assert "game" in data
     assert "players" in data
 
-    with open(CONFIG_DATA_FILE, 'r') as f:
-        config_string = f.read()
+    with open(CONFIG_DATA_FILE, 'r') as file:
+        config_string = file.read()
 
     data = site_runner.parse_config(config_string)
     assert isinstance(data, dict)
@@ -28,14 +28,14 @@ def test_config_loader():
     assert "players" in data
 
 
-def test_get_players():
+def test_assign_agents():
     data = site_runner.parse_config(CONFIG_DATA_FILE)
-    players = site_runner.get_players(data["players"], data["game"]["type"])
+    players = site_runner.assign_agents(data["players"], data["game"]["type"])
 
     assert isinstance(players, dict)
     assert len(players) == len(data["players"])
 
-    for key, player in players.items():
+    for _, player in players.items():
         assert isinstance(player, DynamicAgent)
 
 
@@ -58,9 +58,9 @@ def test_run_session():
     assert len(scores) > 0
     assert len(scores[0]) > 0
 
-    for s in scores:
-        for v in s:
-            assert v >= 0
+    for score in scores:
+        for value in score:
+            assert value >= 0
 
 
 if __name__ == "__main__":

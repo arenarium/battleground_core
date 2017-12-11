@@ -23,9 +23,12 @@ class DynamicAgent(agent.Agent):
         self.game_type = game_type
         self.local_path = local_path
         self.settings = settings
-        self.agent_id = agent_data.get_agent_id(owner=self.owner,
-                                                name=self.name,
-                                                game_type=self.game_type)
+        if "agent_id" in kwargs:
+            self.agent_id = kwargs["agent_id"]
+        else:
+            self.agent_id = agent_data.get_agent_id(owner=self.owner,
+                                                    name=self.name,
+                                                    game_type=self.game_type)
 
         if not os.path.exists(TEMP_MODULE_PATH):
             os.mkdir(TEMP_MODULE_PATH)
@@ -58,8 +61,8 @@ class DynamicAgent(agent.Agent):
         module_path = os.path.join(TEMP_MODULE_PATH, file_name)
 
         # write to temp file
-        with open(module_path, 'w') as f:
-            f.write(code_string)
+        with open(module_path, 'w') as file:
+            file.write(code_string)
 
         importlib.invalidate_caches()
         # change path to module specifier
@@ -89,7 +92,7 @@ class DynamicAgent(agent.Agent):
     def observe(self, state):
         return self.agent_instance.observe(state)
 
-    def get_memory(self):
+    def get_memory(self, **kwargs):
         return self.agent_instance.get_memory()
 
     def set_memory(self, data):

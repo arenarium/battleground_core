@@ -1,7 +1,7 @@
 """
 This is an interface for the game engine class.
 An the engine for a specific game
-Should implement these functions.
+should implement these functions.
 """
 
 
@@ -18,6 +18,9 @@ class GameEngine(object):
         return self.type
 
     def get_state(self):
+        raise NotImplementedError()
+
+    def get_save_state(self):
         raise NotImplementedError()
 
     def get_current_player(self):

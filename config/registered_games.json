@@ -1,3 +1,4 @@
+
 [
   {
     "name":"Basic Game 25",
@@ -21,10 +22,78 @@
     "settings":{}
   },
   {
-    "name":"Arena Game",
-    "type":"arena_game",
-    "local_path":"games.arena.arena_game",
-    "class_name":"ArenaGameEngine",
+    "name": "Arena Game (Basic)",
+    "type": "arena_game",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Mod Basic)",
+    "type": "arena_game_m",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":[]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Position)",
+    "type": "arena_game_pos",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.position"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Boosts)",
+    "type": "arena_game_b",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.boosts"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Position and Boosts)",
+    "type": "arena_game_pos_b",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.position",
+                         "games.arena.mods.boosts"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Perception)",
+    "type": "arena_game_perc",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.perception"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Perception, Boosts and Position)",
+    "type": "arena_game_pbp",
+    "local_path": "games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "games.arena.mods.mod_builder",
+            "mod_paths":["games.arena.mods.perception",
+                         "games.arena.mods.boosts",
+                         "games.arena.mods.position"
+                         ]
+            },
     "settings":{}
   }
 ]

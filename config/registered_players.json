@@ -9,7 +9,8 @@
     "settings":{}
   },
   "basic_2":{
-    "game_type":["basic_game","basic_game_50"],
+    "game_type":["basic_game",
+                 "basic_game_50"],
     "owner":"core",
     "name":"basic_2",
     "local_path":"games.basic_game.basic_agent",
@@ -39,6 +40,20 @@
     "game_type":["arena_game"],
     "owner":"core",
     "name":"gladiator_1",
+    "local_path":"games.arena.arena_agent",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "gladiator_2":{
+    "game_type":["arena_game_m",
+                 "arena_game_pos",
+                 "arena_game_b",
+                 "arena_game_pos_b",
+                 "arena_game_perc",
+                 "arena_game_pbp"],
+    "owner":"core",
+    "name":"gladiator_2",
     "local_path":"games.arena.arena_agent",
     "class_name":"ArenaAgent",
     "remote_path":null,

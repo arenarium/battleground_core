@@ -4,7 +4,8 @@ import start
 
 def test_get_dynamic_players():
     game_type = "basic_game"
-    players = start.get_dynamic_players(game_type=game_type, n=5)
+    players = start.get_dynamic_players(game_type=game_type,
+                                        number_of_players=5)
 
     assert len(players) == 5
     assert isinstance(players[0], dict)
@@ -12,8 +13,7 @@ def test_get_dynamic_players():
         assert game_type in player["game_type"]
 
 
-def test_get_game_gonfig():
-
+def test_get_game_config():
     game_config = start.generate_dynamic_config(0)
 
     assert isinstance(game_config, dict)

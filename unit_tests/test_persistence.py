@@ -6,15 +6,15 @@ import random
 @pytest.fixture(scope="module")
 def db_handle():
     """temporary database for testing"""
-    c = game_data.get_client()
+    client = game_data.get_client()
     db_handle = game_data.get_db_handle("test_db_handle")
     yield db_handle
-    c.drop_database("test_db_handle")
+    client.drop_database("test_db_handle")
 
 
 def test_connection():
-    c = game_data.get_client()
-    connection_info = c.server_info()
+    client = game_data.get_client()
+    connection_info = client.server_info()
     print(connection_info)
     assert isinstance(connection_info, dict)
 

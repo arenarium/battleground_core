@@ -8,10 +8,10 @@ owner, name, game_type = "test_owner", "test_name", "test_game_type"
 @pytest.fixture(scope="module")
 def db_handle():
     """temporary database for testing"""
-    c = game_data.get_client()
+    client = game_data.get_client()
     db_handle = game_data.get_db_handle("test_db_handle")
     yield db_handle
-    c.drop_database("test_db_handle")
+    client.drop_database("test_db_handle")
 
 
 def test_get_agent_id(db_handle):
@@ -75,8 +75,8 @@ def test_get_game_stats(db_handle):
 
 def test_save_code(db_handle):
     path = "games/basic_game/basic_persistent_agent.py"
-    with open(path, 'r') as f:
-        code = f.read()
+    with open(path, 'r') as file:
+        code = file.read()
 
     agent_id = agent_data.save_agent_code(owner, name, game_type, code)
     assert agent_id is not None
