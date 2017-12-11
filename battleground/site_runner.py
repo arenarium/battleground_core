@@ -59,16 +59,18 @@ def game_engine_factory(num_players, game_config):
     return engine_instance
 
 
-def run_session(engine, players, num_games, save=True, game_delay=None):
+def run_session(engine, agent_player_dict, num_games, save=True, game_delay=None):
     all_scores = []
 
-    for agent_id, player in players.items():
+    for agent_id, player in agent_player_dict.items():
         memory = agent_data.load_agent_data(agent_id=agent_id,
                                             key="memory")
         player.set_memory(memory)
 
     for _ in range(num_games):
-        game_runner = GameRunner(engine, players=players, save=save)
+        game_runner = GameRunner(game_engine=engine,
+                                 agent_player_dict=agent_player_dict,
+                                 save=save)
         scores = game_runner.run_game()
 
         if game_delay is not None:
@@ -78,8 +80,8 @@ def run_session(engine, players, num_games, save=True, game_delay=None):
         all_scores.append(scores)
         engine.reset()
 
-    for player_id, player in players.items():
-        agent_data.save_agent_data(agent_id=player_id,
+    for agent_id, player in agent_player_dict.items():
+        agent_data.save_agent_data(agent_id=agent_id,
                                    data=player.get_memory(),
                                    key="memory")
     return all_scores
@@ -90,12 +92,12 @@ def start_session(config, save=True, game_delay=None):
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
-    players = assign_agents(players_config=config_data["players"],
-                            game_type=config_data["game"]["type"])
-    engine = game_engine_factory(num_players=len(players),
+    agent_player_dict = assign_agents(players_config=config_data["players"],
+                                      game_type=config_data["game"]["type"])
+    engine = game_engine_factory(num_players=len(agent_player_dict),
                                  game_config=config_data["game"])
     all_scores = run_session(engine,
-                             players,
+                             agent_player_dict,
                              num_games,
                              save=save,
                              game_delay=game_delay)
