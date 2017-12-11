@@ -3,10 +3,10 @@ import copy
 
 
 class GameRunner(object):
-    def __init__(self, game_engine, players, save=True):
+    def __init__(self, game_engine, agent_player_dict, save=True):
         self.game_engine = game_engine
-        self.players = list(players.values())
-        self.player_ids = list(players.keys())
+        self.players = list(agent_player_dict.values())
+        self.agent_ids = list(agent_player_dict.keys())
         self.game_states = []
         self.save = save
 
@@ -15,7 +15,7 @@ class GameRunner(object):
         state = self.game_engine.get_save_state()
         self.game_states.append({"game_state": state,
                                  "last_move": None,
-                                 "player_ids": self.player_ids
+                                 "player_ids": self.agent_ids
                                  })
 
         player_index = self.game_engine.get_current_player()
@@ -31,7 +31,7 @@ class GameRunner(object):
             data_to_save = {}
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
-            data_to_save["player_ids"] = copy.deepcopy(self.player_ids)
+            data_to_save["player_ids"] = copy.deepcopy(self.agent_ids)
 
             self.game_states.append(data_to_save)
             self.broadcast(data_to_save)
@@ -46,7 +46,7 @@ class GameRunner(object):
             game_id = game_data.save_game_history(self.game_engine.get_game_name(),
                                                   self.game_states)
             for i in range(len(self.players)):
-                agent_id = self.player_ids[i]
+                agent_id = self.agent_ids[i]
                 score = scores[i]
                 agent_data.save_game_result(agent_id, game_id,
                                             self.game_engine.type,

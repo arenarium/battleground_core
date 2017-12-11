@@ -60,7 +60,7 @@ We recommend you set up a virtual machine using [Vagrant](https://www.vagrantup.
 
 start the database server (if you have not yet done so):
 ```
-docker-compose -f docker-compose-ui.yml up -d
+docker-compose -f docker-compose.ui.yml up -d
 ```
 
 for all the tests to pass, there should be some data in the database, to do this run

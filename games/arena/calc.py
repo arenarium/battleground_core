@@ -29,6 +29,7 @@ def dist(pos_a, pos_b):
 def noise():
     """
     noise function for solving clash in sorting of event_queue
+    :returns (float) in [0.001, 0.999]
     """
     return random.randint(1, 999) / 1000
 
@@ -43,4 +44,3 @@ def insort_right(seq, keys, item, keyfunc):
     keys.insert(index, key)          # insert key of item in keys list
     seq.insert(index, item)          # insert the item itself in the corresponding spot
     return None
-

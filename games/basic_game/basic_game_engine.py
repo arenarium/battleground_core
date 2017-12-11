@@ -21,7 +21,9 @@ class BasicGameEngine(GameEngine):
         self.roll = None
 
     def get_state(self):
-        return {"scores": self.scores, "turn": self.turn, "last_roll": self.roll}
+        return {"scores": self.scores,
+                "turn": self.turn,
+                "last_roll": self.roll}
 
     def get_save_state(self):
         return self.get_state()

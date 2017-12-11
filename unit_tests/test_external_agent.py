@@ -14,8 +14,8 @@ config = {
 def test_play():
     players = {}
 
-    with open(config["remote_path"], 'r') as f:
-        code = f.read()
+    with open(config["remote_path"], 'r') as file:
+        code = file.read()
 
     for i in range(4):
         agent_id = agent_data.save_agent_code(owner=config["owner"],

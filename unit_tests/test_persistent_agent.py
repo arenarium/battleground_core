@@ -10,17 +10,17 @@ owner, name, game_type = "test_owner", "test_name", "test_game_type"
 @pytest.fixture(scope="module")
 def db_handle():
     """temporary database for testing"""
-    c = game_data.get_client()
+    client = game_data.get_client()
     db_handle = game_data.get_db_handle("test_db_handle")
     yield db_handle
-    c.drop_database("test_db_handle")
+    client.drop_database("test_db_handle")
 
 
 def test_memory_set():
-    for x in [2, 5, 6, "5", [12, 3, 5], None, 5.6]:
+    for entry in [2, 5, 6, "5", [12, 3, 5], None, 5.6]:
         agent = PeristentAgent()
-        agent.set_memory({"guess": x})
-        assert agent.get_memory()["guess"] == x
+        agent.set_memory({"guess": entry})
+        assert agent.get_memory()["guess"] == entry
 
 
 def test_move():
@@ -65,5 +65,5 @@ def test_with_engine():
             else:
                 player_mems[agent_id] = [player.get_memory()]
 
-    for id, mem in player_mems.items():
+    for _, mem in player_mems.items():
         assert mem[0] != mem[1]

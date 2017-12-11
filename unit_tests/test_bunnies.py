@@ -107,7 +107,7 @@ def test_do_roll():
     assert state["allowedMoves"]["roll"] == 0
     assert state["allowedMoves"]["reset"] == 0
 
-    """check if only some dice can be rolled that unrollables stay unchanged"""
+    # check if only some dice can be rolled that unrollables stay unchanged
     engine = dice_game.DiceGame(num_players=num_players, type="Bunnies")
     state = engine.get_state()
 
