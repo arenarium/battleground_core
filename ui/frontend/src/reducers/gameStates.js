@@ -17,34 +17,34 @@ const gameStates = (state = {didInvalidate: true, stateArray:[], stateIndex:0,au
     case 'SELECT_TURN':
     return ({
       ...state,
-        stateIndex: getTargetTurn(state.stateIndex,action.turnNum,state.stateArray.length-1)
-        })
-        case 'AUTO_INCREMENT_TURN':
-        return ({
-          ...state,
-            stateIndex: autoIncrement(state)
-            })
+      stateIndex: getTargetTurn(state.stateIndex,action.turnNum,state.stateArray.length-1)
+    })
+    case 'AUTO_INCREMENT_TURN':
+    return ({
+      ...state,
+      stateIndex: autoIncrement(state)
+    })
     case 'REQUEST_STATES':
     return ({
       ...state,
-        isFetching: true,
-        didInvalidate: false
-  })
-  case 'RECEIVE_STATES':
-  return ({
-    ...state,
+      isFetching: true,
+      didInvalidate: false
+    })
+    case 'RECEIVE_STATES':
+    return ({
+      ...state,
       isFetching: false,
       didInvalidate: false,
       stateArray: action.data,
-  })
-  case 'CHANGE_AUTOPLAY':
-  return ({
-    ...state,
+    })
+    case 'CHANGE_AUTOPLAY':
+    return ({
+      ...state,
       autoPlay:!state.autoPlay
-  })
-  default:
-  return state
-}
+    })
+    default:
+    return state
+  }
 }
 
 
