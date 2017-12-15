@@ -150,8 +150,8 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'battleground_start=utils.start:go',
-            'battleground_save=utils.start:go',
+            'battleground_start=battleground.utils.start:go',
+            'battleground_save=battleground.utils.start:go',
         ],
 
     },

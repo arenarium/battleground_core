@@ -1,7 +1,7 @@
 import argparse
 import json
 import random
-from . import site_runner
+from .. import site_runner
 
 
 def get_dynamic_players(game_type, number_of_players):
