@@ -6,6 +6,7 @@ from battleground import site_runner
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
+
 def get_dynamic_players(game_type, number_of_players):
     """
     this is a light-weight local version to pick players for a game.
