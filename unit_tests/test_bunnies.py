@@ -1,4 +1,4 @@
-from games.bunnies import dice_game
+from battleground.games.bunnies import dice_game
 import copy
 
 num_players = 2

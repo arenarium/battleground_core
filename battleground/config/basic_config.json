@@ -6,7 +6,7 @@
   "game":{
     "name":"Basic Test Game",
     "type":"basic_game",
-    "local_path":"games.basic_game.basic_game_engine",
+    "local_path":"battleground.games.basic_game.basic_game_engine",
     "class_name":"BasicGameEngine",
     "settings":{}
   },
@@ -14,21 +14,21 @@
     {
       "owner":"core",
       "name":"basic_1",
-      "local_path":"games.basic_game.basic_agent",
+      "local_path":"battleground.games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null
     },
     {
       "owner":"core",
       "name":"basic_2",
-      "local_path":"games.basic_game.basic_agent",
+      "local_path":"battleground.games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null
     },
     {
       "owner":"core",
       "name":"basic_3",
-      "local_path":"games.basic_game.basic_agent",
+      "local_path":"battleground.games.basic_game.basic_agent",
       "class_name":"BasicAgent",
       "remote_path":null
     }

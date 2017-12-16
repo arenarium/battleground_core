@@ -1,5 +1,5 @@
 from battleground.dynamic_agent import DynamicAgent
-from games.basic_game.basic_agent import BasicAgent
+from battleground.games.basic_game.basic_agent import BasicAgent
 from battleground.persistence import agent_data
 from battleground.agent import Agent
 
@@ -8,7 +8,7 @@ def test_dynamic_agent_local_path():
     config = {
         "owner": "test_owner",
         "name": "test_agent",
-        "local_path": "games.basic_game.basic_agent",
+        "local_path": "battleground.games.basic_game.basic_agent",
         "remote_path": None
     }
 
@@ -23,7 +23,7 @@ def test_dynamic_agent_database():
         "owner": "test_owner",
         "name": "test_agent",
         "game_type": "test_game",
-        "local_path": "games.basic_game.basic_agent",
+        "local_path": "battleground.games.basic_game.basic_agent",
         "remote_path": None
     }
     # create an agent ID

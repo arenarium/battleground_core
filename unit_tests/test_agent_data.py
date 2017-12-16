@@ -74,7 +74,7 @@ def test_get_game_stats(db_handle):
 
 
 def test_save_code(db_handle):
-    path = "games/basic_game/basic_persistent_agent.py"
+    path = "battleground/games/basic_game/basic_persistent_agent.py"
     with open(path, 'r') as file:
         code = file.read()
 

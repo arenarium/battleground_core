@@ -1,6 +1,6 @@
 
-from games.basic_game.basic_game_engine import BasicGameEngine
-from games.basic_game import basic_agent
+from battleground.games.basic_game.basic_game_engine import BasicGameEngine
+from battleground.games.basic_game import basic_agent
 
 from battleground.game_runner import GameRunner
 

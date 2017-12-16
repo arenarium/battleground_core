@@ -1,7 +1,7 @@
 import pytest
 from battleground.persistence import game_data, agent_data
-from games.basic_game.basic_persistent_agent import PeristentAgent
-from games.basic_game.basic_game_engine import BasicGameEngine
+from battleground.games.basic_game.basic_persistent_agent import PersistentAgent
+from battleground.games.basic_game.basic_game_engine import BasicGameEngine
 from battleground import site_runner
 
 owner, name, game_type = "test_owner", "test_name", "test_game_type"
@@ -18,19 +18,19 @@ def db_handle():
 
 def test_memory_set():
     for entry in [2, 5, 6, "5", [12, 3, 5], None, 5.6]:
-        agent = PeristentAgent()
+        agent = PersistentAgent()
         agent.set_memory({"guess": entry})
         assert agent.get_memory()["guess"] == entry
 
 
 def test_move():
-    agent = PeristentAgent()
+    agent = PersistentAgent()
     move = agent.move(state={"turn": 5})
     assert move["value"] == agent.default_mem["guess"]
 
 
 def test_observe():
-    agent = PeristentAgent()
+    agent = PersistentAgent()
     agent.observe(state={"turn": 5})
     assert agent.get_memory()["guess"] == agent.default_mem["guess"]
 
@@ -47,7 +47,7 @@ def test_with_engine():
             owner = "core"
             name = "basic_persistent_{}".format(i)
             agent_id = agent_data.get_agent_id(owner, name, game_type)
-            players[str(agent_id)] = PeristentAgent()
+            players[str(agent_id)] = PersistentAgent()
 
         scores = site_runner.run_session(engine, players, 4, save=True)
         assert len(scores) > 0

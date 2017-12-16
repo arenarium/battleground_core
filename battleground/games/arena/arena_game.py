@@ -1,9 +1,9 @@
 
 from battleground.game_engine import GameEngine
-from games.arena import calc
-from games.arena.dungeon import Dungeon
-from games.arena.event import Event
-from games.arena.gladiator import Gladiator
+from . import calc
+from .dungeon import Dungeon
+from .event import Event
+from .gladiator import Gladiator
 
 
 class ArenaGameEngine(GameEngine):
@@ -242,7 +242,7 @@ class ArenaGameEngine(GameEngine):
 
         event_time = (time
                       + glad.get_cost(action=name, target=target, value=value))
-                    # + calc.noise())
+                      # + calc.noise())
 
         event_stats = self.init_queued_event_stats(time=time, glad_event=glad_event, move=move)
 

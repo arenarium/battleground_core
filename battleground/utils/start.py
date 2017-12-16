@@ -1,15 +1,18 @@
 import argparse
 import json
 import random
+import os.path
 from battleground import site_runner
 
+DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
 def get_dynamic_players(game_type, number_of_players):
     """
     this is a light-weight local version to pick players for a game.
     in deployment this should be replaced with a database query.
     """
-    with open("config/registered_players.json", 'r') as conf:
+    file_path = os.path.join(DEFAULT_CONFIG_PATH, "registered_players.json")
+    with open(file_path, 'r') as conf:
         registered_players = json.load(conf)
     qualifying_players = []
     for _, player in registered_players.items():
@@ -26,7 +29,8 @@ def get_dynamic_players(game_type, number_of_players):
 
 
 def generate_dynamic_config(game_delay, game_name=None, players=None):
-    with open("config/registered_games.json", 'r') as conf:
+    file_path = os.path.join(DEFAULT_CONFIG_PATH, "registered_games.json")
+    with open(file_path, 'r') as conf:
         registered_games = json.load(conf)
 
     if game_name is None:
@@ -52,8 +56,11 @@ def generate_dynamic_config(game_delay, game_name=None, players=None):
 
 def go():
     # time.sleep(1)
+
+    default_config_file = os.path.join(DEFAULT_CONFIG_PATH, "basic_config.json")
+
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--config', type=str, default="config/basic_config.json")
+    parser.add_argument('--config', type=str, default=default_config_file)
     parser.add_argument('--dynamic', action='store_true')
     parser.add_argument('-d', action='store_true')
     parser.add_argument('--count', type=int, default=1)
