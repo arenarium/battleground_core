@@ -28,7 +28,7 @@ def test_get_agents(db_handle):
     # add agent if not exists
     agent_data.get_agent_id(owner, name, game_type, db_handle)
 
-    agents = agent_data.get_agents(owner)
+    agents = agent_data.get_agents(owner, db_handle)
     assert len(agents) > 0
 
 
@@ -40,12 +40,14 @@ def test_save_data(db_handle):
 
     agent_data.save_agent_data(agent_id, data, "data", db_handle=db_handle)
 
-    loaded_data = agent_data.load_agent_data(
-        agent_id, "data", db_handle=db_handle)
+    loaded_data = agent_data.load_agent_data(agent_id,
+                                             "data",
+                                             db_handle=db_handle)
     assert loaded_data == data
 
-    loaded_data = agent_data.load_agent_data(
-        agent_id, "blah", db_handle=db_handle)
+    loaded_data = agent_data.load_agent_data(agent_id,
+                                             "blah",
+                                             db_handle=db_handle)
     assert loaded_data is None
 
 
@@ -57,13 +59,12 @@ def test_save_game_result(db_handle):
     game_id = "123456"
     score = 123
     win = True
-    agent_data.save_game_result(
-        agent_id,
-        game_id,
-        game_type,
-        score,
-        win,
-        db_handle=db_handle)
+    agent_data.save_game_result(agent_id,
+                                game_id,
+                                game_type,
+                                score,
+                                win,
+                                db_handle=db_handle)
 
 
 def test_get_game_stats(db_handle):
