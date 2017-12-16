@@ -2,13 +2,6 @@ version: '3'
 
 services:
 
-  nginx:
-    image: battleground/nginx:latest
-    build:
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-
   battleground:
     image: battleground/battleground:latest
     build: .

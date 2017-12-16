@@ -4,7 +4,7 @@ services:
 language: python
 before_script:
 - export PYTHONPATH=$PYTHONPATH:$(pwd)
-- docker-compose -f docker-compose.dev.yml up --build -d
+- docker-compose -f docker-compose.dev.yml up -f docker-compose.run.yml --build -d
 - docker build -t battleground/battleground .
 - docker run --network=host battleground/battleground python battleground/utils/start.py
 script: docker run --network=host battleground/battleground pytest unit_tests
