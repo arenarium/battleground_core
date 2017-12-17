@@ -151,7 +151,7 @@ setup(
     entry_points={  # Optional
         'console_scripts': [
             'battleground_start=battleground.utils.start:go',
-            'battleground_save=battleground.utils.start:go',
+            'battleground_save=battleground.utils.save_agent:go',
         ],
 
     },
