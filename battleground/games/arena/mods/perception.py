@@ -1,9 +1,9 @@
 import random
 
-from games.arena import arena_game
-from games.arena import dungeon
-from games.arena import event
-from games.arena import gladiator
+from .. import arena_game
+from .. import dungeon
+from .. import event
+from .. import gladiator
 
 
 class ArenaGameEngine(arena_game.ArenaGameEngine):

@@ -33,7 +33,7 @@
     "type": "arena_game_m",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
             "mod_paths":[]
             },
     "settings":{}
@@ -43,8 +43,8 @@
     "type": "arena_game_pos",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
-            "mod_paths":["games.arena.mods.position"
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position"
                          ]
             },
     "settings":{}
@@ -54,8 +54,8 @@
     "type": "arena_game_b",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
-            "mod_paths":["games.arena.mods.boosts"
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.boosts"
                          ]
             },
     "settings":{}
@@ -65,9 +65,9 @@
     "type": "arena_game_pos_b",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
-            "mod_paths":["games.arena.mods.position",
-                         "games.arena.mods.boosts"
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position",
+                         "battleground.games.arena.mods.boosts"
                          ]
             },
     "settings":{}
@@ -77,8 +77,8 @@
     "type": "arena_game_perc",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
-            "mod_paths":["games.arena.mods.perception"
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.perception"
                          ]
             },
     "settings":{}
@@ -88,10 +88,10 @@
     "type": "arena_game_pbp",
     "local_path": "battleground.games.arena.arena_game",
     "class_name": "ArenaGameEngine",
-    "mods":{"builder_path": "games.arena.mods.mod_builder",
-            "mod_paths":["games.arena.mods.perception",
-                         "games.arena.mods.boosts",
-                         "games.arena.mods.position"
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.perception",
+                         "battleground.games.arena.mods.boosts",
+                         "battleground.games.arena.mods.position"
                          ]
             },
     "settings":{}

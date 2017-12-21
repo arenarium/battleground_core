@@ -1,9 +1,9 @@
 
-from games.arena import arena_game
-from games.arena import dungeon
-from games.arena import event
-from games.arena import gladiator
-from games.arena import calc
+from .. import arena_game
+from .. import dungeon
+from .. import event
+from .. import gladiator
+from .. import calc
 
 import random
 
