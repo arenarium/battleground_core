@@ -1,33 +1,50 @@
-from battleground import agent
-# from games.arena.arena_game import ArenaGameEngine
-# if __name__ == "__main__":
-#     import arena_game
-# else:
-#     from . import arena_game
-
+from battleground.agent import Agent
 import random
 
 
-class ArenaAgent(agent.Agent):
-    def __init__(self):
-        super().__init__()
+class ArenaAgent(Agent):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def move(self, state):
-        # my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
-        #                                      type="test_arena",
-        #                                      state=state)
-        # my_gladiator = state["queue"][0][1]["owner"]
-        # options = my_game.get_move_options(my_gladiator)
+        """
+        This method is written such that this agent can also play the bunnies game and the basic games.
+        :param state: state of the game
+        :return: dict of chosen move
+        """
+        move = {}
 
-        options = state["move_options"]
+        if state is not None:
+            if "move_options" in state:
+                options = state["move_options"]
+                if isinstance(options, list):
+                    options = random.choice(options)
+                if "name" in options:
+                    name = options["name"]
+                if "targets" in options:
+                    options = random.choice(options["targets"])
+                if "target" in options:
+                    target = options["target"]
+                if "values" in options:
+                    value = random.choice(options["values"])
+            else:
+                # default values
+                name = "stay"
+                target = None
+                value = 1
+                print("Agent is taking default values.")
 
-        option = random.choice(options)
-        name = option["name"]
-        target_dict = random.choice(option["targets"])
-        target = target_dict["target"]
-        value = random.choice(target_dict["values"])
+        try:
+            move["name"] = name
+        except NameError:
+            pass
+        try:
+            move["target"] = target
+        except NameError:
+            pass
+        try:
+            move["value"] = value
+        except NameError:
+            pass
 
-        move = {"name": name,
-                "target": target,
-                "value": value}
         return move

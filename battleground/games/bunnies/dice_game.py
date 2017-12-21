@@ -84,23 +84,31 @@ class DiceGame(GameEngine):
         return state
 
     def get_move_options(self):
-        options = {}
+        options = []
         for key, value in self.state["allowedMoves"].items():
             if value == 1:
                 max_hutch = max(1, max(self.state["hutches"]))
 
                 if key == "roll":
-                    options[key] = [None]
+                    options.append({"name": key,
+                                    "values": [None]})
                 elif key == "stay":
-                    options[key] = [None]
+                    options.append({"name": key,
+                                    "values": [None]})
                 elif key == "reset":
-                    options[key] = [None]
-                elif key == "moveBunny" and (1 in self.state["rollables"] or 2 in self.state["rollables"]):
-                    options[key] = [self.state["rollables"].index(d)
-                                    for d in self.state["rollables"] if d == 1 or d == 2]
+                    options.append({"name": key,
+                                    "values": [None]})
+                elif key == "moveBunny" and (1 in self.state["rollables"]
+                                             or 2 in self.state["rollables"]):
+                    values = [self.state["rollables"].index(d)
+                              for d in self.state["rollables"] if d == 1 or d == 2]
+                    options.append({"name": key,
+                                    "values": values})
                 elif key == "moveHutch" and (max_hutch + 1) in self.state["rollables"]:
-                    options[key] = [self.state["rollables"].index(d)
-                                    for d in self.state["rollables"] if d == max_hutch + 1]
+                    values = [self.state["rollables"].index(d)
+                              for d in self.state["rollables"] if d == max_hutch + 1]
+                    options.append({"name": key,
+                                    "values": values})
 
         return options
 

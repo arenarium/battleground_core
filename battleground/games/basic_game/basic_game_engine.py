@@ -23,10 +23,15 @@ class BasicGameEngine(GameEngine):
     def get_state(self):
         return {"scores": self.scores,
                 "turn": self.turn,
-                "last_roll": self.roll}
+                "last_roll": self.roll,
+                "move_options": self.get_move_options()}
 
     def get_save_state(self):
         return self.get_state()
+
+    def get_move_options(self):
+        options = {"values": list(range(self.max + 1))}
+        return options
 
     def move(self, move):
         """

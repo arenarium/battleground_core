@@ -16,8 +16,9 @@ def test_engine():
 
 
 def test_player():
+    bge = BasicGameEngine(num_players=2, type="bg")
     player = basic_agent.BasicAgent()
-    move = player.move(None)
+    move = player.move(bge.get_state())
     assert isinstance(move, dict)
     assert "value" in move.keys()
 

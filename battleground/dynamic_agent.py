@@ -13,6 +13,7 @@ class DynamicAgent(agent.Agent):
                  owner,
                  name,
                  game_type=None,
+                 class_name=None,
                  from_db=False,
                  local_path=None,
                  queue_prefix=None,
@@ -21,6 +22,7 @@ class DynamicAgent(agent.Agent):
         self.owner = owner
         self.name = name
         self.game_type = game_type
+        self.class_name = class_name
         self.local_path = local_path
         self.settings = settings
         if "agent_id" in kwargs:
@@ -76,9 +78,7 @@ class DynamicAgent(agent.Agent):
 
         agent_module = importlib.import_module(self.local_path)
         for name, obj in inspect.getmembers(agent_module):
-            # May not pick the correct class if other classes are imported
-            # directly into agent_module!
-            if inspect.isclass(obj):
+            if name == self.class_name and inspect.isclass(obj):
                 agent_class = obj
 
         if self.settings is not None:
