@@ -3,7 +3,7 @@
     "game_type":["basic_game"],
     "owner":"core",
     "name":"basic_1",
-    "local_path":"games.basic_game.basic_agent",
+    "local_path":"battleground.games.basic_game.basic_agent",
     "class_name":"BasicAgent",
     "remote_path":null,
     "settings":{}
@@ -13,7 +13,7 @@
                  "basic_game_50"],
     "owner":"core",
     "name":"basic_2",
-    "local_path":"games.basic_game.basic_agent",
+    "local_path":"battleground.games.basic_game.basic_agent",
     "class_name":"BasicAgent",
     "remote_path":null,
     "settings":{}
@@ -22,7 +22,7 @@
     "game_type":["basic_game"],
     "owner":"core",
     "name":"basic_3",
-    "local_path":"games.basic_game.basic_agent",
+    "local_path":"battleground.games.basic_game.basic_agent",
     "class_name":"BasicAgent",
     "remote_path":null,
     "settings":{}
@@ -31,7 +31,7 @@
     "game_type":["bunnies_game"],
     "owner":"core",
     "name":"bunnies_1",
-    "local_path":"games.bunnies.simple_agent",
+    "local_path":"battleground.games.bunnies.simple_agent",
     "class_name":"SimpleAgent",
     "remote_path":null,
     "settings":{}
@@ -40,7 +40,7 @@
     "game_type":["arena_game"],
     "owner":"core",
     "name":"gladiator_1",
-    "local_path":"games.arena.arena_agent",
+    "local_path":"battleground.games.arena.arena_agent",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
@@ -54,7 +54,7 @@
                  "arena_game_pbp"],
     "owner":"core",
     "name":"gladiator_2",
-    "local_path":"games.arena.arena_agent",
+    "local_path":"battleground.games.arena.arena_agent",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}

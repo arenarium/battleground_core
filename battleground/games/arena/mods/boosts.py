@@ -1,7 +1,7 @@
 import math
 
-from games.arena import arena_game
-from games.arena import gladiator
+from .. import arena_game
+from .. import gladiator
 
 
 class ArenaGameEngine(arena_game.ArenaGameEngine):
@@ -130,7 +130,7 @@ class Gladiator(gladiator.Gladiator):
         """
         :return: damage + boost
         """
-        protection = super().get_protection() + self.boosts["prot"]
+        protection = super().get_base_protection() + self.boosts["prot"]
         return protection
 
     def get_speed(self):

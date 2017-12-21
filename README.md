@@ -19,25 +19,28 @@ config/*.json
 
 To run this configuration, start the database server (if you have not yet done so):
 ```
-docker-compose -f docker-compose.ui.yml up -d
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
 then start the site runner:
 ```
-python start.py --dynamic
+python battleground/utils/start.py --dynamic
 ```
 
 or, if you want to use a different config file:
 ```
-python start.py --config path/to/configfile.json
+python battleground/utils/start.py --config path/to/configfile.json
 ```
 
 or, if you want to run the site continiously:
 ```
-python start.py --dynamic -d
+python battleground/utils/start.py --dynamic -d
 ```
 
 ### frontend
+
+**[This has been migrated to [another repo](https://github.com/vincentropy/battleground_ui).]**
+
 first time?:
 ```
 cd ui/frontend
@@ -60,12 +63,12 @@ We recommend you set up a virtual machine using [Vagrant](https://www.vagrantup.
 
 start the database server (if you have not yet done so):
 ```
-docker-compose -f docker-compose.ui.yml up -d
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
 for all the tests to pass, there should be some data in the database, to do this run
 ```
-python start.py
+python battleground/utils/start.py
 ```
 
 next, to run tests:

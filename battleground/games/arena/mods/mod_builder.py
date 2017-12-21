@@ -15,16 +15,16 @@ def base_factory(cls_name, mod_modules):
         mod_list_appender(module)
     # add base classes to mod_list
     if cls_name is "Dungeon":
-        module = importlib.import_module("games.arena.dungeon")
+        module = importlib.import_module("battleground.games.arena.dungeon")
         mod_list_appender(module)
     elif cls_name is "Event":
-        module = importlib.import_module("games.arena.event")
+        module = importlib.import_module("battleground.games.arena.event")
         mod_list_appender(module)
     elif cls_name is "Gladiator":
-        module = importlib.import_module("games.arena.gladiator")
+        module = importlib.import_module("battleground.games.arena.gladiator")
         mod_list_appender(module)
     elif cls_name is "ArenaGameEngine":
-        module = importlib.import_module("games.arena.arena_game")
+        module = importlib.import_module("battleground.games.arena.arena_game")
         mod_list_appender(module)
 
     base_list = tuple(mod_list)
