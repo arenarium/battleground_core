@@ -1,0 +1,290 @@
+Index: battleground/config/registered_games.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/config/registered_games.json	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/config/registered_games.json	(date 1513878256000)
+@@ -33,7 +33,7 @@
+     "type": "arena_game_m",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+             "mod_paths":[]
+             },
+     "settings":{}
+@@ -43,8 +43,8 @@
+     "type": "arena_game_pos",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+-            "mod_paths":["games.arena.mods.position"
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
++            "mod_paths":["battleground.games.arena.mods.position"
+                          ]
+             },
+     "settings":{}
+@@ -54,8 +54,8 @@
+     "type": "arena_game_b",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+-            "mod_paths":["games.arena.mods.boosts"
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
++            "mod_paths":["battleground.games.arena.mods.boosts"
+                          ]
+             },
+     "settings":{}
+@@ -65,9 +65,9 @@
+     "type": "arena_game_pos_b",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+-            "mod_paths":["games.arena.mods.position",
+-                         "games.arena.mods.boosts"
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
++            "mod_paths":["battleground.games.arena.mods.position",
++                         "battleground.games.arena.mods.boosts"
+                          ]
+             },
+     "settings":{}
+@@ -77,8 +77,8 @@
+     "type": "arena_game_perc",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+-            "mod_paths":["games.arena.mods.perception"
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
++            "mod_paths":["battleground.games.arena.mods.perception"
+                          ]
+             },
+     "settings":{}
+@@ -88,10 +88,10 @@
+     "type": "arena_game_pbp",
+     "local_path": "battleground.games.arena.arena_game",
+     "class_name": "ArenaGameEngine",
+-    "mods":{"builder_path": "games.arena.mods.mod_builder",
+-            "mod_paths":["games.arena.mods.perception",
+-                         "games.arena.mods.boosts",
+-                         "games.arena.mods.position"
++    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
++            "mod_paths":["battleground.games.arena.mods.perception",
++                         "battleground.games.arena.mods.boosts",
++                         "battleground.games.arena.mods.position"
+                          ]
+             },
+     "settings":{}
+Index: battleground/config/registered_players.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/config/registered_players.json	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/config/registered_players.json	(date 1513878095000)
+@@ -3,7 +3,7 @@
+     "game_type":["basic_game"],
+     "owner":"core",
+     "name":"basic_1",
+-    "local_path":"games.basic_game.basic_agent",
++    "local_path":"battleground.games.basic_game.basic_agent",
+     "class_name":"BasicAgent",
+     "remote_path":null,
+     "settings":{}
+@@ -13,7 +13,7 @@
+                  "basic_game_50"],
+     "owner":"core",
+     "name":"basic_2",
+-    "local_path":"games.basic_game.basic_agent",
++    "local_path":"battleground.games.basic_game.basic_agent",
+     "class_name":"BasicAgent",
+     "remote_path":null,
+     "settings":{}
+@@ -22,7 +22,7 @@
+     "game_type":["basic_game"],
+     "owner":"core",
+     "name":"basic_3",
+-    "local_path":"games.basic_game.basic_agent",
++    "local_path":"battleground.games.basic_game.basic_agent",
+     "class_name":"BasicAgent",
+     "remote_path":null,
+     "settings":{}
+@@ -31,7 +31,7 @@
+     "game_type":["bunnies_game"],
+     "owner":"core",
+     "name":"bunnies_1",
+-    "local_path":"games.bunnies.simple_agent",
++    "local_path":"battleground.games.bunnies.simple_agent",
+     "class_name":"SimpleAgent",
+     "remote_path":null,
+     "settings":{}
+@@ -40,7 +40,7 @@
+     "game_type":["arena_game"],
+     "owner":"core",
+     "name":"gladiator_1",
+-    "local_path":"games.arena.arena_agent",
++    "local_path":"battleground.games.arena.arena_agent",
+     "class_name":"ArenaAgent",
+     "remote_path":null,
+     "settings":{}
+@@ -54,7 +54,7 @@
+                  "arena_game_pbp"],
+     "owner":"core",
+     "name":"gladiator_2",
+-    "local_path":"games.arena.arena_agent",
++    "local_path":"battleground.games.arena.arena_agent",
+     "class_name":"ArenaAgent",
+     "remote_path":null,
+     "settings":{}
+Index: battleground/games/arena/mods/boosts.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/games/arena/mods/boosts.py	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/games/arena/mods/boosts.py	(date 1513879020000)
+@@ -1,7 +1,7 @@
+ import math
+ 
+-from games.arena import arena_game
+-from games.arena import gladiator
++from .. import arena_game
++from .. import gladiator
+ 
+ 
+ class ArenaGameEngine(arena_game.ArenaGameEngine):
+@@ -130,7 +130,7 @@
+         """
+         :return: damage + boost
+         """
+-        protection = super().get_protection() + self.boosts["prot"]
++        protection = super().get_base_protection() + self.boosts["prot"]
+         return protection
+ 
+     def get_speed(self):
+Index: battleground/games/arena/mods/mod_builder.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/games/arena/mods/mod_builder.py	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/games/arena/mods/mod_builder.py	(date 1513878563000)
+@@ -15,16 +15,16 @@
+         mod_list_appender(module)
+     # add base classes to mod_list
+     if cls_name is "Dungeon":
+-        module = importlib.import_module("games.arena.dungeon")
++        module = importlib.import_module("battleground.games.arena.dungeon")
+         mod_list_appender(module)
+     elif cls_name is "Event":
+-        module = importlib.import_module("games.arena.event")
++        module = importlib.import_module("battleground.games.arena.event")
+         mod_list_appender(module)
+     elif cls_name is "Gladiator":
+-        module = importlib.import_module("games.arena.gladiator")
++        module = importlib.import_module("battleground.games.arena.gladiator")
+         mod_list_appender(module)
+     elif cls_name is "ArenaGameEngine":
+-        module = importlib.import_module("games.arena.arena_game")
++        module = importlib.import_module("battleground.games.arena.arena_game")
+         mod_list_appender(module)
+ 
+     base_list = tuple(mod_list)
+Index: battleground/games/arena/mods/perception.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/games/arena/mods/perception.py	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/games/arena/mods/perception.py	(date 1513878451000)
+@@ -1,9 +1,9 @@
+ import random
+ 
+-from games.arena import arena_game
+-from games.arena import dungeon
+-from games.arena import event
+-from games.arena import gladiator
++from .. import arena_game
++from .. import dungeon
++from .. import event
++from .. import gladiator
+ 
+ 
+ class ArenaGameEngine(arena_game.ArenaGameEngine):
+Index: battleground/games/arena/mods/position.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- battleground/games/arena/mods/position.py	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ battleground/games/arena/mods/position.py	(date 1513878405000)
+@@ -1,9 +1,9 @@
+ 
+-from games.arena import arena_game
+-from games.arena import dungeon
+-from games.arena import event
+-from games.arena import gladiator
+-from games.arena import calc
++from .. import arena_game
++from .. import dungeon
++from .. import event
++from .. import gladiator
++from .. import calc
+ 
+ import random
+ 
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- README.md	(revision 4ff45a07697a06a026b87c692d044497ee298888)
++++ README.md	(date 1513879513000)
+@@ -19,25 +19,28 @@
+ 
+ To run this configuration, start the database server (if you have not yet done so):
+ ```
+-docker-compose -f docker-compose.ui.yml up -d
++docker-compose -f docker-compose.dev.yml up -d
+ ```
+ 
+ then start the site runner:
+ ```
+-python start.py --dynamic
++python battleground/utils/start.py --dynamic
+ ```
+ 
+ or, if you want to use a different config file:
+ ```
+-python start.py --config path/to/configfile.json
++python battleground/utils/start.py --config path/to/configfile.json
+ ```
+ 
+ or, if you want to run the site continiously:
+ ```
+-python start.py --dynamic -d
++python battleground/utils/start.py --dynamic -d
+ ```
+ 
+ ### frontend
++
++**[This has been migrated to [another repo](https://github.com/vincentropy/battleground_ui).]**
++
+ first time?:
+ ```
+ cd ui/frontend
+@@ -60,12 +63,12 @@
+ 
+ start the database server (if you have not yet done so):
+ ```
+-docker-compose -f docker-compose.ui.yml up -d
++docker-compose -f docker-compose.dev.yml up -d
+ ```
+ 
+ for all the tests to pass, there should be some data in the database, to do this run
+ ```
+-python start.py
++python battleground/utils/start.py
+ ```
+ 
+ next, to run tests:
