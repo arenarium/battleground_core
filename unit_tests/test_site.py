@@ -1,9 +1,11 @@
 import battleground.site_runner as site_runner
 from battleground.dynamic_agent import DynamicAgent
-from games.basic_game.basic_game_engine import BasicGameEngine
+from battleground.games.basic_game.basic_game_engine import BasicGameEngine
 import json
+import os.path
 
-CONFIG_DATA_FILE = "config/basic_config.json"
+DEFAULT_CONFIG_PATH = "battleground/config/"
+CONFIG_DATA_FILE = os.path.join(DEFAULT_CONFIG_PATH, "basic_config.json")
 
 
 def test_json():
@@ -43,7 +45,7 @@ def test_get_engine():
     game_config = {
         "name": "bg",
         "type": "basic_game",
-        "local_path": "games.basic_game.basic_game_engine",
+        "local_path": "battleground.games.basic_game.basic_game_engine",
         "class_name": "BasicGameEngine",
         "settings": {}
     }

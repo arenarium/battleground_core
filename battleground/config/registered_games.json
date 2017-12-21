@@ -1,0 +1,99 @@
+
+[
+  {
+    "name":"Basic Game 25",
+    "type":"basic_game",
+    "local_path":"battleground.games.basic_game.basic_game_engine",
+    "class_name":"BasicGameEngine",
+    "settings":{"max_range":25}
+  },
+  {
+    "name":"Basic Game 50",
+    "type":"basic_game_50",
+    "local_path":"battleground.games.basic_game.basic_game_engine",
+    "class_name":"BasicGameEngine",
+    "settings":{"max_range":50}
+  },
+  {
+    "name":"Bunnies Game",
+    "type":"bunnies_game",
+    "local_path":"battleground.games.bunnies.dice_game",
+    "class_name":"DiceGame",
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Basic)",
+    "type": "arena_game",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Mod Basic)",
+    "type": "arena_game_m",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":[]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Position)",
+    "type": "arena_game_pos",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Boosts)",
+    "type": "arena_game_b",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.boosts"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Position and Boosts)",
+    "type": "arena_game_pos_b",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position",
+                         "battleground.games.arena.mods.boosts"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Perception)",
+    "type": "arena_game_perc",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.perception"
+                         ]
+            },
+    "settings":{}
+  },
+  {
+    "name": "Arena Game (Perception, Boosts and Position)",
+    "type": "arena_game_pbp",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.perception",
+                         "battleground.games.arena.mods.boosts",
+                         "battleground.games.arena.mods.position"
+                         ]
+            },
+    "settings":{}
+  }
+]

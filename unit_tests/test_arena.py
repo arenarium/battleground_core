@@ -1,10 +1,11 @@
 # from battleground.game_runner import GameRunner
 
 # from games.arena import calc
-from games.arena.arena_game import ArenaGameEngine
-from games.arena.dungeon import Dungeon
-from games.arena.gladiator import Gladiator
-from games.arena.arena_agent import ArenaAgent
+
+from battleground.games.arena.arena_game import ArenaGameEngine
+from battleground.games.arena.dungeon import Dungeon
+from battleground.games.arena.gladiator import Gladiator
+from battleground.games.arena.arena_agent import ArenaAgent
 
 import random
 

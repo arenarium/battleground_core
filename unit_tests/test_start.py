@@ -1,5 +1,4 @@
-import pytest
-import start
+from battleground.utils import start
 
 
 def test_get_dynamic_players():

@@ -1,5 +1,5 @@
 from battleground.persistence import agent_data
-import start
+from battleground.utils import start
 from battleground import site_runner
 
 config = {
@@ -7,7 +7,7 @@ config = {
     "name": "test_agent",
     "game_type": "basic_game_50",
     "local_path": None,
-    "remote_path": "./games/basic_game/basic_persistent_agent.py"
+    "remote_path": "battleground/games/basic_game/basic_persistent_agent.py"
 }
 
 
