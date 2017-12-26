@@ -21,6 +21,24 @@ def test_get_agent_id(db_handle):
     assert same_agent_id is not None
     assert new_agent_id == same_agent_id
 
+    owners = agent_data.get_owners(db_handle)
+    assert len(owners) > 0
+
+
+def test_no_duplicate_ids(db_handle):
+    agent_ids = []
+    for i in range(10):
+        agent_id = agent_data.get_agent_id(owner, name, game_type, db_handle)
+        agent_ids.append(agent_id)
+    assert len(agent_ids) == 10
+    assert len(set(agent_ids)) == 1
+
+    collection = db_handle.agents
+    result = list(collection.find({"owner": owner,
+                                   "name": name,
+                                   "game_type": game_type}))
+    assert len(result) == 1
+
 
 def test_get_agents(db_handle):
     global owner, name, game_type
