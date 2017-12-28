@@ -68,19 +68,12 @@ class DiceGame(GameEngine):
         """
         return "Bunnies"
 
-    def get_state(self):
+    def get_state(self, observer_id=None):
         """
         :returns self.state with move_options
         """
         state = self.state
         state["move_options"] = self.get_move_options()
-        return state
-
-    def get_save_state(self):
-        """
-        :returns self.get_state()
-        """
-        state = self.get_state()
         return state
 
     def get_move_options(self):

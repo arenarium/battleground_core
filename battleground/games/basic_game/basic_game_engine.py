@@ -20,14 +20,11 @@ class BasicGameEngine(GameEngine):
         self.turn = 0
         self.roll = None
 
-    def get_state(self):
+    def get_state(self, observer_id=None):
         return {"scores": self.scores,
                 "turn": self.turn,
                 "last_roll": self.roll,
                 "move_options": self.get_move_options()}
-
-    def get_save_state(self):
-        return self.get_state()
 
     def get_move_options(self):
         options = {"values": list(range(self.max + 1))}

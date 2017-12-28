@@ -102,7 +102,7 @@ class ArenaGameEngine(GameEngine):
     def get_game_name(self):
         return self.type
 
-    def get_state(self, *args, **kwargs):
+    def get_state(self, observer_id=None):
         """
         :return: (dict) parsed state
         """
@@ -112,12 +112,6 @@ class ArenaGameEngine(GameEngine):
                 "scores": self.scores,
                 "move_options": self.get_move_options(self.get_current_player())
                 }
-
-    def get_save_state(self):
-        """
-        :return: (dict) parsed state
-        """
-        return self.get_state()
 
     def get_current_player(self):
         """
@@ -154,12 +148,15 @@ class ArenaGameEngine(GameEngine):
         """
         Used by agent to get available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) [{move: name,
-                          targets: [{target: target,
-                                     values: []
-                                     },
-                                    ]
-                          },
+        :return: (dict) [{name: name,
+                          tools: [{tool: tool,
+                                   targets: [{target: target,
+                                              values: [value]
+                                              }
+                                             ]
+                                   }
+                                  ]
+                          }
                          ]
         """
         gladiator = self.gladiators[gladiator_index]
