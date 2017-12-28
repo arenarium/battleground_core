@@ -39,7 +39,7 @@ python battleground/utils/start.py --dynamic -d
 
 ### frontend
 
-**[This has been migrated to [another repo](https://github.com/vincentropy/battleground_ui).]**
+**[This has been migrated to [another repo](https://github.com/arenarium/battleground_ui).]**
 
 first time?:
 ```
