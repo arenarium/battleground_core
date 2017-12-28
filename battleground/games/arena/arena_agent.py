@@ -20,31 +20,26 @@ class ArenaAgent(Agent):
                 if isinstance(options, list):
                     options = random.choice(options)
                 if "name" in options:
-                    name = options["name"]
+                    move["name"] = options["name"]
+
+                if "tools" in options:
+                    options = random.choice(options["tools"])
+                if "tool" in options:
+                    move["tool"] = options["tool"]
+
                 if "targets" in options:
                     options = random.choice(options["targets"])
                 if "target" in options:
-                    target = options["target"]
+                    move["target"] = options["target"]
+
                 if "values" in options:
-                    value = random.choice(options["values"])
+                    move["value"] = random.choice(options["values"])
             else:
                 # default values
-                name = "stay"
-                target = None
-                value = 1
+                move["name"] = "stay"
+                move["tool"] = None
+                move["target"] = None
+                move["value"] = 1
                 print("Agent is taking default values.")
-
-        try:
-            move["name"] = name
-        except NameError:
-            pass
-        try:
-            move["target"] = target
-        except NameError:
-            pass
-        try:
-            move["value"] = value
-        except NameError:
-            pass
 
         return move
