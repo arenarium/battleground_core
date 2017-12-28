@@ -20,7 +20,7 @@ def parse_config(config):
 
 def assign_agents(players_config, game_type):
     """
-    Create agent ojects following the specification of players_config
+    Create agent objects following the specification of players_config
     returns a list of tuples (id, agent object)
     duplicate ids are permitted, this corresponds to the same agent being instatiated twice.
     """
@@ -29,6 +29,8 @@ def assign_agents(players_config, game_type):
         agent_id = agent_data.get_agent_id(owner=player["owner"],
                                            name=player["name"],
                                            game_type=game_type)
+
+        print(player)
         # append tuple to agent list
         agents.append((str(agent_id), DynamicAgent(**player)))
     return tuple(agents)  # return immutable version
