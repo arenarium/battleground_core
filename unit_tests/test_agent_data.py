@@ -27,7 +27,7 @@ def test_get_agent_id(db_handle):
 
 def test_no_duplicate_ids(db_handle):
     agent_ids = []
-    for i in range(10):
+    for _ in range(10):
         agent_id = agent_data.get_agent_id(owner, name, game_type, db_handle)
         agent_ids.append(agent_id)
     assert len(agent_ids) == 10

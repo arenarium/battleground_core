@@ -68,7 +68,7 @@ def test_with_engine():
             else:
                 player_mems[agent_id] = [player.get_memory()]
 
-    #  check that memore after game 1 is different from memory after game 2.
+    #  check that memory after game 1 is different from memory after game 2.
     for _, mem in player_mems.items():
         assert mem[0] != mem[1]
 
