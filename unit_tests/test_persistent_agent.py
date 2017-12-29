@@ -82,7 +82,7 @@ def test_unique_owner_name_type():
         assert len(agents) > 0
         names_types = set()
         for agent in agents:
-            if type(agent["game_type"]) == list:
+            if isinstance(agent["game_type"], list):
                 game_type = agent["game_type"][0]
             else:
                 game_type = agent["game_type"]
