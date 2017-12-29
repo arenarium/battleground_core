@@ -30,7 +30,7 @@ def assign_agents(players_config, game_type):
                                            name=player["name"],
                                            game_type=game_type)
 
-        print(player)
+        # print(player)
         # append tuple to agent list
         agents.append((str(agent_id), DynamicAgent(**player)))
     return tuple(agents)  # return immutable version
