@@ -5,6 +5,8 @@ from .dungeon import Dungeon
 from .event import Event
 from .gladiator import Gladiator
 
+import random
+
 
 class ArenaGameEngine(GameEngine):
     """
@@ -36,7 +38,8 @@ class ArenaGameEngine(GameEngine):
             stats = state["gladiators"]
         else:
             stats = []
-        self.gladiators = [self.gladiator_class(**g) for g in stats[0:num_players]]
+        self.gladiators = [self.gladiator_class(**g)
+                           for g in stats[0:num_players]]
 
         if len(stats) < num_players:
             for _ in range(0, num_players - len(stats)):
@@ -56,10 +59,14 @@ class ArenaGameEngine(GameEngine):
                 and "queue" in state:
             self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
         else:
-            self.event_queue = sorted([(g.get_initiative(),  # + calc.noise(),
-                                        self._init_event(g))
-                                       for g in self.gladiators],
-                                      key=lambda event: event[0])
+            self.event_queue = [(g.get_initiative(),  # + calc.noise(),
+                                 self._init_event(g))
+                                for g in self.gladiators]
+            # shuffle list to guarantee no advantage of one player over another
+            # by always being first (at equal initiative)
+            random.shuffle(self.event_queue)
+            # sort by initiative
+            self.event_queue = sorted(self.event_queue, key=lambda event: event[0])
 
         # init scores
         if state is not None \
