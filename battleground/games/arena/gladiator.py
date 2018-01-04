@@ -5,6 +5,12 @@ import math
 
 class Gladiator(object):
 
+    base_damage = 5  # + a compounding 25% bonus per point of str
+    base_protection = 0  # + log2(1 + str)
+                         # + a compounding 25% bonus per point of str
+    base_speed = 12  # / (1 + 2/30 * speed + a compounding 33% bonus per point of dex )
+    base_max_hp = 20  # + a compounding 20% bonus per point of con
+
     def __init__(self,
                  stats=None, skills=None, name="Nameless", team=1, cur_hp=None,
                  *args, **kwargs):
@@ -27,8 +33,8 @@ class Gladiator(object):
                                 "speed": 0}
         else:
             self.base_skills = skills
-        self.damage = 5
-        self.protection = 0
+        self.damage = self.base_damage
+        self.protection = self.base_protection
         self.name = name
         self.team = team
         self.max_hp = self.get_max_hp()
@@ -61,6 +67,7 @@ class Gladiator(object):
     def get_skills(self):
         """
         :return: skills mod stats bonus
+                 speed has a compounding dex bonus
         """
         cur_skills = copy.deepcopy(self.base_skills)
         stats = self.get_stats()
@@ -71,7 +78,7 @@ class Gladiator(object):
 
     def get_attack(self):
         """
-        :return: melee + boost
+        :return: melee
         """
         skills = self.get_skills()
         att = skills["melee"]
@@ -79,7 +86,7 @@ class Gladiator(object):
 
     def get_evasion(self):
         """
-        :return: eva + boost
+        :return: eva
         """
         skills = self.get_skills()
         eva = skills["eva"]
@@ -87,9 +94,6 @@ class Gladiator(object):
 
     def get_base_damage(self):
         return self.damage
-
-    def get_base_protection(self):
-        return self.protection
 
     def get_damage(self):
         """
@@ -100,9 +104,12 @@ class Gladiator(object):
         damage = self.get_base_damage() * (1.25 ** stats["str"])
         return int(damage)
 
+    def get_base_protection(self):
+        return self.protection
+
     def get_protection(self):
         """
-        :return: (base protection + log2(str)) + a compounding 25% bonus per point of str
+        :return: (base protection + log2(1 + str)) + a compounding 25% bonus per point of str
                  (0, 1, 2, 3, 5, 7, ...)
         """
         stats = self.get_stats()
@@ -116,15 +123,20 @@ class Gladiator(object):
                  (20, 24, 28, 34, 41, 49, ...)
         """
         stats = self.get_stats()
-        mhp = int(20 * (1.2 ** stats["con"]))
+        mhp = int(self.base_max_hp * (1.2 ** stats["con"]))
         return mhp
+
+    def get_base_speed(self):
+        skills = self.get_skills()
+        return skills["speed"]
 
     def get_speed(self):
         """
-        :return: 21 - speed
+        :return: 12 / (1 + 2/30 * speed + a compounding 33% bonus per point of dex )
         """
-        skills = self.get_skills()
-        speed = 21 - skills["speed"]
+        stats = self.get_stats()
+        speed_divisor = 1 + 2/30 * self.get_base_speed() * (4/3 ** stats["dex"])
+        speed = self.base_speed / speed_divisor
         return speed
 
     def get_initiative(self):

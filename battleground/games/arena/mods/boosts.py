@@ -68,6 +68,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
 
 
 class Gladiator(gladiator.Gladiator):
+
+    base_max_sp = 10  # + a compounding 10% bonus per point of con
+
     def __init__(self, cur_sp=None, boosts=None, *args, **kwargs):
         """
         :param cur_sp: current spirit points (if not full)
@@ -133,11 +136,11 @@ class Gladiator(gladiator.Gladiator):
         protection = super().get_base_protection() + self.boosts["prot"]
         return protection
 
-    def get_speed(self):
+    def get_base_speed(self):
         """
-        :return: 21 - speed - boost
+        :return: speed + boost
         """
-        speed = super().get_speed() - self.boosts["speed"]
+        speed = super().get_base_speed() + self.boosts["speed"]
         return speed
 
     def get_max_sp(self):
@@ -146,7 +149,7 @@ class Gladiator(gladiator.Gladiator):
                  (10, 11, 12, 13, 14, 16, ...)
         """
         stats = self.get_stats()
-        msp = int(10 * (1.1 ** stats["con"]))
+        msp = int(self.base_max_sp * (1.1 ** stats["con"]))
         return msp
 
     def get_boost_cost(self, attribute, value):
