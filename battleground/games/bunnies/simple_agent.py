@@ -19,23 +19,14 @@ class SimpleAgent(Agent):
                 options = state["move_options"]
                 if isinstance(options, list):
                     options = random.choice(options)
-                if "name" in options:
-                    name = options["name"]
+                if "type" in options:
+                    move["type"] = options["type"]
                 if "values" in options:
-                    value = random.choice(options["values"])
+                    move["value"] = random.choice(options["values"])
             else:
                 # default values
-                name = "stay"
-                value = None
+                move["type"] = "stay"
+                move["value"] = None
                 print("Agent is taking default values.")
-
-        try:
-            move["name"] = name
-        except NameError:
-            pass
-        try:
-            move["value"] = value
-        except NameError:
-            pass
 
         return move

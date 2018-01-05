@@ -81,23 +81,27 @@ def test_player():
     options = age.get_move_options(current_player)
     agent = ArenaAgent()
     move = agent.move(state)
-    assert "name" in move
-    assert "target" in move
-    assert "value" in move
-    name = move["name"]
-    target = move["target"]
-    value = move["value"]
+    assert "type" in move
+    type = move["type"]
+    if "tool" in move:
+        tool = move["tool"]
+    if "target" in move:
+        target = move["target"]
+    if "value" in move:
+        value = move["value"]
 
-    names = [option["name"] for option in options]
-    assert name in names
-    for option in options:
-        if option["name"] is name:
-            targets = [target_options["target"] for target_options in option["targets"]]
-            assert target in targets
-            for target_options in option["targets"]:
-                if target_options["target"] is target:
-                    values = target_options["values"]
-                    assert value in values
+    types = [option["type"] for option in options]
+    assert type in types
+    # check that move in options:
+    # for option in options:
+    #     if option["type"] is type:
+    #         if "tools" in option:
+    #             options = option["tools"]
+    #             if isinstance(options, list):
+    #                 tools = [tool_option["tool"] for tool_option in options]
+    #                 assert tool in tools
+    #                 for option in options:
+    #                     if option["tool"] is tool:
 
 
 def test_game():

@@ -63,7 +63,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         Used by agent to get available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) [{move: name,
+        :return: (dict) [{type: name,
                           targets: [{target: target,
                                      values: []
                                      },
@@ -80,10 +80,8 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                    if self.within_bounds(calc.add_tuples(gladiator.pos, d),
                                          self.dungeon.size)]
         if targets:
-            options_move = {"name": "move",
-                            "targets": [{"target": t,
-                                         "values": [None]}
-                                        for t in targets]
+            options_move = {"type": "move",
+                            "targets": targets
                             }
             options.append(options_move)
 
@@ -101,10 +99,8 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                     del options[index]
             index -= 1
         if targets:
-            options_attack = {"name": "attack",
-                              "targets": [{"target": t,
-                                           "values": [None]}
-                                          for t in targets]
+            options_attack = {"type": "attack",
+                              "targets": targets
                               }
             options.append(options_attack)
 
@@ -223,15 +219,15 @@ class Gladiator(gladiator.Gladiator):
         self.pos = calc.add_tuples(self.pos, direction)
         return None
 
-    def get_cost(self, action, *args, **kwargs):
+    def get_cost(self, type, *args, **kwargs):
         """
-        :param action: (str)
+        :param type: (str)
         :param target: NotImplemented
         :param value: (int)
         :return: (int) cost in turn counts of a given action, given its target and value.
         """
-        if action == "move":
+        if type == "move":
             cost = self.get_speed()
         else:
-            cost = super().get_cost(action=action, *args, **kwargs)
+            cost = super().get_cost(type=type, *args, **kwargs)
         return int(cost)

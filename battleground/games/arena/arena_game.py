@@ -155,7 +155,7 @@ class ArenaGameEngine(GameEngine):
         """
         Used by agent to get available moves
         :param gladiator_index: index in gladiators list
-        :return: (dict) [{name: name,
+        :return: (dict) [{type: type,
                           tools: [{tool: tool,
                                    targets: [{target: target,
                                               values: [value]
@@ -172,10 +172,8 @@ class ArenaGameEngine(GameEngine):
         # speed = gladiator.get_speed()
         values = [1]  # [s / speed for s in range(1, speed + 1, int(speed / 3))]
         # values.append(1)
-        options_stay = {"name": "stay",
-                        "targets": [{"target": None,
-                                     "values": values}
-                                    ]
+        options_stay = {"type": "stay",
+                        "values": values
                         }
         options.append(options_stay)
 
@@ -184,10 +182,8 @@ class ArenaGameEngine(GameEngine):
         targets = [self.gladiators.index(g) for g in self.gladiators
                    if (not g.is_dead() and g is not gladiator)]
         if targets:
-            options_attack = {"name": "attack",
-                              "targets": [{"target": t,
-                                           "values": [None]}
-                                          for t in targets]
+            options_attack = {"type": "attack",
+                              "targets": targets
                               }
             options.append(options_attack)
 
@@ -230,27 +226,16 @@ class ArenaGameEngine(GameEngine):
         :param move:
         :return: None
         """
-        assert "name" in move
-        assert "target" in move
-        assert "value" in move
-
-        name = move["name"]
-        target = move["target"]
-        value = move["value"]
-
         (time, glad_event) = self.event_queue.pop(0)
         time = int(time)
         glad_index = glad_event.owner
         glad = self.gladiators[glad_index]
         event_queue_keys = [ev[0] for ev in self.event_queue]
 
-        event_time = (time
-                      + glad.get_cost(action=name, target=target, value=value))
-                      # + calc.noise())
-
+        event_time = (time + glad.get_cost(**move))  # + calc.noise())
         event_stats = self.init_queued_event_stats(time=time, glad_event=glad_event, move=move)
-
         event = self.event_class(**event_stats)
+
         calc.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, event),
@@ -268,14 +253,12 @@ class ArenaGameEngine(GameEngine):
         """
         :param time: time the event is created
         :param glad_event: event the gladiator is called
-        :param move: move the gladiator wants to queue
+        :param move: dict describing the move the gladiator wants to queue
         :return: dict of stats for instantiation of event.
         """
-        stats = {"owner": glad_event.owner,
-                 "type": move["name"],
-                 "time_stamp": time,
-                 "target": move["target"],
-                 "value": move["value"]}
+        stats = move
+        stats["owner"] = glad_event.owner
+        stats["time_stamp"] = time
         return stats
 
     def move_attack(self, event):

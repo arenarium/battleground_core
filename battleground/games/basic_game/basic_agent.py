@@ -13,15 +13,10 @@ class BasicAgent(Agent):
             if "move_options" in state:
                 options = state["move_options"]
                 if "values" in options:
-                    value = random.choice(options["values"])
+                    move["value"] = random.choice(options["values"])
             else:
                 # default value
-                value = random.randint(5, 20)
+                move["value"] = random.randint(5, 20)
                 print("Agent is taking default values.")
-
-        try:
-            move["value"] = value
-        except NameError:
-            pass
 
         return move

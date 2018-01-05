@@ -32,7 +32,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
             if values:
                 targets[attr] = values
         if targets:
-            options_boost = {"name": "boost",
+            options_boost = {"type": "boost",
                              "targets": [{"target": t,
                                           "values": v}
                                          for t, v in targets.items()]
@@ -188,17 +188,17 @@ class Gladiator(gladiator.Gladiator):
                 self.boosts[attr] += val
         return None
 
-    def get_cost(self, action, value, *args, **kwargs):
+    def get_cost(self, type, value=None, *args, **kwargs):
         """
-        :param action: (str)
+        :param type: (str)
         :param target: NotImplemented
         :param value: (int)
         :return: (int) cost in turn counts of a given action, given its target and value.
         """
-        if action == "boost":
+        if type == "boost":
             cost = value * self.get_speed()
         else:
-            cost = super().get_cost(action=action,
+            cost = super().get_cost(type=type,
                                     value=value,
                                     *args, **kwargs)
         return int(cost)

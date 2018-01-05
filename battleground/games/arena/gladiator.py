@@ -168,17 +168,17 @@ class Gladiator(object):
             protection = target.get_protection()
         return int(max(damage - protection, 0))
 
-    def get_cost(self, action, target, value, *args, **kwargs):
+    def get_cost(self, type, target=None, value=None, *args, **kwargs):
         """
-        :param action: (str)
+        :param type: (str)
         :param target: NotImplemented
         :param value: (int)
         :return: (int) cost in turn counts of a given action, given its target and value.
         """
         cost = 1
-        if action == "stay":
+        if type == "stay":
             cost = value
-        elif action == "attack":
+        elif type == "attack":
             cost = 1
         cost *= self.get_speed()
         return int(cost)

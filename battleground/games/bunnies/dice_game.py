@@ -83,24 +83,24 @@ class DiceGame(GameEngine):
                 max_hutch = max(1, max(self.state["hutches"]))
 
                 if key == "roll":
-                    options.append({"name": key,
+                    options.append({"type": key,
                                     "values": [None]})
                 elif key == "stay":
-                    options.append({"name": key,
+                    options.append({"type": key,
                                     "values": [None]})
                 elif key == "reset":
-                    options.append({"name": key,
+                    options.append({"type": key,
                                     "values": [None]})
                 elif key == "moveBunny" and (1 in self.state["rollables"]
                                              or 2 in self.state["rollables"]):
                     values = [self.state["rollables"].index(d)
                               for d in self.state["rollables"] if d == 1 or d == 2]
-                    options.append({"name": key,
+                    options.append({"type": key,
                                     "values": values})
                 elif key == "moveHutch" and (max_hutch + 1) in self.state["rollables"]:
                     values = [self.state["rollables"].index(d)
                               for d in self.state["rollables"] if d == max_hutch + 1]
-                    options.append({"name": key,
+                    options.append({"type": key,
                                     "values": values})
 
         return options
@@ -162,10 +162,10 @@ class DiceGame(GameEngine):
         """
         :returns (bool) if a move is valid given current state
         """
-        assert "name" in move
+        assert "type" in move
         assert "value" in move
 
-        move_name = move["name"]
+        move_name = move["type"]
         dice_id = move["value"]
 
         state_copy = copy.deepcopy(self.state)
@@ -322,10 +322,10 @@ class DiceGame(GameEngine):
         checks if (dict) move is valid given current state and applies move
         :returns self.state
         """
-        assert "name" in move
+        assert "type" in move
         assert "value" in move
 
-        move_name = move["name"]
+        move_name = move["type"]
         dice_id = move["value"]
 
         if self._is_valid(move):

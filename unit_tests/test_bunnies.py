@@ -74,7 +74,7 @@ def test_score():
         "moveBunny": 0,
         "moveHutch": 0}
     current_player = copy.deepcopy(state["currentPlayer"])
-    engine.move({"name": "stay",
+    engine.move({"type": "stay",
                  "value": 0})
     assert 0 in state["scores"]
     assert state["scores"][current_player] == (
@@ -97,7 +97,7 @@ def test_do_roll():
         "reset": 0,
         "moveBunny": 1,
         "moveHutch": 1}
-    engine.move({"name": "roll",
+    engine.move({"type": "roll",
                  "value": 0})
     # check if all dice from bunnies were used as rollables
     assert state["rollables"].count(0) == 0
@@ -120,7 +120,7 @@ def test_do_roll():
         "moveBunny": 1,
         "moveHutch": 0}
     old_bunnies = copy.deepcopy(state["bunnies"])
-    engine.move({"name": "roll",
+    engine.move({"type": "roll",
                  "value": 0})
     for i in range(dice_game.NUM_DICE):
         if state["rollables"][i] == 0:
@@ -143,7 +143,7 @@ def test_do_stay():
         "moveBunny": 0,
         "moveHutch": 0}
     current_player = copy.deepcopy(state["currentPlayer"])
-    engine.move({"name": "stay",
+    engine.move({"type": "stay",
                  "value": 0})
     assert state["currentPlayer"] == (current_player + 1) % num_players
     assert state["boardValue"] == 10 * 2
@@ -167,7 +167,7 @@ def test_do_stay():
         "moveBunny": 0,
         "moveHutch": 0}
     current_player = copy.deepcopy(state["currentPlayer"])
-    engine.move({"name": "stay",
+    engine.move({"type": "stay",
                  "value": 0})
     assert state["currentPlayer"] == (current_player + 1) % num_players
 
@@ -187,7 +187,7 @@ def test_do_reset():
         "moveBunny": 0,
         "moveHutch": 0}
     current_player = copy.deepcopy(state["currentPlayer"])
-    engine.move({"name": "reset",
+    engine.move({"type": "reset",
                  "value": 0})
     assert state["rollables"].count(0) == 0
     assert state["bunnies"] == [0] * dice_game.NUM_DICE
@@ -211,7 +211,7 @@ def test_move_bunnies():
         "moveBunny": 1,
         "moveHutch": 0}
     # try to move a die into the bunny container
-    engine.move({"name": "moveBunny",
+    engine.move({"type": "moveBunny",
                  "value": 0})
     assert state["bunnies"][0] == 2
     assert state["bunnies"][1] == 0
@@ -240,7 +240,7 @@ def test_move_hutches():
 
     # try to move any die into the hutch container
     for i in range(dice_game.NUM_DICE):
-        engine.move({"name": "moveHutch",
+        engine.move({"type": "moveHutch",
                      "value": i})
         # check that bunnies didn't move into hutches container:
         assert state["hutches"] == [0] * dice_game.NUM_DICE
@@ -249,7 +249,7 @@ def test_move_hutches():
     state["rollables"] = [1, 4, 5, 6, 3, 4, 5]
     # try to move a die into the hutch container
     for i in range(dice_game.NUM_DICE):
-        engine.move({"name": "moveHutch",
+        engine.move({"type": "moveHutch",
                      "value": i})
         # check that dice didn't move into hutches container:
         assert state["hutches"] == [0] * dice_game.NUM_DICE
@@ -258,7 +258,7 @@ def test_move_hutches():
     state["rollables"] = [2] * dice_game.NUM_DICE
     # try to move a die into the hutch container
     for i in range(dice_game.NUM_DICE):
-        engine.move({"name": "moveHutch",
+        engine.move({"type": "moveHutch",
                      "value": i})
     # check that only first dice was moved:
     assert state["hutches"] == [2, 0, 0, 0, 0, 0, 0]
@@ -278,19 +278,19 @@ def test_last_round():
         "moveBunny": 1,
         "moveHutch": 1}
     state["scores"][player_0] = dice_game.END_SCORE - 1
-    engine.move({"name": "moveBunny",
+    engine.move({"type": "moveBunny",
                  "value": 1})
-    engine.move({"name": "stay",
+    engine.move({"type": "stay",
                  "value": 0})
     assert state["scores"][player_0] == dice_game.END_SCORE
     assert state["lastRound"]
     assert state["lastPlayer"] == (player_0 - 1) % num_players
-    engine.move({"name": "reset",
+    engine.move({"type": "reset",
                  "value": 0})
     state["rollables"] = [6, 1, 2, 4, 5, 5, 6]
-    engine.move({"name": "moveBunny",
+    engine.move({"type": "moveBunny",
                  "value": 1})
-    engine.move({"name": "stay",
+    engine.move({"type": "stay",
                  "value": 0})
     assert state["lastRound"]
     assert state["lastPlayer"] == state["currentPlayer"]
