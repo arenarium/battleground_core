@@ -75,11 +75,14 @@ class ArenaGameEngine(GameEngine):
         else:
             self.scores = {i: 0 for i in range(num_players)}
 
+        self.message = []
+
         # init state
         self.state = {"gladiators": self.gladiators,
                       "dungeon": self.dungeon,
                       "queue": self.event_queue,
-                      "scores": self.scores
+                      "scores": self.scores,
+                      "message": self.message
                       }
 
     def init_new_gladiator_stats(self, *args, **kwargs):
@@ -117,6 +120,7 @@ class ArenaGameEngine(GameEngine):
                 "dungeon": self.dungeon.get_init(),
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
                 "scores": self.scores,
+                "message": self.message,
                 "move_options": self.get_move_options(self.get_current_player())
                 }
 
@@ -147,7 +151,8 @@ class ArenaGameEngine(GameEngine):
         self.state = {"gladiators": self.gladiators,
                       "dungeon": self.dungeon,
                       "queue": self.event_queue,
-                      "scores": self.scores
+                      "scores": self.scores,
+                      "message": self.message
                       }
         return None
 
@@ -199,10 +204,13 @@ class ArenaGameEngine(GameEngine):
         :return:
         """
         self.queue_move(move)
+        self.message = []
 
         while self.event_queue[0][1].type is not "gladiator":
             (_, event) = self.event_queue.pop(0)
             self.handle_event(event)
+            if event.type is not "gladiator":
+                self.message.append(("event", event.get_init()))
 
         self.current_player = self.get_current_player()
         return None
