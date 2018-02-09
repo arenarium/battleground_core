@@ -38,7 +38,7 @@ def test_gladiator():
     assert isinstance(glad.get_init(), dict)
     assert isinstance(glad.get_stats(), dict)
     assert isinstance(glad.get_skills(), dict)
-    assert isinstance(glad.get_attack(), int)
+    assert isinstance(glad.get_accuracy(), int)
     assert isinstance(glad.get_evasion(), int)
     assert isinstance(glad.get_base_damage(), int)
     assert isinstance(glad.get_base_protection(), int)
@@ -59,9 +59,9 @@ def test_gladiator():
     stats = {"str": random.randint(1, 3),
              "dex": random.randint(1, 3),
              "con": random.randint(1, 3)}
-    skills = {"melee": random.randint(1, 3),
+    skills = {"acc": random.randint(1, 3),
               "eva": random.randint(1, 3),
-              "speed": random.randint(1, 3)}
+              "spd": random.randint(1, 3)}
     name = "Maximus"
     team = random.randint(1, 10)
     vlad = Gladiator(stats=stats, skills=skills,

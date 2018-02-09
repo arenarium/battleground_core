@@ -27,8 +27,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         targets = {}
         for attr, val in gladiator.boosts.items():
             min_range = - val
-            max_range = gladiator.cur_sp + 1
+            max_range = gladiator.get_boost_value(attr, gladiator.cur_sp) + 1
             values = list(range(min_range, max_range))
+            values.remove(0)  # boosting by 0 is essentially "stay"
             if values:
                 targets[attr] = values
         if targets:
@@ -82,11 +83,11 @@ class Gladiator(gladiator.Gladiator):
             self.cur_sp = self.max_sp
         else:
             self.cur_sp = cur_sp
-        self.boosts = {"att": 0,
+        self.boosts = {"acc": 0,
                        "eva": 0,
-                       "dam": 0,
-                       "prot": 0,
-                       "speed": 0}
+                       "dmg": 0,
+                       "prt": 0,
+                       "spd": 0}
         if boosts is not None:
             for att, val in boosts.items():
                 self.boosts[att] = val
@@ -101,18 +102,18 @@ class Gladiator(gladiator.Gladiator):
         super().reset()
         self.max_sp = self.get_max_sp()
         self.cur_sp = self.max_sp
-        self.boosts = {"att": 0,
+        self.boosts = {"acc": 0,
                        "eva": 0,
-                       "dam": 0,
-                       "prot": 0,
-                       "speed": 0}
+                       "dmg": 0,
+                       "prt": 0,
+                       "spd": 0}
         return None
 
-    def get_attack(self):
+    def get_accuracy(self):
         """
         :return: melee + boost
         """
-        att = super().get_attack() + self.boosts["att"]
+        att = super().get_accuracy() + self.boosts["acc"]
         return att
 
     def get_evasion(self):
@@ -126,21 +127,21 @@ class Gladiator(gladiator.Gladiator):
         """
         :return: damage + boost
         """
-        damage = super().get_base_damage() + self.boosts["dam"]
+        damage = super().get_base_damage() + self.boosts["dmg"]
         return damage
 
     def get_base_protection(self):
         """
         :return: damage + boost
         """
-        protection = super().get_base_protection() + self.boosts["prot"]
+        protection = super().get_base_protection() + self.boosts["prt"]
         return protection
 
     def get_base_speed(self):
         """
         :return: speed + boost
         """
-        speed = super().get_base_speed() + self.boosts["speed"]
+        speed = super().get_base_speed() + self.boosts["spd"]
         return speed
 
     def get_max_sp(self):
@@ -196,7 +197,7 @@ class Gladiator(gladiator.Gladiator):
         :return: (int) cost in turn counts of a given action, given its target and value.
         """
         if type == "boost":
-            cost = value * self.get_speed()
+            cost = abs(value) * self.get_speed()
         else:
             cost = super().get_cost(type=type,
                                     value=value,

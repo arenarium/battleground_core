@@ -5,11 +5,10 @@ import math
 
 class Gladiator(object):
 
-    base_damage = 5  # + a compounding 25% bonus per point of str
-    base_protection = 0  # + log2(1 + str)
-                         # + a compounding 25% bonus per point of str
-    base_speed = 12  # / (1 + 2/30 * speed + a compounding 33% bonus per point of dex )
-    base_max_hp = 20  # + a compounding 20% bonus per point of con
+    base_damage = 5
+    base_protection = 0
+    base_speed = 23
+    base_max_hp = 23
 
     def __init__(self,
                  stats=None, skills=None, name="Nameless", team=1, cur_hp=None,
@@ -28,9 +27,9 @@ class Gladiator(object):
         else:
             self.base_stats = stats
         if skills is None:
-            self.base_skills = {"melee": 0,
+            self.base_skills = {"acc": 0,
                                 "eva": 0,
-                                "speed": 0}
+                                "spd": 0}
         else:
             self.base_skills = skills
         self.damage = self.base_damage
@@ -71,18 +70,18 @@ class Gladiator(object):
         """
         cur_skills = copy.deepcopy(self.base_skills)
         stats = self.get_stats()
-        cur_skills["melee"] += stats["str"]
+        cur_skills["acc"] += stats["dex"]
         cur_skills["eva"] += stats["dex"]
-        cur_skills["speed"] += stats["dex"]
+        cur_skills["spd"] += stats["dex"]
         return cur_skills
 
-    def get_attack(self):
+    def get_accuracy(self):
         """
         :return: melee
         """
         skills = self.get_skills()
-        att = skills["melee"]
-        return att
+        acc = skills["acc"]
+        return acc
 
     def get_evasion(self):
         """
@@ -128,7 +127,7 @@ class Gladiator(object):
 
     def get_base_speed(self):
         skills = self.get_skills()
-        return skills["speed"]
+        return skills["spd"]
 
     def get_speed(self):
         """
@@ -163,7 +162,7 @@ class Gladiator(object):
         """
         damage = 0
         protection = 0
-        if target.is_hit(attack=self.get_attack()):
+        if target.is_hit(attack=self.get_accuracy()):
             damage = self.get_damage()
             protection = target.get_protection()
         return int(max(damage - protection, 0))
