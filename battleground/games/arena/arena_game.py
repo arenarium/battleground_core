@@ -215,19 +215,6 @@ class ArenaGameEngine(GameEngine):
         self.current_player = self.get_current_player()
         return None
 
-    def handle_event(self, event):
-        """
-        :param event:
-        :return: None
-        """
-        if event.type is "stay":
-            pass
-        elif event.type is "attack":
-            self.move_attack(event)
-        else:
-            pass
-        return None
-
     def queue_move(self, move):
         """
         Queue move and player into event_queue.
@@ -240,8 +227,10 @@ class ArenaGameEngine(GameEngine):
         glad = self.gladiators[glad_index]
         event_queue_keys = [ev[0] for ev in self.event_queue]
 
-        event_time = (time + glad.get_cost(**move))  # + calc.noise())
-        event_stats = self.init_queued_event_stats(time=time, glad_event=glad_event, move=move)
+        event_time = time + glad.get_cost(**move)  # + calc.noise()
+        event_stats = self.init_queued_event_stats(time=time,
+                                                   glad_event=glad_event,
+                                                   move=move)
         event = self.event_class(**event_stats)
 
         calc.insort_right(self.event_queue,
@@ -268,6 +257,19 @@ class ArenaGameEngine(GameEngine):
         stats["owner"] = glad_event.owner
         stats["time_stamp"] = time
         return stats
+
+    def handle_event(self, event):
+        """
+        :param event:
+        :return: None
+        """
+        if event.type is "stay":
+            pass
+        elif event.type is "attack":
+            self.move_attack(event)
+        else:
+            pass
+        return None
 
     def move_attack(self, event):
         """
