@@ -100,7 +100,7 @@ class Gladiator(object):
                  (5, 6, 7, 9, 12, 15, ...)
         """
         stats = self.get_stats()
-        damage = self.get_base_damage() * (1.25 ** stats["str"])
+        damage = self.get_base_damage() * (1.33 ** stats["str"])
         return int(damage)
 
     def get_base_protection(self):
@@ -113,7 +113,7 @@ class Gladiator(object):
         """
         stats = self.get_stats()
         protection = (self.get_base_protection()
-                      + math.log2(1 + max(0, stats["str"]))) * (1.25 ** stats["str"])
+                      + max(0, stats["str"])) * (1.05 ** stats["str"])
         return int(protection)
 
     def get_max_hp(self):
@@ -134,8 +134,7 @@ class Gladiator(object):
         :return: 12 / (1 + 2/30 * speed + a compounding 33% bonus per point of dex )
         """
         stats = self.get_stats()
-        speed_divisor = 1 + 2/30 * self.get_base_speed() * (4/3 ** stats["dex"])
-        speed = self.base_speed / speed_divisor
+        speed = self.base_speed - self.get_base_speed() - stats["dex"]
         return speed
 
     def get_initiative(self):
