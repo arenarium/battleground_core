@@ -24,16 +24,18 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
 
-        if gladiators:
-            size = self.get_dungeon_size(gladiators)
-        else:
-            size = ((0, 2), (0, 2))
+        # if gladiators:
+        #     size = self.get_dungeon_size(gladiators)
+        # else:
+        #     size = ((0, 2), (0, 2))
         # find free position
-        while True:
-            pos = (random.randint(size[0][0], size[0][1]),
-                   random.randint(size[1][0], size[1][1]))
-            if all(pos != g.pos for g in gladiators):
-                break
+        # while True:
+        #     pos = (random.randint(size[0][0], size[0][1]),
+        #            random.randint(size[1][0], size[1][1]))
+        #     if all(pos != g.pos for g in gladiators):
+        #         break
+        positions = ((0, 0), (0, 3), (3, 0), (3, 3))
+        pos = positions[gladiators.index(gladiator)]
         stats["pos"] = pos
         return stats
 
@@ -125,7 +127,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         else:
             super().handle_event(event=event)
 
-        self.dungeon.shrink_dungeon(self.state)
+        # self.dungeon.shrink_dungeon(self.state)
         return None
 
     def move_move(self, event):
@@ -139,6 +141,9 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # for glad in self.gladiators:
         #     if glad.pos == calc.add_tuples(player.pos, event.target):
         #         blocked = True
+        target_pos = calc.add_tuples(player.pos, event.target)
+        if self.dungeon.out_of_bounds(target_pos):
+            blocked = True
         if not blocked:
             player.move(event.target)
         return None
@@ -156,6 +161,12 @@ class Dungeon(dungeon.Dungeon):
         init = super().get_init(*args, **kwargs)
         init["size"] = self.size
         return init
+
+    def out_of_bounds(self, position):
+        if (self.size[1][0] < position[0] < self.size[0][0]
+                or self.size[1][1] < position[1] < self.size[0][1]):
+            return True
+        return False
 
     def shrink_dungeon(self, state):
         # shrink dungeon
