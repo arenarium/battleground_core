@@ -1,33 +1,62 @@
-from battleground import agent
-# from games.arena.arena_game import ArenaGameEngine
-# if __name__ == "__main__":
-#     import arena_game
-# else:
-#     from . import arena_game
-
+from battleground.agent import Agent
 import random
 
 
-class ArenaAgent(agent.Agent):
-    def __init__(self):
-        super().__init__()
+class ArenaAgent(Agent):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def move(self, state):
-        # my_game = arena_game.ArenaGameEngine(num_players=len(state["gladiators"]),
-        #                                      type="test_arena",
-        #                                      state=state)
-        # my_gladiator = state["queue"][0][1]["owner"]
-        # options = my_game.get_move_options(my_gladiator)
+        """
+        This method is written such that this agent can also play the bunnies game and the basic games.
+        :param state: state of the game
+        :return: dict of chosen move
+        """
+        move = {}
 
-        options = state["move_options"]
+        if state is not None:
+            if "move_options" in state:
+                options = state["move_options"]
+                if isinstance(options, list):
+                    options = random.choice(options)
+                if "type" in options:
+                    move["type"] = options["type"]
+                else:
+                    move["type"] = options
 
-        option = random.choice(options)
-        name = option["name"]
-        target_dict = random.choice(option["targets"])
-        target = target_dict["target"]
-        value = random.choice(target_dict["values"])
+                has_tools = False
+                if isinstance(options, dict) and "tools" in options:
+                    options = random.choice(options["tools"])
+                    has_tools = True
+                if isinstance(options, dict) and "tool" in options:
+                    move["tool"] = options["tool"]
+                elif has_tools:
+                    move["tool"] = options
 
-        move = {"name": name,
-                "target": target,
-                "value": value}
+                has_targets = False
+                if isinstance(options, dict) and "targets" in options:
+                    options = random.choice(options["targets"])
+                    has_targets = True
+                if isinstance(options, dict) and "target" in options:
+                    move["target"] = options["target"]
+                elif has_targets:
+                    move["target"] = options
+
+                has_values = False
+                if isinstance(options, dict) and "values" in options:
+                    options = random.choice(options["values"])
+                    has_values = True
+                if isinstance(options, dict) and "value" in options:
+                    move["value"] = move["value"]
+                elif has_values:
+                    move["value"] = options
+
+            else:
+                # default values
+                move["type"] = "stay"
+                move["tool"] = None
+                move["target"] = None
+                move["value"] = 1
+                print("Agent is taking default values.")
+
         return move

@@ -7,7 +7,8 @@ config = {
     "name": "test_agent",
     "game_type": "basic_game_50",
     "local_path": None,
-    "remote_path": "battleground/games/basic_game/basic_persistent_agent.py"
+    "remote_path": "battleground/games/basic_game/basic_persistent_agent.py",
+    "class_name": "PersistentAgent"
 }
 
 

@@ -5,6 +5,11 @@ import math
 
 class Gladiator(object):
 
+    base_damage = 5
+    base_protection = 0
+    base_speed = 23
+    base_max_hp = 23
+
     def __init__(self,
                  stats=None, skills=None, name="Nameless", team=1, cur_hp=None,
                  *args, **kwargs):
@@ -22,13 +27,13 @@ class Gladiator(object):
         else:
             self.base_stats = stats
         if skills is None:
-            self.base_skills = {"melee": 0,
+            self.base_skills = {"acc": 0,
                                 "eva": 0,
-                                "speed": 0}
+                                "spd": 0}
         else:
             self.base_skills = skills
-        self.damage = 5
-        self.protection = 0
+        self.damage = self.base_damage
+        self.protection = self.base_protection
         self.name = name
         self.team = team
         self.max_hp = self.get_max_hp()
@@ -61,25 +66,26 @@ class Gladiator(object):
     def get_skills(self):
         """
         :return: skills mod stats bonus
+                 speed has a compounding dex bonus
         """
         cur_skills = copy.deepcopy(self.base_skills)
         stats = self.get_stats()
-        cur_skills["melee"] += stats["str"]
+        cur_skills["acc"] += stats["dex"]
         cur_skills["eva"] += stats["dex"]
-        cur_skills["speed"] += stats["dex"]
+        cur_skills["spd"] += stats["dex"]
         return cur_skills
 
-    def get_attack(self):
+    def get_accuracy(self):
         """
-        :return: melee + boost
+        :return: melee
         """
         skills = self.get_skills()
-        att = skills["melee"]
-        return att
+        acc = skills["acc"]
+        return acc
 
     def get_evasion(self):
         """
-        :return: eva + boost
+        :return: eva
         """
         skills = self.get_skills()
         eva = skills["eva"]
@@ -88,26 +94,26 @@ class Gladiator(object):
     def get_base_damage(self):
         return self.damage
 
-    def get_base_protection(self):
-        return self.protection
-
     def get_damage(self):
         """
         :return: base damage + a compounding 25% bonus per point of str
                  (5, 6, 7, 9, 12, 15, ...)
         """
         stats = self.get_stats()
-        damage = self.get_base_damage() * (1.25 ** stats["str"])
+        damage = self.get_base_damage() * (1.33 ** stats["str"])
         return int(damage)
+
+    def get_base_protection(self):
+        return self.protection
 
     def get_protection(self):
         """
-        :return: (base protection + log2(str)) + a compounding 25% bonus per point of str
+        :return: (base protection + log2(1 + str)) + a compounding 25% bonus per point of str
                  (0, 1, 2, 3, 5, 7, ...)
         """
         stats = self.get_stats()
         protection = (self.get_base_protection()
-                      + math.log2(1 + max(0, stats["str"]))) * (1.25 ** stats["str"])
+                      + max(0, stats["str"])) * (1.05 ** stats["str"])
         return int(protection)
 
     def get_max_hp(self):
@@ -116,15 +122,19 @@ class Gladiator(object):
                  (20, 24, 28, 34, 41, 49, ...)
         """
         stats = self.get_stats()
-        mhp = int(20 * (1.2 ** stats["con"]))
+        mhp = int(self.base_max_hp * (1.2 ** stats["con"]))
         return mhp
+
+    def get_base_speed(self):
+        skills = self.get_skills()
+        return skills["spd"]
 
     def get_speed(self):
         """
-        :return: 21 - speed
+        :return: 12 / (1 + 2/30 * speed + a compounding 33% bonus per point of dex )
         """
-        skills = self.get_skills()
-        speed = 21 - skills["speed"]
+        stats = self.get_stats()
+        speed = self.base_speed - self.get_base_speed() - stats["dex"]
         return speed
 
     def get_initiative(self):
@@ -151,22 +161,22 @@ class Gladiator(object):
         """
         damage = 0
         protection = 0
-        if target.is_hit(attack=self.get_attack()):
+        if target.is_hit(attack=self.get_accuracy()):
             damage = self.get_damage()
             protection = target.get_protection()
         return int(max(damage - protection, 0))
 
-    def get_cost(self, action, target, value, *args, **kwargs):
+    def get_cost(self, type, target=None, value=None, *args, **kwargs):
         """
-        :param action: (str)
+        :param type: (str)
         :param target: NotImplemented
         :param value: (int)
         :return: (int) cost in turn counts of a given action, given its target and value.
         """
         cost = 1
-        if action == "stay":
+        if type == "stay":
             cost = value
-        elif action == "attack":
+        elif type == "attack":
             cost = 1
         cost *= self.get_speed()
         return int(cost)

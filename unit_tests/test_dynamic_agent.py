@@ -8,6 +8,7 @@ def test_dynamic_agent_local_path():
     config = {
         "owner": "test_owner",
         "name": "test_agent",
+        "class_name": "BasicAgent",
         "local_path": "battleground.games.basic_game.basic_agent",
         "remote_path": None
     }
@@ -23,13 +24,14 @@ def test_dynamic_agent_database():
         "owner": "test_owner",
         "name": "test_agent",
         "game_type": "test_game",
+        "class_name": "BasicAgent",
         "local_path": "battleground.games.basic_game.basic_agent",
         "remote_path": None
     }
     # create an agent ID
     agent_id = agent_data.get_agent_id(owner=config["owner"],
                                        name=config["name"],
-                                       game_type=["game_type"])
+                                       game_type=config["game_type"])
 
     # load file
     module_path = config["local_path"].replace(".", "/") + ".py"
@@ -42,7 +44,8 @@ def test_dynamic_agent_database():
     # test loading from database
     dynamic_agent = DynamicAgent(owner=config["owner"],
                                  name=config["name"],
-                                 game_type=["game_type"],
+                                 game_type=config["game_type"],
+                                 class_name=config["class_name"],
                                  from_db=True)
 
     assert isinstance(dynamic_agent.agent_instance, Agent)

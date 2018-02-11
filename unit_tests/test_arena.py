@@ -38,7 +38,7 @@ def test_gladiator():
     assert isinstance(glad.get_init(), dict)
     assert isinstance(glad.get_stats(), dict)
     assert isinstance(glad.get_skills(), dict)
-    assert isinstance(glad.get_attack(), int)
+    assert isinstance(glad.get_accuracy(), int)
     assert isinstance(glad.get_evasion(), int)
     assert isinstance(glad.get_base_damage(), int)
     assert isinstance(glad.get_base_protection(), int)
@@ -59,9 +59,9 @@ def test_gladiator():
     stats = {"str": random.randint(1, 3),
              "dex": random.randint(1, 3),
              "con": random.randint(1, 3)}
-    skills = {"melee": random.randint(1, 3),
+    skills = {"acc": random.randint(1, 3),
               "eva": random.randint(1, 3),
-              "speed": random.randint(1, 3)}
+              "spd": random.randint(1, 3)}
     name = "Maximus"
     team = random.randint(1, 10)
     vlad = Gladiator(stats=stats, skills=skills,
@@ -81,23 +81,27 @@ def test_player():
     options = age.get_move_options(current_player)
     agent = ArenaAgent()
     move = agent.move(state)
-    assert "name" in move
-    assert "target" in move
-    assert "value" in move
-    name = move["name"]
-    target = move["target"]
-    value = move["value"]
+    assert "type" in move
+    type = move["type"]
+    if "tool" in move:
+        tool = move["tool"]
+    if "target" in move:
+        target = move["target"]
+    if "value" in move:
+        value = move["value"]
 
-    names = [option["name"] for option in options]
-    assert name in names
-    for option in options:
-        if option["name"] is name:
-            targets = [target_options["target"] for target_options in option["targets"]]
-            assert target in targets
-            for target_options in option["targets"]:
-                if target_options["target"] is target:
-                    values = target_options["values"]
-                    assert value in values
+    types = [option["type"] for option in options]
+    assert type in types
+    # check that move in options:
+    # for option in options:
+    #     if option["type"] is type:
+    #         if "tools" in option:
+    #             options = option["tools"]
+    #             if isinstance(options, list):
+    #                 tools = [tool_option["tool"] for tool_option in options]
+    #                 assert tool in tools
+    #                 for option in options:
+    #                     if option["tool"] is tool:
 
 
 def test_game():

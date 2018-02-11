@@ -68,7 +68,7 @@ class DiceGame(GameEngine):
         """
         return "Bunnies"
 
-    def get_state(self):
+    def get_state(self, observer_id=None):
         """
         :returns self.state with move_options
         """
@@ -76,31 +76,32 @@ class DiceGame(GameEngine):
         state["move_options"] = self.get_move_options()
         return state
 
-    def get_save_state(self):
-        """
-        :returns self.get_state()
-        """
-        state = self.get_state()
-        return state
-
     def get_move_options(self):
-        options = {}
+        options = []
         for key, value in self.state["allowedMoves"].items():
             if value == 1:
                 max_hutch = max(1, max(self.state["hutches"]))
 
                 if key == "roll":
-                    options[key] = [None]
+                    options.append({"type": key,
+                                    "values": [None]})
                 elif key == "stay":
-                    options[key] = [None]
+                    options.append({"type": key,
+                                    "values": [None]})
                 elif key == "reset":
-                    options[key] = [None]
-                elif key == "moveBunny" and (1 in self.state["rollables"] or 2 in self.state["rollables"]):
-                    options[key] = [self.state["rollables"].index(d)
-                                    for d in self.state["rollables"] if d == 1 or d == 2]
+                    options.append({"type": key,
+                                    "values": [None]})
+                elif key == "moveBunny" and (1 in self.state["rollables"]
+                                             or 2 in self.state["rollables"]):
+                    values = [self.state["rollables"].index(d)
+                              for d in self.state["rollables"] if d == 1 or d == 2]
+                    options.append({"type": key,
+                                    "values": values})
                 elif key == "moveHutch" and (max_hutch + 1) in self.state["rollables"]:
-                    options[key] = [self.state["rollables"].index(d)
-                                    for d in self.state["rollables"] if d == max_hutch + 1]
+                    values = [self.state["rollables"].index(d)
+                              for d in self.state["rollables"] if d == max_hutch + 1]
+                    options.append({"type": key,
+                                    "values": values})
 
         return options
 
@@ -161,10 +162,10 @@ class DiceGame(GameEngine):
         """
         :returns (bool) if a move is valid given current state
         """
-        assert "name" in move
+        assert "type" in move
         assert "value" in move
 
-        move_name = move["name"]
+        move_name = move["type"]
         dice_id = move["value"]
 
         state_copy = copy.deepcopy(self.state)
@@ -321,10 +322,10 @@ class DiceGame(GameEngine):
         checks if (dict) move is valid given current state and applies move
         :returns self.state
         """
-        assert "name" in move
+        assert "type" in move
         assert "value" in move
 
-        move_name = move["name"]
+        move_name = move["type"]
         dice_id = move["value"]
 
         if self._is_valid(move):
