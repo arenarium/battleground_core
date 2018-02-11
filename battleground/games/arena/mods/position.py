@@ -24,18 +24,18 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
 
-        # if gladiators:
-        #     size = self.get_dungeon_size(gladiators)
-        # else:
-        #     size = ((0, 2), (0, 2))
+        if gladiators:
+            size = self.get_dungeon_size(gladiators)
+        else:
+            size = ((0, 3), (0, 3))
         # find free position
-        # while True:
-        #     pos = (random.randint(size[0][0], size[0][1]),
-        #            random.randint(size[1][0], size[1][1]))
-        #     if all(pos != g.pos for g in gladiators):
-        #         break
-        positions = ((0, 0), (0, 3), (3, 0), (3, 3))
-        pos = positions[gladiators.index(gladiator)]
+        while True:
+            pos = (random.randint(size[0][0], size[0][1]),
+                   random.randint(size[1][0], size[1][1]))
+            if all(pos != g.pos for g in gladiators):
+                break
+        # positions = ((0, 0), (0, 3), (3, 0), (3, 3))
+        # pos = positions[gladiators.index(gladiator)]
         stats["pos"] = pos
         return stats
 
