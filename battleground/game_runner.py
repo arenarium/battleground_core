@@ -31,6 +31,7 @@ class GameRunner(object):
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
             data_to_save["player_ids"] = copy.deepcopy(self.agent_ids)
+            data_to_save["game_over"] = str(self.game_engine.game_over())
 
             self.game_states.append(data_to_save)
             self.broadcast(data_to_save)
