@@ -44,7 +44,8 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         :return: list of stats to create Dungeon object at start of the game
         """
         stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
-        stats["size"] = self.get_dungeon_size(gladiators)
+        # stats["size"] = self.get_dungeon_size(gladiators)
+        stats["size"] = ((0, 3), (0, 3))
         return stats
 
     @staticmethod
@@ -142,7 +143,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         #     if glad.pos == calc.add_tuples(player.pos, event.target):
         #         blocked = True
         target_pos = calc.add_tuples(player.pos, event.target)
-        if self.dungeon.out_of_bounds(target_pos):
+        if not self.within_bounds(target_pos):
             blocked = True
         if not blocked:
             player.move(event.target)
@@ -161,12 +162,6 @@ class Dungeon(dungeon.Dungeon):
         init = super().get_init(*args, **kwargs)
         init["size"] = self.size
         return init
-
-    def out_of_bounds(self, position):
-        if (self.size[1][0] < position[0] < self.size[0][0]
-                or self.size[1][1] < position[1] < self.size[0][1]):
-            return True
-        return False
 
     def shrink_dungeon(self, state):
         # shrink dungeon
