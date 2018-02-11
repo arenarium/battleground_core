@@ -143,7 +143,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         #     if glad.pos == calc.add_tuples(player.pos, event.target):
         #         blocked = True
         target_pos = calc.add_tuples(player.pos, event.target)
-        if not self.within_bounds(target_pos):
+        if not self.within_bounds(target_pos, size=self.dungeon.size):
             blocked = True
         if not blocked:
             player.move(event.target)
