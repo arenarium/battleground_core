@@ -74,13 +74,28 @@ Vagrant.configure("2") do |config|
 
   #couchdb instance for testing
   config.vm.provision "docker" do |d|
-    # d.run "couchdb",
-    #   args: "-p 5984:5984"
+    d.run "mongo",
+      image: "mongo:3.4",
+      args: "-v '/data:/data/db' -p 27017:27017"
+    d.run "mongo-express",
+      image: "mongo-express",
+      args: "--link mongo:mongo -p 8081:8081"
   end
 
   config.vm.provision "shell", path: "bootstrap.sh"
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
+
+  git clone git://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
+  cp .oh-my-zsh/templates/zshrc.zsh-template .zshrc
+  sudo chsh -s /bin/zsh $(whoami)
+
+  echo "
+  source ~/python3/bin/activate
+  cd /vagrant
+  export PYTHONPATH=$PYTHONPATH:/vagrant
+  " >> .zshrc
+
   pyvenv python3
   . ./python3/bin/activate
   pip install --upgrade pip
