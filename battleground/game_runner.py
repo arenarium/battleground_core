@@ -20,6 +20,7 @@ class GameRunner(object):
         player_index = self.game_engine.get_current_player()
 
         while not self.game_engine.game_over():
+            # TODO: steamline public vs private information.
             engine_state = self.game_engine.get_state(player_index)
 
             engine_state['current_player'] = player_index
