@@ -22,21 +22,25 @@ class GameRunner(object):
         while not self.game_engine.game_over():
             engine_state = self.game_engine.get_state(player_index)
 
+            engine_state['current_player'] = player_index
+
             move = self.players[player_index].move(engine_state)
             self.game_engine.move(move)
 
             state = self.game_engine.get_state()
+            player_index = self.game_engine.get_current_player()
 
             data_to_save = {}
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
             data_to_save["player_ids"] = copy.deepcopy(self.agent_ids)
             data_to_save["game_state"]["game_over"] = str(self.game_engine.game_over())
+            data_to_save["game_state"]['current_player'] = player_index
 
             self.game_states.append(data_to_save)
             self.broadcast(data_to_save)
 
-            player_index = self.game_engine.get_current_player()
+
 
         # the final scores
         scores = self.game_engine.get_state()["scores"]
