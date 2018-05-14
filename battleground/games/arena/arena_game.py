@@ -194,23 +194,6 @@ class ArenaGameEngine(GameEngine):
 
         return options
 
-    # @staticmethod
-    # def get_move_options_list(move_options):
-    #     nested_options = move_options
-    #     options_list = []
-    #     while isinstance(nested_options, list):
-    #         move = {}
-    #         for option in nested_options:
-    #             if isinstance(option, dict):
-    #                 for k, v in option.items():
-    #                     if not isinstance(v, list):
-    #                         move[k] = v
-    #                     else:
-    #                         new_nested_options = v
-    #
-    #         nested_options = new_nested_options
-    #     return options_list
-
     def move(self, move):
         """
         Execute a move on behalf of the current player.
