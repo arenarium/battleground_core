@@ -89,7 +89,7 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
     return all_scores
 
 
-def start_session(config, save=True, game_delay=None):
+def start_session(config, save=True, game_delay=None, run=True):
     config_data = parse_config(config)
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
@@ -98,9 +98,13 @@ def start_session(config, save=True, game_delay=None):
                                   game_type=config_data["game"]["type"])
     engine = game_engine_factory(num_players=len(agent_objects),
                                  game_config=config_data["game"])
-    all_scores = run_session(engine,
-                             agent_objects,
-                             num_games,
-                             save=save,
-                             game_delay=game_delay)
-    return all_scores
+
+    if run:
+        all_scores = run_session(engine,
+                                 agent_objects,
+                                 num_games,
+                                 save=save,
+                                 game_delay=game_delay)
+        return all_scores
+    else:
+        return [agent_objects, engine]
