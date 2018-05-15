@@ -76,10 +76,14 @@ class DynamicAgent(agent.Agent):
     def _load_from_file(self):
         """loads agent code from a file specified at runtime"""
 
+        agent_class = None
         agent_module = importlib.import_module(self.local_path)
         for name, obj in inspect.getmembers(agent_module):
             if name == self.class_name and inspect.isclass(obj):
                 agent_class = obj
+
+        if agent_class is None:
+            raise Exception("agent class '{}' not found in {}.".format(self.class_name, self.local_path))
 
         if self.settings is not None:
             return agent_class(**self.settings)

@@ -19,21 +19,21 @@
       "owner":"core",
       "name":"random walker 1",
       "local_path":"battleground.games.arena.agents.arena_agent",
-      "class_name":"BasicAgent",
+      "class_name":"ArenaAgent",
       "remote_path":null
     },
     {
       "owner":"core",
       "name":"random walker 2",
       "local_path":"battleground.games.arena.agents.arena_agent",
-      "class_name":"BasicAgent",
+      "class_name":"ArenaAgent",
       "remote_path":null
     },
     {
       "owner":"core",
       "name":"random walker 3",
       "local_path":"battleground.games.arena.agents.arena_agent",
-      "class_name":"BasicAgent",
+      "class_name":"ArenaAgent",
       "remote_path":null
     }
   ]
