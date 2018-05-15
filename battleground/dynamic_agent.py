@@ -83,7 +83,9 @@ class DynamicAgent(agent.Agent):
                 agent_class = obj
 
         if agent_class is None:
-            raise Exception("agent class '{}' not found in {}.".format(self.class_name, self.local_path))
+            message = "agent class '{}' not found in {}.".format(self.class_name,
+                                                                 self.local_path)
+            raise Exception(message)
 
         if self.settings is not None:
             return agent_class(**self.settings)
