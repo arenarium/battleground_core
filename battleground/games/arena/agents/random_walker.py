@@ -13,51 +13,15 @@ class ArenaAgent(Agent):
         :param state: state of the game
         :return: dict of chosen move
         """
-        move = {}
+        my_move = {}
 
         if state is not None:
             if "move_options" in state:
-                options = state["move_options"]
-                if isinstance(options, list):
-                    options = random.choice(options)
-                if "type" in options:
-                    move["type"] = options["type"]
-                else:
-                    move["type"] = options
+                for move in state['move_options']:
+                    if move['type'] == 'move':  # walk around
+                        my_move["type"] = "move"
+                        my_move["tool"] = None
+                        my_move["target"] = random.choice(move['targets'])
+                        my_move["value"] = 1
 
-                has_tools = False
-                if isinstance(options, dict) and "tools" in options:
-                    options = random.choice(options["tools"])
-                    has_tools = True
-                if isinstance(options, dict) and "tool" in options:
-                    move["tool"] = options["tool"]
-                elif has_tools:
-                    move["tool"] = options
-
-                has_targets = False
-                if isinstance(options, dict) and "targets" in options:
-                    options = random.choice(options["targets"])
-                    has_targets = True
-                if isinstance(options, dict) and "target" in options:
-                    move["target"] = options["target"]
-                elif has_targets:
-                    move["target"] = options
-
-                has_values = False
-                if isinstance(options, dict) and "values" in options:
-                    options = random.choice(options["values"])
-                    has_values = True
-                if isinstance(options, dict) and "value" in options:
-                    move["value"] = move["value"]
-                elif has_values:
-                    move["value"] = options
-
-            else:
-                # default values
-                move["type"] = "stay"
-                move["tool"] = None
-                move["target"] = None
-                move["value"] = 1
-                print("Agent is taking default values.")
-
-        return move
+        return my_move
