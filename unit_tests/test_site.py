@@ -34,10 +34,10 @@ def test_assign_agents():
     data = site_runner.parse_config(CONFIG_DATA_FILE)
     players = site_runner.assign_agents(data["players"], data["game"]["type"])
 
-    assert isinstance(players, dict)
+    assert isinstance(players, tuple)
     assert len(players) == len(data["players"])
 
-    for _, player in players.items():
+    for _, player in players:
         assert isinstance(player, DynamicAgent)
 
 

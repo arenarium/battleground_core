@@ -19,19 +19,21 @@ def parse_config(config):
 
 
 def assign_agents(players_config, game_type):
-    agents = {}
-    taken_ids = []
+    """
+    Create agent objects following the specification of players_config
+    returns a list of tuples (id, agent object)
+    duplicate ids are permitted, this corresponds to the same agent being instatiated twice.
+    """
+    agents = []  # will contain tuples of (id, object)
     for player in players_config:
         agent_id = agent_data.get_agent_id(owner=player["owner"],
                                            name=player["name"],
-                                           game_type=game_type,
-                                           taken_ids=taken_ids)
-        player["agent_id"] = agent_id
-        if "game_type" not in player:
-            player["game_type"] = [game_type]
-        agents[str(agent_id)] = DynamicAgent(**player)
-        taken_ids.append(agent_id)
-    return agents
+                                           game_type=game_type)
+
+        # print(player)
+        # append tuple to agent list
+        agents.append((str(agent_id), DynamicAgent(**player)))
+    return tuple(agents)  # return immutable version
 
 
 def game_engine_factory(num_players, game_config):
@@ -59,17 +61,17 @@ def game_engine_factory(num_players, game_config):
     return engine_instance
 
 
-def run_session(engine, agent_player_dict, num_games, save=True, game_delay=None):
+def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
     all_scores = []
 
-    for agent_id, player in agent_player_dict.items():
+    for agent_id, player in agent_objects:
         memory = agent_data.load_agent_data(agent_id=agent_id,
                                             key="memory")
         player.set_memory(memory)
 
     for _ in range(num_games):
         game_runner = GameRunner(game_engine=engine,
-                                 agent_player_dict=agent_player_dict,
+                                 agent_objects=agent_objects,
                                  save=save)
         scores = game_runner.run_game()
 
@@ -80,7 +82,7 @@ def run_session(engine, agent_player_dict, num_games, save=True, game_delay=None
         all_scores.append(scores)
         engine.reset()
 
-    for agent_id, player in agent_player_dict.items():
+    for agent_id, player in agent_objects:
         agent_data.save_agent_data(agent_id=agent_id,
                                    data=player.get_memory(),
                                    key="memory")
@@ -92,12 +94,12 @@ def start_session(config, save=True, game_delay=None):
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
-    agent_player_dict = assign_agents(players_config=config_data["players"],
-                                      game_type=config_data["game"]["type"])
-    engine = game_engine_factory(num_players=len(agent_player_dict),
+    agent_objects = assign_agents(players_config=config_data["players"],
+                                  game_type=config_data["game"]["type"])
+    engine = game_engine_factory(num_players=len(agent_objects),
                                  game_config=config_data["game"])
     all_scores = run_session(engine,
-                             agent_player_dict,
+                             agent_objects,
                              num_games,
                              save=save,
                              game_delay=game_delay)

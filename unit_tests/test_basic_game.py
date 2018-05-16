@@ -24,9 +24,9 @@ def test_player():
 
 
 def test_game():
-    players = {}
+    players = []
     for i in range(3):
-        players[i] = basic_agent.BasicAgent()
+        players.append((i, basic_agent.BasicAgent()))
     engine = BasicGameEngine(num_players=3, type="bg")
     runner = GameRunner(engine, players, save=False)
     scores = runner.run_game()
@@ -40,7 +40,7 @@ def test_game():
             assert key in state
 
         assert isinstance(state["game_state"], dict)
-        assert isinstance(state["player_ids"], list)
+        assert isinstance(state["player_ids"], tuple)
         if i == 0:
             assert state["last_move"] is None
         else:

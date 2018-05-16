@@ -3,10 +3,9 @@ import copy
 
 
 class GameRunner(object):
-    def __init__(self, game_engine, agent_player_dict, save=True):
+    def __init__(self, game_engine, agent_objects, save=True):
         self.game_engine = game_engine
-        self.players = list(agent_player_dict.values())
-        self.agent_ids = list(agent_player_dict.keys())
+        self.agent_ids, self.players = zip(*agent_objects)
         self.game_states = []
         self.save = save
 
@@ -40,14 +39,12 @@ class GameRunner(object):
 
         # the final scores
         scores = self.game_engine.get_state()["scores"]
-
         if self.save:
             # save game states and player stats to the DB.
             game_id = game_data.save_game_history(self.game_engine.get_game_name(),
                                                   self.game_states)
-            for i in range(len(self.players)):
-                agent_id = self.agent_ids[i]
-                score = scores[i]
+            for index, agent_id in enumerate(self.agent_ids):
+                score = scores[index]
                 agent_data.save_game_result(agent_id, game_id,
                                             self.game_engine.type,
                                             score,

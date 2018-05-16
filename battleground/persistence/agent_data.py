@@ -17,11 +17,22 @@ def insert_new_agent(owner, name, game_type, db_handle):
     return agent_id
 
 
-def get_agent_id(owner, name, game_type, db_handle=None, taken_ids=None):
+def get_owners(db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
-    if taken_ids is None:
-        taken_ids = []
+
+    owners = set()
+
+    collection = db_handle.agents
+    for document in collection.find():
+        owners.add(document["owner"])
+
+    return owners
+
+
+def get_agent_id(owner, name, game_type, db_handle=None):
+    if db_handle is None:
+        db_handle = get_db_handle("agents")
 
     if "agents" not in db_handle.collection_names():
         agent_id = insert_new_agent(owner, name, game_type, db_handle)
@@ -30,9 +41,8 @@ def get_agent_id(owner, name, game_type, db_handle=None, taken_ids=None):
         result = list(collection.find({"owner": owner,
                                        "name": name,
                                        "game_type": game_type}))
-        agent_list = [agent for agent in result if agent["_id"] not in taken_ids]
-        if agent_list:
-            agent_id = agent_list[0]["_id"]
+        if result:
+            agent_id = result[0]["_id"]
         else:
             agent_id = insert_new_agent(owner, name, game_type, db_handle)
     return agent_id
