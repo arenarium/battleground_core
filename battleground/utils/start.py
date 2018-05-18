@@ -76,7 +76,14 @@ def go():
             config = generate_dynamic_config(delay)
             site_runner.start_session(config)
         else:
-            site_runner.start_session(args.config)
+            config_file_name = args.config
+
+            # relative paths can be local or in de default config folder
+            if not os.path.isabs(args.config):
+                if not os.path.exists(args.config):
+                    config_file_name = os.path.join(DEFAULT_CONFIG_PATH, args.config)
+
+            site_runner.start_session(config_file_name)
 
 
 if __name__ == "__main__":
