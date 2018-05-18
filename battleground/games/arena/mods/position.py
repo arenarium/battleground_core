@@ -27,7 +27,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         if gladiators:
             size = self.get_dungeon_size(gladiators)
         else:
-            size = ((0, 3), (0, 3))
+            size = ((2, 7), (3, 10))
         # find free position
         while True:
             pos = (random.randint(size[0][0], size[0][1]),
@@ -45,7 +45,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
         # stats["size"] = self.get_dungeon_size(gladiators)
-        stats["size"] = ((0, 7), (0, 13))
+        stats["size"] = ((0, 13), (0, 7))
         return stats
 
     @staticmethod
