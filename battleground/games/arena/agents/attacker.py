@@ -8,8 +8,7 @@ class ArenaAgent(Agent):
 
     def move(self, state):
         """
-        This method is written such that this agent can also play the bunnies
-        game and the basic games.
+        Can only play arena games with position mod.
         :param state: state of the game
         :return: dict of chosen move
         """
