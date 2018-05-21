@@ -27,7 +27,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         if gladiators:
             size = self.get_dungeon_size(gladiators)
         else:
-            size = ((0, 3), (0, 3))
+            size = ((2, 7), (3, 10))
         # find free position
         while True:
             pos = (random.randint(size[0][0], size[0][1]),
@@ -45,11 +45,12 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
         # stats["size"] = self.get_dungeon_size(gladiators)
-        stats["size"] = ((0, 3), (0, 3))
+        stats["size"] = ((0, 13), (0, 7))
         return stats
 
     @staticmethod
     def get_dungeon_size(gladiators):
+        """ get a dungeon size based on gladiator position (bounding box + margin) """
         positions = [g.pos for g in gladiators]
         pos_x = [p[0] for p in positions]
         pos_y = [p[1] for p in positions]
@@ -59,6 +60,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
 
     @staticmethod
     def within_bounds(pos, size):
+        """test if position is within bounds"""
         return bool(size[0][0] <= pos[0] <= size[0][1]
                     and size[1][0] <= pos[1] <= size[1][1])
 
@@ -94,6 +96,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
                    if (util.dist(gladiator.pos, g.pos) <= gladiator.range
                        and not g.is_dead()
                        and g is not gladiator)]
+
         # replace attack option from super()
         index = len(options) - 1
         for option in reversed(options):
@@ -164,7 +167,7 @@ class Dungeon(dungeon.Dungeon):
         return init
 
     def shrink_dungeon(self, state):
-        # shrink dungeon
+        """ Shrink dungeon. This is useful to limit the length of the game."""
         positions = [g.pos for g in state["gladiators"]]
         pos_x = [p[0] for p in positions]
         pos_y = [p[1] for p in positions]

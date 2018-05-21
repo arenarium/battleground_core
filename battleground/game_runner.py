@@ -1,6 +1,11 @@
 from .persistence import game_data, agent_data
 import copy
-
+# turn stages:
+# - current player recieves its view on the game state
+# - player makes a move
+# - move is resolved
+# - state after move is broadcast
+# - current player index is set to the player that moves next
 
 class GameRunner(object):
     def __init__(self, game_engine, agent_objects, save=True):
@@ -20,21 +25,34 @@ class GameRunner(object):
         player_index = self.game_engine.get_current_player()
 
         while not self.game_engine.game_over():
+            # TODO: steamline public vs private information.
+
+            last_player = player_index
             engine_state = self.game_engine.get_state(player_index)
+            engine_state['current_player'] = player_index
+            engine_state['last_player'] = last_player
 
             move = self.players[player_index].move(engine_state)
             self.game_engine.move(move)
 
+            # get global state
             state = self.game_engine.get_state()
 
+            # save and broadcast data
             data_to_save = {}
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
             data_to_save["player_ids"] = copy.deepcopy(self.agent_ids)
+            data_to_save["game_state"]["game_over"] = str(self.game_engine.game_over())
+            data_to_save["game_state"]['current_player'] = player_index
+            data_to_save["game_state"]['last_player'] = last_player
 
             self.game_states.append(data_to_save)
+
+            # broadcast to observers
             self.broadcast(data_to_save)
 
+            # get next player
             player_index = self.game_engine.get_current_player()
 
         # the final scores

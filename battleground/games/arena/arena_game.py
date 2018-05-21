@@ -32,7 +32,7 @@ class ArenaGameEngine(GameEngine):
         """
         super().__init__(num_players=num_players, type=type)
 
-        # init gladiators
+        # init gladiators from exsisting game state, if provided
         if state is not None \
                 and "gladiators" in state:
             stats = state["gladiators"]
@@ -41,6 +41,7 @@ class ArenaGameEngine(GameEngine):
         self.gladiators = [self.gladiator_class(**g)
                            for g in stats[0:num_players]]
 
+        # create new players if number of specified players > existing players
         if len(stats) < num_players:
             for _ in range(0, num_players - len(stats)):
                 new_stats = self.init_new_gladiator_stats(self.gladiators)
@@ -55,8 +56,7 @@ class ArenaGameEngine(GameEngine):
         self.dungeon = self.dungeon_class(**dungeon_stats)
 
         # init event_queue
-        if state is not None \
-                and "queue" in state:
+        if state is not None and "queue" in state:
             self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
         else:
             self.event_queue = [(g.get_initiative(),  # + util.noise(),

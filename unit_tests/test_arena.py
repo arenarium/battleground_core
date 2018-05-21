@@ -5,7 +5,7 @@
 from battleground.games.arena.arena_game import ArenaGameEngine
 from battleground.games.arena.dungeon import Dungeon
 from battleground.games.arena.gladiator import Gladiator
-from battleground.games.arena.arena_agent import ArenaAgent
+from battleground.games.arena.agents.arena_agent import ArenaAgent
 
 import random
 

@@ -21,3 +21,6 @@ class Event(object):
                 "value": self.value
                 }
         return init
+
+    def __repr__(self):
+        return("<Event {}>".format(str(self.get_init())))
