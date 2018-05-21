@@ -3,7 +3,7 @@ from .. import arena_game
 from .. import dungeon
 from .. import event
 from .. import gladiator
-from .. import calc
+from .. import util
 
 import random
 
@@ -80,7 +80,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # add options for "move"
         directions = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
         targets = [d for d in directions
-                   if self.within_bounds(calc.add_tuples(gladiator.pos, d),
+                   if self.within_bounds(util.add_tuples(gladiator.pos, d),
                                          self.dungeon.size)]
         if targets:
             options_move = {"type": "move",
@@ -91,7 +91,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # add options for "attack"
         # targets are indices of gladiators list
         targets = [self.gladiators.index(g) for g in self.gladiators
-                   if (calc.dist(gladiator.pos, g.pos) <= gladiator.range
+                   if (util.dist(gladiator.pos, g.pos) <= gladiator.range
                        and not g.is_dead()
                        and g is not gladiator)]
         # replace attack option from super()
@@ -142,7 +142,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # for glad in self.gladiators:
         #     if glad.pos == calc.add_tuples(player.pos, event.target):
         #         blocked = True
-        target_pos = calc.add_tuples(player.pos, event.target)
+        target_pos = util.add_tuples(player.pos, event.target)
         if not self.within_bounds(target_pos, size=self.dungeon.size):
             blocked = True
         if not blocked:
@@ -212,7 +212,7 @@ class Gladiator(gladiator.Gladiator):
         """
         pos_o = self.pos
         pos_t = target.pos
-        if calc.dist(pos_o, pos_t) > self.range:
+        if util.dist(pos_o, pos_t) > self.range:
             return 0
         else:
             return super().attack(target=target)
@@ -222,7 +222,7 @@ class Gladiator(gladiator.Gladiator):
         :param direction: (int, int) direction vector (list)
         :return: None
         """
-        self.pos = calc.add_tuples(self.pos, direction)
+        self.pos = util.add_tuples(self.pos, direction)
         return None
 
     def get_cost(self, type, *args, **kwargs):

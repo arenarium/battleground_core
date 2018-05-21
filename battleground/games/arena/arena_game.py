@@ -1,6 +1,6 @@
 
 from battleground.game_engine import GameEngine
-from . import calc
+from . import util
 from .dungeon import Dungeon
 from .event import Event
 from .gladiator import Gladiator
@@ -59,7 +59,7 @@ class ArenaGameEngine(GameEngine):
                 and "queue" in state:
             self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
         else:
-            self.event_queue = [(g.get_initiative(),  # + calc.noise(),
+            self.event_queue = [(g.get_initiative(),  # + util.noise(),
                                  self._init_event(g))
                                 for g in self.gladiators]
             # shuffle list to guarantee no advantage of one player over another
@@ -143,7 +143,7 @@ class ArenaGameEngine(GameEngine):
         for glad in self.gladiators:
             glad.reset()
         self.dungeon.reset()
-        self.event_queue = sorted([(g.get_initiative(),  # + calc.noise(),
+        self.event_queue = sorted([(g.get_initiative(),  # + util.noise(),
                                     self._init_event(g))
                                    for g in self.gladiators],
                                   key=lambda event: event[0])
@@ -227,20 +227,20 @@ class ArenaGameEngine(GameEngine):
         glad = self.gladiators[glad_index]
         event_queue_keys = [ev[0] for ev in self.event_queue]
 
-        event_time = time + glad.get_cost(**move)  # + calc.noise()
+        event_time = time + glad.get_cost(**move)  # + util.noise()
         event_stats = self.init_queued_event_stats(time=time,
                                                    glad_event=glad_event,
                                                    move=move)
         event = self.event_class(**event_stats)
 
-        calc.insort_right(self.event_queue,
+        util.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, event),
                           keyfunc=lambda e: e[0])
         next_glad_event = self.event_class(owner=glad_index,
                                            type="gladiator",
                                            time_stamp=time)
-        calc.insort_right(self.event_queue,
+        util.insort_right(self.event_queue,
                           event_queue_keys,
                           (event_time, next_glad_event),
                           keyfunc=lambda e: e[0])
