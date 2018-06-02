@@ -4,8 +4,12 @@ import json
 
 
 def generate_players_config_from_db(game_type, num_players):
-    agent_ids = agent_data.get_agents(game_type=game_type)
-    players = random.sample(agent_ids, num_players, fields=['owner', 'name'])
+    agent_ids = agent_data.get_agents(game_type=game_type,
+                                      has_file=True,
+                                      fields=['owner', 'name'])
+    print(agent_ids)
+    players = random.sample(agent_ids,
+                            num_players)
     config = []
     for player in players:
         player_config = {}
@@ -45,12 +49,18 @@ def generate_dynamic_config(file_path, game_delay=None, players=None, game_type=
     if game_type is None:
         game_spec = random.choice(registered_games)
     else:
-        registered_games = {x["name"]: x for x in registered_games}
+        registered_games = {x["type"]: x for x in registered_games}
         assert game_type in registered_games
         game_spec = registered_games[game_type]
 
     if players is None:
         players = generate_players_config_from_db(game_spec["type"], 3)
+    elif isinstance(players, list):
+        players = players
+    else:
+        players = generate_players_config_from_file(game_spec["type"],
+                                                    3,
+                                                    players)
 
     config = {
         "game": game_spec,
