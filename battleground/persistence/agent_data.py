@@ -2,11 +2,40 @@ from .game_data import get_db_handle
 import bson
 
 
-def get_agents(owner, db_handle=None):
+def get_agents(owner=None, game_type=None, has_file=True, fields=None, db_handle=None):
+    """
+    get agent data for conditions:
+    owner == owner
+    game_type == game_type
+
+    has_file: if True, only return records that have code_string
+
+    fields:
+    only return these field from the database
+
+    db_handle: used for testing
+    """
+
     if db_handle is None:
         db_handle = get_db_handle("agents")
+
     collection = db_handle.agents
-    result = collection.find({"owner": owner})
+
+    query = {}
+    if owner is not None:
+        query['owner'] = owner
+    if game_type is not None:
+        query['game_type'] = game_type
+    if has_file:
+        query['code':'$exists']
+
+    if fields is None:
+        projection = {'agent_id': True}
+    else:
+        projection = {field: True for field in fields}
+
+    result = collection.find(query, projection=projection)
+
     return list(result)
 
 
