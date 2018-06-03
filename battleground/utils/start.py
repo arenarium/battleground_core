@@ -2,6 +2,7 @@ import argparse
 import os.path
 from battleground import site_runner
 from battleground.config_generator import generate_dynamic_config
+from battleground.utils import init_db, populate_db_core_agents
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 DEFAULT_REGISTERED_GAME_PATH = os.path.join(DEFAULT_CONFIG_PATH, "registered_games.json")
@@ -27,32 +28,40 @@ def go():
     parser.add_argument('--dynamic', action='store_true')
     parser.add_argument('-d', action='store_true')
     parser.add_argument('--use_db', action='store_true')
-
+    parser.add_argument('--init', action='store_true')
     parser.add_argument('--count', type=int, default=1)
     args = parser.parse_args()
-    print("starting battleground ...")
-    i = 0
-    while i < args.count or args.d:
-        i += 1
-        if args.dynamic:
-            print("running new dynamic config ...")
-            delay = 60 if args.d else 0
-            players = None if args.use_db else default_player_file_path
 
-            # relative paths can be local or in de default config folder
-            reg_games_path = make_path_absolute(args.registered_games)
+    if args.init:
+        print('Creating indices...')
+        init_db.create_indices()
+        print('Creating players...')
+        populate_db_core_agents.add_default_players()
+        print('Done.')
+    else:
+        print("starting battleground ...")
+        i = 0
+        while i < args.count or args.d:
+            i += 1
+            if args.dynamic:
+                print("running new dynamic config ...")
+                delay = 60 if args.d else 0
+                players = None if args.use_db else default_player_file_path
 
-            config = generate_dynamic_config(reg_games_path,
-                                             players=players,
-                                             game_delay=delay)
-            site_runner.start_session(config)
-        else:
-            config_file_name = args.config
+                # relative paths can be local or in de default config folder
+                reg_games_path = make_path_absolute(args.registered_games)
 
-            # relative paths can be local or in de default config folder
-            config_file_name = make_path_absolute(args.config)
+                config = generate_dynamic_config(reg_games_path,
+                                                 players=players,
+                                                 game_delay=delay)
+                site_runner.start_session(config)
+            else:
+                config_file_name = args.config
 
-            site_runner.start_session(config_file_name)
+                # relative paths can be local or in de default config folder
+                config_file_name = make_path_absolute(args.config)
+
+                site_runner.start_session(config_file_name)
 
 
 if __name__ == "__main__":
