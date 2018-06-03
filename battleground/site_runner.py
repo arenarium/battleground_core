@@ -65,16 +65,19 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
     all_scores = []
 
     for agent_id, player in agent_objects:
+        # load memory for agent (needed to enable long-term learning)
         memory = agent_data.load_agent_data(agent_id=agent_id,
                                             key="memory")
         player.set_memory(memory)
 
     for _ in range(num_games):
+        # play multiple games
         game_runner = GameRunner(game_engine=engine,
                                  agent_objects=agent_objects,
                                  save=save)
         scores = game_runner.run_game()
 
+        # use delay if set
         if game_delay is not None:
             time.sleep(game_delay)
 
@@ -83,6 +86,7 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
         engine.reset()
 
     for agent_id, player in agent_objects:
+        # persist memory for agent (needed to enable long-term learning)
         agent_data.save_agent_data(agent_id=agent_id,
                                    data=player.get_memory(),
                                    key="memory")
@@ -90,16 +94,22 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
 
 
 def start_session(config, save=True, game_delay=None, run=True):
+    # config can be file, dict, or json string, parse these into a dict.
     config_data = parse_config(config)
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
+    # generate the agent instances from configuration files.
     agent_objects = assign_agents(players_config=config_data["players"],
                                   game_type=config_data["game"]["type"])
+
+    # generate engine instance from configuration
     engine = game_engine_factory(num_players=len(agent_objects),
                                  game_config=config_data["game"])
 
+    # setting run=False is used for testing
     if run:
+        # run games and return scores
         all_scores = run_session(engine,
                                  agent_objects,
                                  num_games,
@@ -107,4 +117,5 @@ def start_session(config, save=True, game_delay=None, run=True):
                                  game_delay=game_delay)
         return all_scores
     else:
+        # used for testing
         return [agent_objects, engine]

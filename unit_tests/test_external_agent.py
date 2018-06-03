@@ -1,5 +1,6 @@
 from battleground.persistence import agent_data
 from battleground.utils import start
+from battleground.config_generator import generate_dynamic_config
 from battleground import site_runner
 
 config = {
@@ -28,9 +29,11 @@ def test_play():
         config_temp["from_db"] = True
         players[str(agent_id)] = config_temp
 
-    game_config = start.generate_dynamic_config(game_delay=None,
-                                                game_name="Basic Game 50",
-                                                players=list(players.values()))
+    game_config = generate_dynamic_config(
+        file_path=start.DEFAULT_REGISTERED_GAME_PATH,
+        game_delay=None,
+        game_type="basic_game_50",
+        players=list(players.values()))
     scores = site_runner.start_session(game_config)
 
     assert len(scores) > 0

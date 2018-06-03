@@ -15,7 +15,7 @@ def go():
     parser.add_argument('path', help='file path')
 
     args = parser.parse_args()
-    
+
     if not os.path.isfile(args.path):
         raise Exception("File '{}' not found.".format(args.path))
 

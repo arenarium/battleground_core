@@ -83,12 +83,12 @@ def test_player():
     move = agent.move(state)
     assert "type" in move
     type = move["type"]
-    if "tool" in move:
-        tool = move["tool"]
-    if "target" in move:
-        target = move["target"]
-    if "value" in move:
-        value = move["value"]
+    # if "tool" in move:
+    #     tool = move["tool"]
+    # if "target" in move:
+    #     target = move["target"]
+    # if "value" in move:
+    #     value = move["value"]
 
     types = [option["type"] for option in options]
     assert type in types

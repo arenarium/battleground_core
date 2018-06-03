@@ -1,9 +1,17 @@
 version: '3'
 
 services:
+
   mongo:
     image: mongo:3.4
     volumes:
       - /data:/data/db
     ports:
       - 27017:27017
+
+  mongo_express:
+    image: mongo-express
+    depends_on:
+      - mongo
+    ports:
+      - 8081:8081

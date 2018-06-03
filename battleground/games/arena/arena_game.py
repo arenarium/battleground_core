@@ -31,6 +31,7 @@ class ArenaGameEngine(GameEngine):
             self.type
         """
         super().__init__(num_players=num_players, type=type)
+        self.dungeon = None
 
         # init gladiators from exsisting game state, if provided
         if state is not None \
@@ -48,8 +49,7 @@ class ArenaGameEngine(GameEngine):
                 self.gladiators.append(self.gladiator_class(**new_stats))
 
         # init dungeon
-        if state is not None \
-                and "dungeon" in state:
+        if state is not None and "dungeon" in state:
             dungeon_stats = state["dungeon"]
         else:
             dungeon_stats = self.init_new_dungeon_stats(self.gladiators)
