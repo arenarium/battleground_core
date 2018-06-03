@@ -21,24 +21,31 @@ def generate_players_config_from_db(game_type, num_players):
     return players
 
 
-def generate_players_config_from_file(game_type, number_of_players, file_path):
+def generate_players_config_from_file(file_path, game_type=None, number_of_players=None):
     """
     this is a light-weight local version to pick players for a game.
     in deployment this should be replaced with a database query.
     """
     with open(file_path, 'r') as conf:
         registered_players = json.load(conf)
-    qualifying_players = []
-    for _, player in registered_players.items():
-        if game_type in player["game_type"]:
-            qualifying_players.append(player)
+
+    if game_type is not None:
+        qualifying_players = []
+        for _, player in registered_players.items():
+            if game_type in player["game_type"]:
+                qualifying_players.append(player)
+    else:
+        qualifying_players = registered_players
 
     if not qualifying_players:
         raise IndexError("No qualifying players found.")
 
-    players = []
-    for _ in range(number_of_players):
-        players.append(random.choice(qualifying_players))
+    if number_of_players is not None:
+        players = []
+        for _ in range(number_of_players):
+            players.append(random.choice(qualifying_players))
+    else:
+        players = qualifying_players
     return players
 
 
@@ -58,9 +65,9 @@ def generate_dynamic_config(file_path, game_delay=None, players=None, game_type=
     elif isinstance(players, list):
         players = players
     else:
-        players = generate_players_config_from_file(game_spec["type"],
-                                                    3,
-                                                    players)
+        players = generate_players_config_from_file(game_type=game_spec["type"],
+                                                    number_of_players=3,
+                                                    file_path=players)
 
     config = {
         "game": game_spec,
