@@ -2,7 +2,8 @@ from battleground import config_generator
 from battleground.persistence import agent_data
 import os.path
 
-DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/initial_db_agents.json")
+BASE_PATH = os.path.join(os.path.dirname(__file__), '../..')
+DEFAULT_CONFIG_PATH = os.path.join(BASE_PATH, "battleground/config/initial_db_agents.json")
 
 
 def add_default_players():
@@ -11,6 +12,9 @@ def add_default_players():
     for name, player in players.items():
         assert name == player['name']
         local_path = player['local_path'].replace('.', '/') + ".py"
+        if not os.path.isfile(local_path):
+            local_path = os.path.join(BASE_PATH, local_path)
+        assert os.path.isfile(local_path)
         with open(local_path, 'r') as file:
             code = file.read()
 
