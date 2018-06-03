@@ -1,8 +1,8 @@
 {
   "num_games":2,
   "max_turns":1000,
-  "move_delay":0.1,
-  "game_delay":0.1,
+  "move_delay":0.01,
+  "game_delay":0.01,
   "game":  {
       "name": "Arena Game (Position)",
       "type": "arena_game_pos",
