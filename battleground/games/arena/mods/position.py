@@ -15,29 +15,39 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         :param state: {"dungeon": {"size": int},
                        ...}
         """
+        if 'dungeon_size' in kwargs:
+            self.dungeon_size = kwargs['dungeon_size']
+        else:
+            self.dungeon_size = ((0, 13), (0, 7))
+
         super().__init__(state=state, *args, **kwargs)
 
-    def init_new_gladiator_stats(self, gladiators, *args, **kwargs):
+
+    def init_new_gladiator_stats(self, existing_gladiators, *args, **kwargs):
         """
         :param gladiators: list of Gladiators
         :return: list of stats to create Gladiator object at start of the game
         """
-        stats = super().init_new_gladiator_stats(gladiators, *args, **kwargs)
+        stats = super().init_new_gladiator_stats(existing_gladiators, *args, **kwargs)
 
-        if gladiators:
-            size = self.get_dungeon_size(gladiators)
-        else:
-            size = ((2, 7), (3, 10))
+        size = self.get_dungeon_size()
+
         # find free position
         while True:
             pos = (random.randint(size[0][0], size[0][1]),
                    random.randint(size[1][0], size[1][1]))
-            if all(pos != g.pos for g in gladiators):
+            if all(pos != g.pos for g in existing_gladiators):
                 break
         # positions = ((0, 0), (0, 3), (3, 0), (3, 3))
         # pos = positions[gladiators.index(gladiator)]
         stats["pos"] = pos
         return stats
+
+    def get_dungeon_size(self):
+        if self.dungeon is None:
+            return self.dungeon_size
+        else:
+            return self.dungeon.size
 
     def init_new_dungeon_stats(self, gladiators, *args, **kwargs):
         """
@@ -45,18 +55,18 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         """
         stats = super().init_new_dungeon_stats(gladiators, *args, **kwargs)
         # stats["size"] = self.get_dungeon_size(gladiators)
-        stats["size"] = ((0, 13), (0, 7))
+        stats["size"] = self.dungeon_size
         return stats
 
-    @staticmethod
-    def get_dungeon_size(gladiators):
-        """ get a dungeon size based on gladiator position (bounding box + margin) """
-        positions = [g.pos for g in gladiators]
-        pos_x = [p[0] for p in positions]
-        pos_y = [p[1] for p in positions]
-        size = ((min(pos_x) - 1, max(pos_x) + 1),
-                (min(pos_y) - 1, max(pos_y) + 1))
-        return size
+    # @staticmethod
+    # def init_dungeon_size(gladiators):
+    #     """ get a dungeon size based on gladiator position (bounding box + margin) """
+    #     positions = [g.pos for g in gladiators]
+    #     pos_x = [p[0] for p in positions]
+    #     pos_y = [p[1] for p in positions]
+    #     size = ((min(pos_x) - 1, max(pos_x) + 1),
+    #             (min(pos_y) - 1, max(pos_y) + 1))
+    #     return size
 
     @staticmethod
     def within_bounds(pos, size):

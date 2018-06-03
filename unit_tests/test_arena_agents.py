@@ -16,12 +16,14 @@ def test_random_walker(agents_and_engines):
     game_state = engine.get_state()
     rw = random_walker.ArenaAgent()
 
-    walk_options = [x for x in game_state['move_options'] if x['type'] == 'move'][0]
+    assert len(game_state['move_options']) > 0
 
+    walk_options = [x for x in game_state['move_options'] if x['type'] == 'move']
     move = rw.move(game_state)
-    assert move['type'] == 'move'
 
-    assert move['target'] in walk_options['targets']
+    assert len(walk_options) > 0
+    assert move['type'] == 'move'
+    assert move['target'] in walk_options[0]['targets']
 
 
 def test_arena_move(agents_and_engines):
