@@ -11,7 +11,5 @@ def test_arena_postion():
             for key in keys:
                 assert key in game_state
             types = [x['type'] for x in game_state['move_options']]
-            if 'move' not in types:
-                print(game_state)
             assert 'move' in types
             assert 'stay' in types
