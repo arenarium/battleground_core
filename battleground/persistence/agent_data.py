@@ -186,6 +186,6 @@ def load_game_results(game_type, db_handle=None):
     for agent in result:
         if "results" in agent:
             win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
-            stats.append((agent['_id'], agent["owner"], agent["name"], win_rate))
+            stats.append((str(agent['_id']), agent["owner"], agent["name"], win_rate))
 
     return stats

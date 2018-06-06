@@ -90,7 +90,7 @@ def test_save_game_result(db_handle):
     assert len(game_stats) > 0
     assert len(game_stats[0]) == 4
     agent_ids = [x[0] for x in game_stats]
-    assert agent_id in agent_ids
+    assert str(agent_id) in agent_ids
 
 
 def test_get_player_results(db_handle):
