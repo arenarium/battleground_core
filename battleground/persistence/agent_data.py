@@ -116,7 +116,13 @@ def load_agent_data(agent_id, key, db_handle=None):
     return None
 
 
-def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
+def save_game_result(agent_id,
+                     game_id,
+                     game_type,
+                     score,
+                     win,
+                     time,
+                     db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
     collection = db_handle.agents
@@ -134,8 +140,7 @@ def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
         num_games = agent["results"]["num_games"]
         avg_score = agent["results"]["avg_score"]
         agent["results"]["num_games"] += 1
-        agent["results"]["avg_score"] = (
-            avg_score * num_games + score) / (num_games + 1)
+        agent["results"]["avg_score"] = (avg_score * num_games + score) / (num_games + 1)
         if win:
             agent["results"]["num_wins"] += 1
     else:
@@ -145,6 +150,29 @@ def save_game_result(agent_id, game_id, game_type, score, win, db_handle=None):
         agent["results"]["num_wins"] = 1 if win else 0
 
     collection.save(agent)
+
+    # now save to results table (used to search results by player/agent)
+    collection = db_handle.results
+
+    result = {
+        'agent_id': str(agent_id),
+        'game_id': str(game_id),
+        'game_type': game_type,
+        'score': score,
+        'win': win,
+        'time': time
+    }
+    collection.save(result)
+
+
+def load_agent_results(agent_id, limit=10, db_handle=None):
+    if db_handle is None:
+        db_handle = get_db_handle("agents")
+    collection = db_handle.results
+
+    result = collection.find({"agent_id": str(agent_id)})
+    result = result.sort('time', 1).limit(limit)
+    return list(result)
 
 
 def load_game_results(game_type, db_handle=None):

@@ -1,11 +1,13 @@
 from .persistence import game_data, agent_data
 import copy
+from datetime import datetime
 # turn stages:
 # - current player recieves its view on the game state
 # - player makes a move
 # - move is resolved
 # - state after move is broadcast
 # - current player index is set to the player that moves next
+
 
 class GameRunner(object):
     def __init__(self, game_engine, agent_objects, save=True):
@@ -66,7 +68,8 @@ class GameRunner(object):
                 agent_data.save_game_result(agent_id, game_id,
                                             self.game_engine.type,
                                             score,
-                                            max(scores) == score)
+                                            max(scores) == score,
+                                            datetime.utcnow())
 
         return scores
 
