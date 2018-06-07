@@ -112,6 +112,9 @@ def start_session(config, save=True, game_delay=None, run=True):
     num_games = config_data["num_games"]
     print(config_data["game"]["type"])
 
+    if game_delay is None and 'game_delay' in config_data:
+        game_delay = config_data['game_delay']
+
     # generate the agent instances from configuration files.
     agent_objects = assign_agents(players_config=config_data["players"],
                                   game_type=config_data["game"]["type"])
