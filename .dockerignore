@@ -1,5 +1,8 @@
-./ui/frontend/node_modules
 .git
 .vagrant
 .cache
+tmp
+.ropeproject
 deploy*
+*.log
+*pycache*
