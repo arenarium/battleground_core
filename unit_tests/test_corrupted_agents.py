@@ -19,7 +19,6 @@ def test_corrupted_basic_agent():
     start_session(config_file, save=False, run=True)
 
 
-
 def test_corrupted_arena_agent():
     # there is some randomness in the initialisation, so try many times
     config_file = 'unit_tests/test_configurations/corrupted_arena_config.json'
