@@ -1,10 +1,12 @@
 import json
 import importlib
 import inspect
+import os
 from .dynamic_agent import DynamicAgent
 from .game_runner import GameRunner
 import time
 from .persistence import agent_data
+from . import fallback_agent
 
 
 def parse_config(config):
@@ -32,7 +34,16 @@ def assign_agents(players_config, game_type):
 
         # print(player)
         # append tuple to agent list
-        agents.append((str(agent_id), DynamicAgent(**player)))
+        try:
+            agent_object = DynamicAgent(**player)
+        except Exception as e:
+            if os.environ.get('DEBUG') == 'True':
+                raise e
+            else:
+                print(e)
+                agent_object = fallback_agent.FallbackAgent()
+
+        agents.append((str(agent_id), agent_object))
     return tuple(agents)  # return immutable version
 
 
@@ -61,7 +72,7 @@ def game_engine_factory(num_players, game_config):
     return engine_instance
 
 
-def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
+def run_session(engine, agent_objects, num_games, save=True, game_delay=None, max_turns=None):
     all_scores = []
 
     for agent_id, player in agent_objects:
@@ -74,7 +85,9 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None):
         # play multiple games
         game_runner = GameRunner(game_engine=engine,
                                  agent_objects=agent_objects,
-                                 save=save)
+                                 save=save,
+                                 max_turns=max_turns)
+
         scores = game_runner.run_game()
 
         # use delay if set
@@ -110,11 +123,18 @@ def start_session(config, save=True, game_delay=None, run=True):
     # setting run=False is used for testing
     if run:
         # run games and return scores
+        if 'max_turns' in config_data:
+            max_turns = config_data['max_turns']
+        else:
+            max_turns = None
+
+        print(max_turns)
         all_scores = run_session(engine,
                                  agent_objects,
                                  num_games,
                                  save=save,
-                                 game_delay=game_delay)
+                                 game_delay=game_delay,
+                                 max_turns=max_turns)
         return all_scores
     else:
         # used for testing

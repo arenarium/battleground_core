@@ -93,10 +93,23 @@ class DynamicAgent(agent.Agent):
             return agent_class()
 
     def move(self, state):
-        return self.agent_instance.move(state)
+        try:
+            return self.agent_instance.move(state)
+        except Exception as e:
+            if os.environ.get('DEBUG') == 'True':
+                raise e
+            else:
+                print("Error in move function: " + str(e))
+                return {}
 
     def observe(self, state):
-        return self.agent_instance.observe(state)
+        try:
+            return self.agent_instance.observe(state)
+        except Exception as e:
+            if os.environ.get('DEBUG') == 'True':
+                raise e
+            else:
+                print(e)
 
     def get_memory(self, **kwargs):
         return self.agent_instance.get_memory()

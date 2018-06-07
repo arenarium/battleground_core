@@ -22,7 +22,6 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
 
         super().__init__(state=state, *args, **kwargs)
 
-
     def init_new_gladiator_stats(self, existing_gladiators, *args, **kwargs):
         """
         :param gladiators: list of Gladiators

@@ -32,12 +32,15 @@ class BasicGameEngine(GameEngine):
 
     def move(self, move):
         """
-        Do you move on behalf of the current player
+        Execute move on behalf of the current player
         """
-        assert "value" in move
+        if "value" in move:
+            value = move["value"]
+        else:
+            value = 0
 
-        value = move["value"]
-        self.roll = random.randint(1, self.max)
+        value = max(value, 0)
+        self.roll = random.randint(0, self.max)
 
         if value < self.roll:
             self.scores[self.current_player] += value

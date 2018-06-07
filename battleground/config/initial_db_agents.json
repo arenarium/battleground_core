@@ -17,15 +17,6 @@
     "remote_path":null,
     "settings":{}
   },
-  "gladiator_3":{
-    "game_type":["arena_game_pos"],
-    "owner":"core",
-    "name":"gladiator_3",
-    "local_path":"battleground.games.arena.agents.arena_agent",
-    "class_name":"ArenaAgent",
-    "remote_path":null,
-    "settings":{}
-  },
   "random_walker":{
     "game_type":["arena_game_pos"],
     "owner":"core",
@@ -41,6 +32,34 @@
     "name":"random_attacker",
     "local_path":"battleground.games.arena.agents.arena_agent",
     "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "basic_1":{
+    "game_type":["basic_game"],
+    "owner":"core",
+    "name":"basic_1",
+    "local_path":"battleground.games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "basic_2":{
+    "game_type":["basic_game",
+                 "basic_game_50"],
+    "owner":"core",
+    "name":"basic_2",
+    "local_path":"battleground.games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "basic_3":{
+    "game_type":["basic_game"],
+    "owner":"core",
+    "name":"basic_3",
+    "local_path":"battleground.games.basic_game.basic_agent",
+    "class_name":"BasicAgent",
     "remote_path":null,
     "settings":{}
   }

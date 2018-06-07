@@ -203,6 +203,13 @@ class ArenaGameEngine(GameEngine):
                            "value": float
         :return:
         """
+
+        # behaviour for bad move returned
+        if not move or 'type' not in move:
+            move = {}
+            move['type'] = 'stay'
+            move['value'] = 1
+
         self.queue_move(move)
         self.message = []
 

@@ -14,6 +14,3 @@ after_success:
 - test $TRAVIS_BRANCH = "master" &&
   test $TRAVIS_PULL_REQUEST = "false" &&
   ./deploy_scripts/do_deploy.sh
-before_install:
-- openssl aes-256-cbc -K $encrypted_1645300b04d0_key -iv $encrypted_1645300b04d0_iv
-  -in deploy_key.enc -out deploy_key -d

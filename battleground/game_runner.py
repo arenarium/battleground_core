@@ -10,11 +10,12 @@ from datetime import datetime
 
 
 class GameRunner(object):
-    def __init__(self, game_engine, agent_objects, save=True):
+    def __init__(self, game_engine, agent_objects, save=True, max_turns=None):
         self.game_engine = game_engine
         self.agent_ids, self.players = zip(*agent_objects)
         self.game_states = []
         self.save = save
+        self.max_turns = max_turns
 
     def run_game(self):
         # self.game_engine.reset()
@@ -26,8 +27,9 @@ class GameRunner(object):
 
         player_index = self.game_engine.get_current_player()
 
+        turn_num = 0
         while not self.game_engine.game_over():
-            # TODO: steamline public vs private information.
+            # TODO: streamline public vs private information.
 
             last_player = player_index
             engine_state = self.game_engine.get_state(player_index)
@@ -35,6 +37,7 @@ class GameRunner(object):
             engine_state['last_player'] = last_player
 
             move = self.players[player_index].move(engine_state)
+
             self.game_engine.move(move)
 
             # get global state
@@ -56,9 +59,15 @@ class GameRunner(object):
 
             # get next player
             player_index = self.game_engine.get_current_player()
+            turn_num += 1
+            if self.max_turns is not None and turn_num > self.max_turns:
+                break
 
         # the final scores
         scores = self.game_engine.get_state()["scores"]
+        # in case scores is a dict-like object: convert to list
+        scores = [scores[i] for i in range(len(scores))]
+
         if self.save:
             # save game states and player stats to the DB.
             game_id = game_data.save_game_history(self.game_engine.get_game_name(),
