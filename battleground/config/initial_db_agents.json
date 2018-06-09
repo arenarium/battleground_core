@@ -21,7 +21,7 @@
     "game_type":["arena_game_pos"],
     "owner":"core",
     "name":"random_walker",
-    "local_path":"battleground.games.arena.agents.arena_agent",
+    "local_path":"battleground.games.arena.agents.random_walker",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
@@ -30,7 +30,7 @@
     "game_type":["arena_game_pos"],
     "owner":"core",
     "name":"random_attacker",
-    "local_path":"battleground.games.arena.agents.arena_agent",
+    "local_path":"battleground.games.arena.agents.random_attacker",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
