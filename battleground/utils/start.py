@@ -3,6 +3,7 @@ import os.path
 from battleground import site_runner
 from battleground.config_generator import generate_dynamic_config
 from battleground.utils import init_db, populate_db_core_agents
+import sys
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 DEFAULT_REGISTERED_GAME_PATH = os.path.join(DEFAULT_CONFIG_PATH, "registered_games.json")
@@ -19,6 +20,9 @@ def go():
     """
     start the battleground server
     """
+
+    sys.path.append(".")
+
     default_player_file_path = os.path.join(DEFAULT_CONFIG_PATH, "registered_players.json")
     default_config_file = os.path.join(DEFAULT_CONFIG_PATH, "basic_config.json")
 
