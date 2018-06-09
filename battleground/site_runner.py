@@ -20,22 +20,27 @@ def parse_config(config):
     return data
 
 
-def assign_agents(players_config, game_type):
+def assign_agents(players_config, game_type, save=True):
     """
     Create agent objects following the specification of players_config
     returns a list of tuples (id, agent object)
     duplicate ids are permitted, this corresponds to the same agent being instatiated twice.
     """
     agents = []  # will contain tuples of (id, object)
-    for player in players_config:
-        agent_id = agent_data.get_agent_id(owner=player["owner"],
-                                           name=player["name"],
-                                           game_type=game_type)
+    for i, player in enumerate(players_config):
+        if save:
+            agent_id = agent_data.get_agent_id(owner=player["owner"],
+                                               name=player["name"],
+                                               game_type=game_type)
+        else:
+            agent_id = i
 
+        if 'agent_id' not in player.keys():
+            player['agent_id'] = agent_id
         # print(player)
         # append tuple to agent list
         try:
-            agent_object = DynamicAgent(**player)
+            agent_object = DynamicAgent(**player, save=save)
         except Exception as e:
             if os.environ.get('DEBUG') == 'True':
                 raise e
@@ -72,14 +77,20 @@ def game_engine_factory(num_players, game_config):
     return engine_instance
 
 
-def run_session(engine, agent_objects, num_games, save=True, game_delay=None, max_turns=None):
+def run_session(engine,
+                agent_objects,
+                num_games,
+                save=True,
+                game_delay=None,
+                max_turns=None):
     all_scores = []
 
-    for agent_id, player in agent_objects:
-        # load memory for agent (needed to enable long-term learning)
-        memory = agent_data.load_agent_data(agent_id=agent_id,
-                                            key="memory")
-        player.set_memory(memory)
+    if save:
+        for agent_id, player in agent_objects:
+            # load memory for agent (needed to enable long-term learning)
+            memory = agent_data.load_agent_data(agent_id=agent_id,
+                                                key="memory")
+            player.set_memory(memory)
 
     for _ in range(num_games):
         # play multiple games
@@ -98,11 +109,12 @@ def run_session(engine, agent_objects, num_games, save=True, game_delay=None, ma
         all_scores.append(scores)
         engine.reset()
 
-    for agent_id, player in agent_objects:
-        # persist memory for agent (needed to enable long-term learning)
-        agent_data.save_agent_data(agent_id=agent_id,
-                                   data=player.get_memory(),
-                                   key="memory")
+    if save:
+        for agent_id, player in agent_objects:
+            # persist memory for agent (needed to enable long-term learning)
+            agent_data.save_agent_data(agent_id=agent_id,
+                                       data=player.get_memory(),
+                                       key="memory")
     return all_scores
 
 
@@ -117,7 +129,8 @@ def start_session(config, save=True, game_delay=None, run=True):
 
     # generate the agent instances from configuration files.
     agent_objects = assign_agents(players_config=config_data["players"],
-                                  game_type=config_data["game"]["type"])
+                                  game_type=config_data["game"]["type"],
+                                  save=save)
 
     # generate engine instance from configuration
     engine = game_engine_factory(num_players=len(agent_objects),
@@ -131,7 +144,6 @@ def start_session(config, save=True, game_delay=None, run=True):
         else:
             max_turns = None
 
-        print(max_turns)
         all_scores = run_session(engine,
                                  agent_objects,
                                  num_games,

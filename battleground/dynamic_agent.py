@@ -18,6 +18,7 @@ class DynamicAgent(agent.Agent):
                  local_path=None,
                  queue_prefix=None,
                  settings=None,
+                 save=True,
                  **kwargs):
         self.owner = owner
         self.name = name
@@ -25,6 +26,8 @@ class DynamicAgent(agent.Agent):
         self.class_name = class_name
         self.local_path = local_path
         self.settings = settings
+        self.save = save
+
         if "agent_id" in kwargs:
             self.agent_id = kwargs["agent_id"]
         else:
