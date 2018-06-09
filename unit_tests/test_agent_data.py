@@ -1,6 +1,7 @@
 import pytest
 from battleground.persistence import agent_data, game_data
 from datetime import datetime
+import time
 
 owner, name, game_type = "test_owner", "test_name", "test_game_type"
 
@@ -73,34 +74,45 @@ def test_save_game_result(db_handle):
     """
     just test that function runs without errors
     """
-    agent_id = agent_data.get_agent_id(owner, name, game_type, db_handle=db_handle)
-    game_id = "123456"
+
     score = 123
-    win = True
-    agent_data.save_game_result(agent_id,
-                                game_id,
-                                game_type,
-                                score,
-                                win,
-                                datetime.utcnow(),
-                                db_handle=db_handle)
+    for i in range(10):
+        win = i % 2
+        game_id = i
+        agent_name = name + str(i % 3)
+        agent_id = agent_data.get_agent_id(owner, agent_name, game_type, db_handle=db_handle)
+        agent_data.save_game_result(agent_id,
+                                    game_id,
+                                    game_type,
+                                    score,
+                                    win,
+                                    datetime.utcnow(),
+                                    db_handle=db_handle)
+        time.sleep(.01)
 
     game_stats = agent_data.load_game_results(game_type, db_handle=db_handle)
 
-    assert len(game_stats) > 0
+    assert len(game_stats) == 3
     assert len(game_stats[0]) == 4
     agent_ids = [x[0] for x in game_stats]
     assert str(agent_id) in agent_ids
 
+    for i in range(1, len(game_stats)):
+        # test sorted by winrate descending
+        assert game_stats[i][-1] >= game_stats[i-1][-1]
+
 
 def test_get_player_results(db_handle):
-    agent_id = agent_data.get_agent_id(owner, name, game_type, db_handle=db_handle)
+    agent_id = agent_data.get_agent_id(owner, name+str(0), game_type, db_handle=db_handle)
     agent_results = agent_data.load_agent_results(agent_id, db_handle=db_handle)
 
-    assert len(agent_results) > 0
+    assert len(agent_results) > 1
+
     cols = ['agent_id', 'game_id', 'game_type', 'score', 'win', 'time']
     for col in cols:
         assert col in agent_results[0]
+
+    assert agent_results[0]['time'] >= agent_results[1]['time']
 
 
 def test_save_code(db_handle):

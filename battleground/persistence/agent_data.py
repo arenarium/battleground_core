@@ -171,7 +171,7 @@ def load_agent_results(agent_id, limit=10, db_handle=None):
     collection = db_handle.results
 
     result = collection.find({"agent_id": str(agent_id)})
-    result = result.sort('time', 1).limit(limit)
+    result = result.sort('time', -1).limit(limit)
     return list(result)
 
 
@@ -187,5 +187,5 @@ def load_game_results(game_type, db_handle=None):
         if "results" in agent:
             win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
             stats.append((str(agent['_id']), agent["owner"], agent["name"], win_rate))
-
-    return stats
+    sorted_stats = sorted(stats, key=lambda x: x[-1])
+    return sorted_stats
