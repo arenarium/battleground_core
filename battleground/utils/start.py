@@ -30,7 +30,7 @@ def go():
     parser.add_argument('--use_db', action='store_true')
     parser.add_argument('--init', action='store_true')
     parser.add_argument('--count', type=int, default=1)
-    parser.add_argument('--save', type=int, default=1)
+    parser.add_argument('--no_save', action='store_true')
     args = parser.parse_args()
 
     if args.init:
@@ -55,14 +55,14 @@ def go():
                 config = generate_dynamic_config(reg_games_path,
                                                  players=players,
                                                  game_delay=delay)
-                site_runner.start_session(config, save=args.save)
+                site_runner.start_session(config, save=not args.no_save)
             else:
                 config_file_name = args.config
 
                 # relative paths can be local or in de default config folder
                 config_file_name = make_path_absolute(args.config)
 
-                site_runner.start_session(config_file_name, save=args.save)
+                site_runner.start_session(config_file_name, save=not args.no_save)
 
 
 if __name__ == "__main__":
