@@ -15,6 +15,10 @@ def make_path_absolute(path):
             path = os.path.join(DEFAULT_CONFIG_PATH, path)
     return path
 
+def print_scores(win_rates):
+    print("Win rates:")
+    for name, win_rate in win_rates.items():
+        print('{}: {:1.4f}'.format(name, win_rate))
 
 def go():
     """
@@ -40,8 +44,10 @@ def go():
     if args.init:
         print('Creating indices...')
         init_db.create_indices()
+
         print('Creating players...')
         populate_db_core_agents.add_default_players()
+
         print('Done.')
     else:
         print("starting battleground ...")
@@ -59,15 +65,15 @@ def go():
                 config = generate_dynamic_config(reg_games_path,
                                                  players=players,
                                                  game_delay=delay)
-                site_runner.start_session(config, save=not args.no_save)
+                win_rates = site_runner.start_session(config, save=not args.no_save)
             else:
                 config_file_name = args.config
 
                 # relative paths can be local or in de default config folder
                 config_file_name = make_path_absolute(args.config)
 
-                site_runner.start_session(config_file_name, save=not args.no_save)
-
+                win_rates = site_runner.start_session(config_file_name, save=not args.no_save)
+            print_scores(win_rates)
 
 if __name__ == "__main__":
     go()

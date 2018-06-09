@@ -58,11 +58,9 @@ def test_run_session():
     scores = site_runner.start_session(
         CONFIG_DATA_FILE, save=False, game_delay=0)
     assert len(scores) > 0
-    assert len(scores[0]) > 0
 
-    for score in scores:
-        for value in score:
-            assert value >= 0
+    for key, score in scores.items():
+        assert score >= 0
 
 
 if __name__ == "__main__":

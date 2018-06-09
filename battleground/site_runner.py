@@ -7,6 +7,17 @@ from .game_runner import GameRunner
 import time
 from .persistence import agent_data
 from . import fallback_agent
+from collections import defaultdict
+
+
+def get_win_rate(names, scores):
+    d = defaultdict(lambda: 0)
+    for score in scores:
+        for name, points in zip(names, score):
+            d[name] += int((points == max(score)))
+    for key, value in d.items():
+        d[key] /= len(scores)
+    return dict(d)
 
 
 def parse_config(config):
@@ -150,7 +161,8 @@ def start_session(config, save=True, game_delay=None, run=True):
                                  save=save,
                                  game_delay=game_delay,
                                  max_turns=max_turns)
-        return all_scores
+        names = [agent['name'] for agent in config_data["players"]]
+        return get_win_rate(names, all_scores)
     else:
         # used for testing
         return [agent_objects, engine]

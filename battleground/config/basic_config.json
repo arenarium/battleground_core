@@ -1,5 +1,5 @@
 {
-  "num_games":2,
+  "num_games":3,
   "max_turns":1000,
   "move_delay":0.1,
   "game_delay":0.1,
