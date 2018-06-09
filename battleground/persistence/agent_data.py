@@ -187,5 +187,5 @@ def load_game_results(game_type, db_handle=None):
         if "results" in agent:
             win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
             stats.append((str(agent['_id']), agent["owner"], agent["name"], win_rate))
-    sorted_stats = sorted(stats, key=lambda x: x[-1])
+    sorted_stats = sorted(stats, key=lambda x: x[-1], reverse=True)
     return sorted_stats

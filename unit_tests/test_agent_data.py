@@ -99,7 +99,7 @@ def test_save_game_result(db_handle):
 
     for i in range(1, len(game_stats)):
         # test sorted by winrate descending
-        assert game_stats[i][-1] >= game_stats[i-1][-1]
+        assert game_stats[i][-1] <= game_stats[i-1][-1]
 
 
 def test_get_player_results(db_handle):
