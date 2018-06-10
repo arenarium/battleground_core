@@ -30,7 +30,7 @@
     "game_type":["arena_game_pos"],
     "owner":"core",
     "name":"random_attacker",
-    "local_path":"battleground.games.arena.agents.random_attacker",
+    "local_path":"battleground.games.arena.agents.attacker",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
