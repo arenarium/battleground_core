@@ -45,10 +45,16 @@ def test_get_agents(db_handle):
     global owner, name, game_type
 
     # add agent if not exists
-    agent_data.get_agent_id(owner, name, game_type, db_handle)
+    id = agent_data.get_agent_id(owner, name, game_type, db_handle)
 
     agents = agent_data.get_agents(owner, db_handle=db_handle)
     assert len(agents) > 0
+
+    agents = agent_data.get_agents(agent_id=id, db_handle=db_handle)
+    assert len(agents) == 1
+
+    agents = agent_data.get_agents(agent_id=str(id), db_handle=db_handle)
+    assert len(agents) == 1
 
 
 def test_save_data(db_handle):

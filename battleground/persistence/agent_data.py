@@ -2,7 +2,7 @@ from .game_data import get_db_handle
 import bson
 
 
-def get_agents(owner=None, game_type=None, has_file=False, fields=None, db_handle=None):
+def get_agents(owner=None, game_type=None, agent_id=None, has_file=False, fields=None, db_handle=None):
     """
     get agent data for conditions:
     owner == owner
@@ -22,12 +22,17 @@ def get_agents(owner=None, game_type=None, has_file=False, fields=None, db_handl
     collection = db_handle.agents
 
     query = {}
-    if owner is not None:
-        query['owner'] = owner
-    if game_type is not None:
-        query['game_type'] = game_type
-    if has_file:
-        query['code'] = {'$exists': True, '$ne': 'null'}
+    if agent_id is not None:
+        if not isinstance(agent_id, bson.ObjectId):
+            agent_id = bson.ObjectId(str(agent_id))
+        query['_id'] = agent_id
+    else:
+        if owner is not None:
+            query['owner'] = owner
+        if game_type is not None:
+            query['game_type'] = game_type
+        if has_file:
+            query['code'] = {'$exists': True, '$ne': 'null'}
 
     if fields is None:
         projection = {'_id': True, 'game_type': True, 'owner': True, 'name': True}
