@@ -9,6 +9,13 @@ TEMP_MODULE_PATH = "tmp/"
 
 
 class DynamicAgent(agent.Agent):
+    """ A wrapper around an agent object.
+    This wrapper implements the Agent interface.
+
+    This class facilitates dynamic loading of agent code
+    and messaging between containers.
+    """
+
     def __init__(self,
                  owner,
                  name,

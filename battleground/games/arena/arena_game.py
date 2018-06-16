@@ -121,7 +121,8 @@ class ArenaGameEngine(GameEngine):
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
                 "scores": self.scores,
                 "message": self.message,
-                "move_options": self.get_move_options(self.get_current_player())
+                "move_options": self.get_move_options(self.get_current_player()),
+                "current_player": self.get_current_player()
                 }
 
     def get_current_player(self):
