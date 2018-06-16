@@ -26,7 +26,14 @@ Every agent you write should derive from the :py:class:`~battleground.agent.Agen
    :language: python
 
 This agent just sits still for one turn. You are free to read the game state directly and process it however you like.  You can see examples of the `state` dictionary
-However, it's easiest to start with a few basic building blocks.
+However, it's easiest to start with the basic building blocks provided by the :py:mod:`~battleground.games.arena.building_blocks` module.
+
+The following example aggressively attacks the nearest other player.
+
+.. literalinclude :: ../battleground/games/arena/agents/aggressive_attacker.py
+   :language: python
+
+From here it's up to you, enjoy!
 
 Modules
 -------
