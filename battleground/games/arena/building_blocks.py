@@ -1,5 +1,15 @@
 from . import util
 import math
+import random
+
+
+def random_walk(state):
+    move_options = util.move_options_to_list(state['move_options'])
+    walk_options = [o for o in move_options if o['type'] == 'move']
+    if len(walk_options) > 0:
+        return random.choice(walk_options)
+    else:
+        return {}
 
 
 def closest_other(state):

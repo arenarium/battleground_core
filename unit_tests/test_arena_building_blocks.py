@@ -92,3 +92,11 @@ def test_attack_closest(states_to_test):
 
     move = building_blocks.attack_closest(state_without_attack)
     assert move is None
+
+
+def test_random_walk(states_to_test):
+    state_without_attack, state_with_attack = states_to_test
+    for state in states_to_test:
+        move = building_blocks.random_walk(state)
+        assert 'type' in move
+        assert move['type'] == 'move'

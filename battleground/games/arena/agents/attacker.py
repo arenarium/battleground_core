@@ -3,8 +3,6 @@ import random
 
 
 class ArenaAgent(Agent):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
     def move(self, state):
         """
