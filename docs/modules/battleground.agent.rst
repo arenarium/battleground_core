@@ -1,4 +1,4 @@
-battleground.agent
+Battleground Agent
 ==================
 
 .. automodule:: battleground.agent
