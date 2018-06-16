@@ -2,7 +2,12 @@ from .game_data import get_db_handle
 import bson
 
 
-def get_agents(owner=None, game_type=None, agent_id=None, has_file=False, fields=None, db_handle=None):
+def get_agents(owner=None,
+               game_type=None,
+               agent_id=None,
+               has_file=False,
+               fields=None,
+               db_handle=None):
     """
     get agent data for conditions:
     owner == owner
