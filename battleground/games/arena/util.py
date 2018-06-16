@@ -6,6 +6,14 @@ from bisect import bisect_right
 import random
 
 
+def argmin(iterable):
+    return min(enumerate(iterable), key=lambda x: x[1])[0]
+
+
+def argmin_dict(d):
+    return min(d.items(), key=lambda x: x[1])[0]
+
+
 def add_tuples(tuple_a, tuple_b):
     """
     :param tuple_a: ((int), (int))
@@ -75,7 +83,8 @@ def move_options_to_list(move_options):
                     else:  # v is list of values
                         # they keys are strings, and for the last list of options they are given as
                         #   'values': [ ... ]
-                        # removing the plural 's' gives the singular form which appears in the move dict
+                        # removing the plural 's' gives the singular
+                        # form which appears in the move dict
                         # ASSUMPTION: A KEY THAT ENDS ON 's' IS IN PLURAL FORM
                         if k[-1] is 's':
                             key = k[:-1]

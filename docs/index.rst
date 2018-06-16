@@ -36,6 +36,7 @@ Modules
 
   battleground.agent
   battleground.game_engine
+  battleground.games.arena.building_blocks
 
 Indices and tables
 ------------------

@@ -33,7 +33,9 @@ class GameRunner(object):
 
             last_player = player_index
             engine_state = self.game_engine.get_state(player_index)
-            engine_state['current_player'] = player_index
+            if 'current_player' not in engine_state:
+                # this may be added to the game state in game engine.
+                engine_state['current_player'] = player_index
             engine_state['last_player'] = last_player
 
             move = self.players[player_index].move(engine_state)
