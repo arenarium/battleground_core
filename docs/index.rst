@@ -10,8 +10,11 @@ Welcome to Arenarium!
    :maxdepth: 2
    :caption: Contents:
 
+Getting Started
+---------------
+
 Modules
-=======
+-------
 
 .. autosummary::
   :toctree: modules
@@ -20,7 +23,7 @@ Modules
   battleground.game_engine
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
