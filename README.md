@@ -2,61 +2,33 @@
 [![Build Status](https://travis-ci.org/arenarium/battleground_core.svg?branch=master)](https://travis-ci.org/arenarium/battleground_core)
 [![Documentation Status](https://readthedocs.org/projects/arenarium/badge/?version=latest)](https://arenarium.readthedocs.io/en/latest/?badge=latest)
 
-# battleground
+# Arenarium: battleground-core
 
-A platform for light-weight multi-player online games. Easy creation of games, user-interfaces, and automated NPCs.
+Arenarium is a platform for automated multi-player online games: write code to play.
 
-To get started all you need to do is write a simple python script that describes your game or NPC logic. Examples to follow.
+To get started all you need to do is write a simple python script that describes your agent's logic.
 
-### requirements:
-- Vagrant
+**[Join Arenarium here.](http://www.arenarium.com/)**
 
-## Running games
-### backend
-which game should be played and what players and NPCs should be included can be configured in
-```
-config/*.json
-```
+To get started writing your own agent, head over to the
+[agent development template](https://github.com/arenarium/battleground_agent_template)
+for all the tools you need.
 
-To run this configuration, start the database server (if you have not yet done so):
-```
-docker-compose -f docker-compose.dev.yml up -d
-```
+[Read the documentation here.](https://arenarium.readthedocs.io/)
 
-then start the site runner:
-```
-python battleground/utils/start.py --dynamic
-```
 
-or, if you want to use a different config file:
-```
-python battleground/utils/start.py --config path/to/configfile.json
-```
-
-or, if you want to run the site continiously:
-```
-python battleground/utils/start.py --dynamic -d
-```
-
-### frontend
-
-**[This has been migrated to [another repo](https://github.com/arenarium/battleground_ui).]**
-
-first time?:
-```
-cd ui/frontend
-npm install
-```
-
-to start a development server:
-```
-cd ui/frontend
-npm start
-```
-
-then navigate to http://localhost:3000
 
 ## Getting Started With Development
+
+If you want to contribute to the Arenarium core engine, read on.
+If you're interested in contributing to the UI/UX, head over to [the UI repo](https://github.com/arenarium/battleground_ui).
+
+### Core Tech Stack:
+- Python 3
+- MongoDB
+- Vagrant
+
+
 We recommend you set up a virtual machine using [Vagrant](https://www.vagrantup.com/) and the provided Vagrantfile. Once you have Vagrant (and its requirements) installed you can use vagrant to run unit-tests.
 
 
@@ -75,36 +47,4 @@ python battleground/utils/start.py
 next, to run tests:
 ```
 pytest
-```
-
-## Developing your own games and NPCs
-
-### adding an external agent from the command line to run locally
-
-in order to add agents that are not part of the core platform you need:
-- a python file that contains the code for your agent
-- a game configuration file
-
-examples of these can be found in
-```
-examples/external_agent/
-```
-
-first upload your agent code to the database:
-```
-python battleground/utils/save_agent.py \
---owner my_name \
---name my_external_agent \
---type basic_game \
-examples/external_agent/basic_persistent_agent.py
-```
-
-then adjust create a game configuration you want to play for example like
-```
-examples/external_agent/game_config.json
-```
-
-start the game:
-```
-python start.py --config examples/external_agent/game_config.json
 ```
