@@ -26,6 +26,8 @@ If you're interested in contributing to the UI/UX, head over to [the UI repo](ht
 ### Core Tech Stack:
 - Python 3
 - MongoDB
+- Docker
+- Travis CI
 - Vagrant
 
 
