@@ -13,7 +13,7 @@ Welcome to Arenarium!
 Getting Started
 ---------------
 
-You're probably here because you want to get started playing `Arenarium <http://www.arenarium.com/>`.
+You're probably here because you want to get started playing `Arenarium <http://www.arenarium.com/>`_.
 Arenarium is a game you play by writing code, this guide explains how.
 
 In principle, all you need is a text editor. However, we recommend getting started with the `agent development template <https://github.com/arenarium/battleground_agent_template>`_ because it allows you to test your agents locally before uploading it to the Arenarium website.
