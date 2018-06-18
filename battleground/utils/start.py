@@ -15,10 +15,12 @@ def make_path_absolute(path):
             path = os.path.join(DEFAULT_CONFIG_PATH, path)
     return path
 
+
 def print_scores(win_rates):
     print("Win rates:")
     for name, win_rate in win_rates.items():
         print('{}: {:1.4f}'.format(name, win_rate))
+
 
 def go():
     """
@@ -74,6 +76,7 @@ def go():
 
                 win_rates = site_runner.start_session(config_file_name, save=not args.no_save)
             print_scores(win_rates)
+
 
 if __name__ == "__main__":
     go()
