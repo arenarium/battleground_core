@@ -288,8 +288,9 @@ class ArenaGameEngine(GameEngine):
         attacker = self.gladiators[event.owner]
         target.cur_hp -= attacker.attack(target)
         corpse_count = self.remove_dead()
-        if not attacker.is_dead():
-            self.state["scores"][event.owner] += corpse_count
+        self.state["scores"][event.owner] += corpse_count
+        if attacker.is_dead():
+            self.state["scores"][event.owner] = 0
         return None
 
     def remove_dead(self):

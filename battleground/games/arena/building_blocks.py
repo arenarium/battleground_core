@@ -3,6 +3,19 @@ import random
 import numpy as np
 
 
+def random_move(state, seppuku=True):
+    move_options = util.move_options_to_list(state['move_options'])
+    if not seppuku:
+        myself = state["current_player"]
+        move_options = [o for o in move_options
+                        if not ("type" in o and "target" in o
+                                and o["type"] is "attack" and o["target"] is myself)]
+    if len(move_options) > 0:
+        return random.choice(move_options)
+    else:
+        return {}
+
+
 def random_walk(state):
     move_options = util.move_options_to_list(state['move_options'])
     walk_options = [o for o in move_options if o['type'] == 'move']
