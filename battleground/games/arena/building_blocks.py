@@ -1,6 +1,6 @@
 from . import util
-import math
 import random
+import numpy as np
 
 
 def random_walk(state):
@@ -21,7 +21,7 @@ def closest_other(state):
 
     """
     locations = others_locations(state)
-    distances_ = distances(my_location(state), locations.values())
+    distances_ = distances(my_location(state), list(locations.values()))
     dist_dict = {key: dist for key, dist in zip(locations, distances_)}
     target = util.argmin_dict(dist_dict)
     return target
@@ -87,10 +87,8 @@ def distances(reference_location, locations):
     :returns: dict of distances {id: float, ...}
 
     """
-    distances_ = []
-    for location in locations:
-        distance = math.sqrt(sum([(x - y)**2 for x, y in zip(location, reference_location)]))
-        distances_.append(distance)
+    differences = np.array(locations) - np.array(reference_location)
+    distances_ = np.sqrt(np.sum(differences**2, axis=1))
     return distances_
 
 
@@ -111,11 +109,13 @@ def move_toward(state, location):
     if len(move_options) == 0:
         return None
 
-    move_targets = [m['target'] for m in move_options]
+    my_location_ = my_location(state)
+    move_targets = np.array([m['target'] for m in move_options])
+    target_locations = move_targets + my_location_
 
-    distances_ = distances(location, move_targets)
+    distances_ = distances(location, target_locations)
 
-    target_index = util.argmin(distances_)
+    target_index = np.argmin(distances_)
 
     return move_options[target_index]
 
@@ -151,7 +151,7 @@ def attack_closest(state):
 
     """
     locations = others_locations(state)
-    distances_ = distances(my_location(state), locations.values())
+    distances_ = distances(my_location(state), list(locations.values()))
     others_distances = {key: d for key, d in zip(locations.keys(), distances_)}
     target = util.argmin_dict(others_distances)
 

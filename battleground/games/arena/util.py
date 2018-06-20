@@ -6,10 +6,6 @@ from bisect import bisect_right
 import random
 
 
-def argmin(iterable):
-    return min(enumerate(iterable), key=lambda x: x[1])[0]
-
-
 def argmin_dict(d):
     return min(d.items(), key=lambda x: x[1])[0]
 

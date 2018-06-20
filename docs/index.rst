@@ -16,6 +16,21 @@ Getting Started
 You're probably here because you want to get started playing `Arenarium <http://www.arenarium.com/>`_.
 Arenarium is a game you play by writing code, this guide explains how.
 
+Rules
+*********
+
+The rules of the basic Arena game are simple. The game starts with 2 or more gladiators (agents)
+inside a dungeon. On each turn, your gladiator has three types of moves:
+
+1. **Move** to a neighboring grid points.
+#. **Attack** another gladiator within range.
+#. **Stay** in the same place (do nothing).
+
+**Objective:** The last gladiator to survive wins.
+
+Writing your own agent
+***************************
+
 In principle, all you need is a text editor. However, we recommend getting started with the `agent development template <https://github.com/arenarium/battleground_agent_template>`_ because it allows you to test your agents locally before uploading it to the Arenarium website.
 
 Once you've set up your environment, it's time to learn about the basic anatomy of an agent.
@@ -34,6 +49,21 @@ The following example aggressively attacks the nearest other player.
    :language: python
 
 From here it's up to you, enjoy!
+
+Agent Memory
+-------------
+
+Agents have the ability to remember information from previous games.
+This enables them to learn and improve over time.
+
+You can get/set this memory using the :py:meth:`~battleground.agent.Agent.get_memory` and
+:py:meth:`~battleground.agent.Agent.set_memory` methods of the agent class.
+
+A simple example would look like this:
+
+.. literalinclude :: ../examples/external_agent/basic_persistent_agent.py
+   :language: python
+
 
 Modules
 -------

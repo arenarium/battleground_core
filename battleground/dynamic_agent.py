@@ -109,7 +109,7 @@ class DynamicAgent(agent.Agent):
             if os.environ.get('DEBUG') == 'True':
                 raise e
             else:
-                print("Error in move function: " + str(e))
+                # print("Error in move function: " + str(e))
                 return {}
 
     def observe(self, state):
