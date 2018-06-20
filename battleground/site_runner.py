@@ -7,17 +7,17 @@ from .game_runner import GameRunner
 import time
 from .persistence import agent_data
 from . import fallback_agent
-from collections import defaultdict
+from .utils.collections_ import DefaultOrderedDict
 
 
 def get_win_rate(names, scores):
-    d = defaultdict(lambda: 0)
+    d = DefaultOrderedDict(lambda: 0)
     for score in scores:
         for name, points in zip(names, score):
             d[name] += int((points == max(score)))
     for key, value in d.items():
         d[key] /= len(scores)
-    return dict(d)
+    return d
 
 
 def parse_config(config):
