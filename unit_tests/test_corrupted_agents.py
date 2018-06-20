@@ -18,6 +18,8 @@ def test_corrupted_basic_agent():
     # should not throw error
     start_session(config_file, save=False, run=True)
 
+    os.environ['DEBUG'] = 'True'
+
 
 def test_corrupted_arena_agent():
     # there is some randomness in the initialisation, so try many times
@@ -34,3 +36,5 @@ def test_corrupted_arena_agent():
     os.environ['DEBUG'] = 'False'
     # should not throw error
     start_session(config_file, save=False, run=True)
+
+    os.environ['DEBUG'] = 'True'

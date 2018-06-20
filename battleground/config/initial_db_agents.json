@@ -1,36 +1,72 @@
 {
-  "gladiator_1":{
+  "Random Mover":{
     "game_type":["arena_game_pos"],
     "owner":"core",
-    "name":"gladiator_1",
+    "name":"Random Mover",
     "local_path":"battleground.games.arena.agents.arena_agent",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
   },
-  "gladiator_2":{
+  "Gladiator 1":{
     "game_type":["arena_game_pos"],
     "owner":"core",
-    "name":"gladiator_2",
+    "name":"Gladiator 1",
     "local_path":"battleground.games.arena.agents.arena_agent",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
   },
-  "random_walker":{
+  "Random Walker":{
     "game_type":["arena_game_pos"],
     "owner":"core",
-    "name":"random_walker",
+    "name":"Random Walker",
     "local_path":"battleground.games.arena.agents.random_walker",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
   },
-  "random_attacker":{
+  "Caesar So-So":{
     "game_type":["arena_game_pos"],
     "owner":"core",
-    "name":"random_attacker",
+    "name":"Caesar So-So",
+    "local_path":"battleground.games.arena.agents.random_walker",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "Random Attacker":{
+    "game_type":["arena_game_pos"],
+    "owner":"core",
+    "name":"Random Attacker",
     "local_path":"battleground.games.arena.agents.attacker",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "Gladius Minimus":{
+    "game_type":["arena_game_pos"],
+    "owner":"core",
+    "name":"Gladius Minimus",
+    "local_path":"battleground.games.arena.agents.attacker",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "Aggro Attacker":{
+    "game_type":["arena_game_pos"],
+    "owner":"core",
+    "name":"Aggro Attacker",
+    "local_path":"battleground.games.arena.agents.aggressive_attacker",
+    "class_name":"ArenaAgent",
+    "remote_path":null,
+    "settings":{}
+  },
+  "Gladius Maximus":{
+    "game_type":["arena_game_pos"],
+    "owner":"core",
+    "name":"Gladius Maximus",
+    "local_path":"battleground.games.arena.agents.aggressive_attacker",
     "class_name":"ArenaAgent",
     "remote_path":null,
     "settings":{}
