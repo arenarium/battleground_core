@@ -16,6 +16,10 @@ def state_to_test():
     return game_state
 
 
+def test_debug():
+    assert os.environ['DEBUG'] == 'True'
+
+
 def test_all_arena_agents(state_to_test):
     agent_path = "battleground/games/arena/agents/"
     all_agent_paths = glob.glob(os.path.join(agent_path, '*.py'))
