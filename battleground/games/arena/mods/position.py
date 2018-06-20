@@ -103,8 +103,7 @@ class ArenaGameEngine(arena_game.ArenaGameEngine):
         # targets are indices of gladiators list
         targets = [self.gladiators.index(g) for g in self.gladiators
                    if (util.dist(gladiator.pos, g.pos) <= gladiator.range
-                       and not g.is_dead()
-                       and g is not gladiator)]
+                       and not g.is_dead())]
 
         # replace attack option from super()
         index = len(options) - 1

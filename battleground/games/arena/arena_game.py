@@ -185,8 +185,7 @@ class ArenaGameEngine(GameEngine):
 
         # add options for "attack"
         # targets are indices of gladiators list
-        targets = [self.gladiators.index(g) for g in self.gladiators
-                   if (not g.is_dead() and g is not gladiator)]
+        targets = [self.gladiators.index(g) for g in self.gladiators if not g.is_dead()]
         if targets:
             options_attack = {"type": "attack",
                               "targets": targets
@@ -289,7 +288,8 @@ class ArenaGameEngine(GameEngine):
         attacker = self.gladiators[event.owner]
         target.cur_hp -= attacker.attack(target)
         corpse_count = self.remove_dead()
-        self.state["scores"][event.owner] += corpse_count
+        if not attacker.is_dead():
+            self.state["scores"][event.owner] += corpse_count
         return None
 
     def remove_dead(self):
