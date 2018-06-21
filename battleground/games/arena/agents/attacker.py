@@ -1,6 +1,5 @@
 from battleground.agent import Agent
 from battleground.games.arena import building_blocks
-import random
 
 
 class ArenaAgent(Agent):
