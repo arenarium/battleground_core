@@ -53,6 +53,13 @@ def test_attacker(agents_and_engines):
     assert len(agents) == 3
 
     game_state = engine.get_state()
+
+    print([g['pos'] for g in game_state['gladiators']])
+    engine.reset()
+    game_state = engine.get_state()
+
+    print([g['pos'] for g in game_state['gladiators']])
+
     ra = attacker.ArenaAgent()
     me = game_state['current_player']
 
@@ -63,9 +70,11 @@ def test_attacker(agents_and_engines):
     print(game_state['move_options'])
     print(attack_options)
 
+    target = 1 if me == 2 else 2
+
     if len(attack_options) == 0:
-        attack_options = {'type': 'attack', 'targets': [1]}
-        game_state['gladiators'][1]['pos'] = add_tuples(game_state['gladiators'][me]['pos'], (1, 0))
+        attack_options = {'type': 'attack', 'targets': [target]}
+        game_state['gladiators'][target]['pos'] = add_tuples(game_state['gladiators'][me]['pos'], (1, 0))
         game_state['move_options'].append(attack_options)
     else:
         attack_options = attack_options[0]
