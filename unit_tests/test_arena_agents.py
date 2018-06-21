@@ -1,6 +1,7 @@
 import pytest
 from battleground.games.arena.agents import random_walker, attacker
 from battleground.site_runner import start_session
+from battleground.games.arena.util import add_tuples
 
 
 @pytest.fixture(scope="module")
@@ -53,14 +54,23 @@ def test_attacker(agents_and_engines):
 
     game_state = engine.get_state()
     ra = attacker.ArenaAgent()
+    me = game_state['current_player']
 
-    attack_options = [x for x in game_state['move_options'] if x['type'] == 'attack']
+    attack_options = [x for x in game_state['move_options']
+                      if 'type' in x and 'targets' in x
+                         and x['type'] == 'attack' and x['targets'] != [me]]
+
+    print(game_state['move_options'])
+    print(attack_options)
 
     if len(attack_options) == 0:
         attack_options = {'type': 'attack', 'targets': [1]}
+        game_state['gladiators'][1]['pos'] = add_tuples(game_state['gladiators'][me]['pos'], (1, 0))
         game_state['move_options'].append(attack_options)
     else:
         attack_options = attack_options[0]
+
+    print(game_state['gladiators'])
 
     move = ra.move(game_state)
 

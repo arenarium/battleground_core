@@ -36,12 +36,12 @@ We recommend you set up a virtual machine using [Vagrant](https://www.vagrantup.
 
 ### Unit tests
 
-start the database server (if you have not yet done so):
+Start the database server (if you have not yet done so):
 ```
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
-for all the tests to pass, there should be some data in the database, to do this run
+For all the tests to pass, there should be some data in the database, to do this run
 ```
 python battleground/utils/start.py
 ```
@@ -49,4 +49,9 @@ python battleground/utils/start.py
 next, to run tests:
 ```
 pytest
+```
+
+The battleground runs by default the basic game. You can change to the arena game by using a different config file:
+```
+python battleground/utils/start.py --config basic_arena_config.json
 ```
