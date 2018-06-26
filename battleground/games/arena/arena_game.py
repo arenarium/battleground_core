@@ -122,7 +122,7 @@ class ArenaGameEngine(GameEngine):
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
                 "scores": self.scores,
                 "message": self.message,
-                "move_options": self.get_move_options(current_player) if current_player else None,
+                "move_options": self.get_move_options(current_player) if current_player is not None else None,
                 "current_player": self.get_current_player()
                 }
 
