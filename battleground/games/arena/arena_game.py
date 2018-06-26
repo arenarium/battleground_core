@@ -116,12 +116,13 @@ class ArenaGameEngine(GameEngine):
         """
         :return: (dict) parsed state
         """
+        current_player = self.get_current_player()
         return {"gladiators": [g.get_init() for g in self.gladiators],
                 "dungeon": self.dungeon.get_init(),
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
                 "scores": self.scores,
                 "message": self.message,
-                "move_options": self.get_move_options(self.get_current_player()),
+                "move_options": self.get_move_options(current_player) if current_player else None,
                 "current_player": self.get_current_player()
                 }
 
