@@ -134,7 +134,10 @@ class ArenaGameEngine(GameEngine):
         start of the event_queue.
         :returns index of first gladiator in event_queue in gladiators list
         """
-        return self.event_queue[0][1].owner
+        if self.game_over():
+            return None
+        else:
+            return self.event_queue[0][1].owner
 
     def reset(self):
         """
@@ -213,7 +216,7 @@ class ArenaGameEngine(GameEngine):
         self.queue_move(move)
         self.message = []
 
-        while self.event_queue[0][1].type is not "gladiator":
+        while len(self.event_queue) > 0 and self.event_queue[0][1].type is not "gladiator":
             (_, event) = self.event_queue.pop(0)
             self.handle_event(event)
             if event.type is not "gladiator":
