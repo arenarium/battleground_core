@@ -28,10 +28,11 @@ class GameRunner(object):
         player_index = self.game_engine.get_current_player()
 
         turn_num = 0
-        while not self.game_engine.game_over():
+        last_player = None
+        game_over = False
+        while not game_over:
             # TODO: streamline public vs private information.
 
-            last_player = player_index
             engine_state = self.game_engine.get_state(player_index)
             if 'current_player' not in engine_state:
                 # this may be added to the game state in game engine.
@@ -42,7 +43,12 @@ class GameRunner(object):
 
             self.game_engine.move(move)
 
-            # get global state
+            if self.max_turns is not None and turn_num > self.max_turns:
+                game_over = True
+            else:
+                game_over = self.game_engine.game_over()
+
+            # get global state after move
             state = self.game_engine.get_state()
 
             # save and broadcast data
@@ -50,7 +56,7 @@ class GameRunner(object):
             data_to_save["game_state"] = copy.deepcopy(state)
             data_to_save["last_move"] = copy.deepcopy(move)
             data_to_save["player_ids"] = copy.deepcopy(self.agent_ids)
-            data_to_save["game_state"]["game_over"] = str(self.game_engine.game_over())
+            data_to_save["game_state"]["game_over"] = str(game_over)
             data_to_save["game_state"]['current_player'] = player_index
             data_to_save["game_state"]['last_player'] = last_player
 
@@ -60,10 +66,9 @@ class GameRunner(object):
             self.broadcast(data_to_save)
 
             # get next player
+            last_player = player_index
             player_index = self.game_engine.get_current_player()
             turn_num += 1
-            if self.max_turns is not None and turn_num > self.max_turns:
-                break
 
         # the final scores
         scores = self.game_engine.get_state()["scores"]
