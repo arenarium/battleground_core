@@ -17,7 +17,7 @@ class ArenaGameEngine(GameEngine):
     event_class = Event
     gladiator_class = Gladiator
 
-    def __init__(self, num_players=2, type="Arena", state=None):
+    def __init__(self, num_players=2, type="Arena", state=None, **kwargs):
         """
         :param num_players: int
         :param type: str
