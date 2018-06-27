@@ -84,7 +84,7 @@ class GameRunner(object):
                 agent_data.save_game_result(agent_id, game_id,
                                             self.game_engine.type,
                                             score,
-                                            max(scores) == score,
+                                            max(scores) == score and min(scores) != score,
                                             datetime.utcnow())
 
         return scores
