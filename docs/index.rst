@@ -25,7 +25,10 @@ inside a dungeon. On each turn, your gladiator has the option between three type
 1. **Move** to a neighboring grid points.
 #. **Attack** another gladiator within range.
 #. **Stay** in the same place (and do nothing).
-(#.) **Boost** a stat of your gladiator to improve its accuracy, evasion, damage, protection or speed (coming soon!)
+
+A fourth move will be coming soon :
+
+(4.) **Boost** a stat of your gladiator to improve its accuracy, evasion, damage, protection or speed.
 
 **Objective:** The last gladiator to survive wins.
 
