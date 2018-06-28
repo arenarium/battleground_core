@@ -14,7 +14,7 @@ def get_win_rate(names, scores):
     d = DefaultOrderedDict(lambda: 0)
     for score in scores:
         for name, points in zip(names, score):
-            d[name] += int((points == max(score)))
+            d[name] += int((points == max(score) and points != min(score)))
     for key, value in d.items():
         d[key] /= len(scores)
     return d

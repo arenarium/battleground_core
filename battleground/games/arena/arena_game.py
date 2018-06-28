@@ -17,7 +17,7 @@ class ArenaGameEngine(GameEngine):
     event_class = Event
     gladiator_class = Gladiator
 
-    def __init__(self, num_players=2, type="Arena", state=None):
+    def __init__(self, num_players=2, type="Arena", state=None, **kwargs):
         """
         :param num_players: int
         :param type: str
@@ -116,12 +116,13 @@ class ArenaGameEngine(GameEngine):
         """
         :return: (dict) parsed state
         """
+        current_player = self.get_current_player()
         return {"gladiators": [g.get_init() for g in self.gladiators],
                 "dungeon": self.dungeon.get_init(),
                 "queue": [(t, e.get_init()) for t, e in self.event_queue],
                 "scores": self.scores,
                 "message": self.message,
-                "move_options": self.get_move_options(self.get_current_player()),
+                "move_options": self.get_move_options(current_player) if current_player is not None else None,
                 "current_player": self.get_current_player()
                 }
 
@@ -134,7 +135,10 @@ class ArenaGameEngine(GameEngine):
         start of the event_queue.
         :returns index of first gladiator in event_queue in gladiators list
         """
-        return self.event_queue[0][1].owner
+        if self.game_over():
+            return None
+        else:
+            return self.event_queue[0][1].owner
 
     def reset(self):
         """
@@ -213,7 +217,7 @@ class ArenaGameEngine(GameEngine):
         self.queue_move(move)
         self.message = []
 
-        while self.event_queue[0][1].type is not "gladiator":
+        while len(self.event_queue) > 0 and self.event_queue[0][1].type is not "gladiator":
             (_, event) = self.event_queue.pop(0)
             self.handle_event(event)
             if event.type is not "gladiator":
