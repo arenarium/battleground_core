@@ -27,10 +27,10 @@ def random_walk(state):
 
 def closest_other(state):
     """
-    Get the id of the closest other.
+    Get the id of the closest other player.
 
     :param state: The current game state.
-    :returns: int.
+    :returns: (int) index in gladiator list.
 
     """
     locations = others_locations(state)
@@ -58,7 +58,7 @@ def others(state):
     Get a dictionary of other players.
 
     :param state: The current game state.
-    :returns: dict {id: player data, ...}
+    :returns: (dict) {id: player data, ...}
     """
     me = state['current_player']
     all_players = state['gladiators']
@@ -68,10 +68,10 @@ def others(state):
 
 def others_locations(state):
     """
-    Get a dictionary of the locations of players excluding the current player.
+    Get a dictionary of the locations of players, excluding the current player.
 
     :param state: The current game state.
-    :returns: dict of locations, e.g., {id: (x, y)}.
+    :returns: dict of locations, e.g., {id: (x, y), ...}.
 
     """
     others_ = others(state)
@@ -107,7 +107,7 @@ def distances(reference_location, locations):
 
 def move_toward(state, location):
     """
-    Generate move that takes us most directly to the specified location.
+    Generate move that takes you most directly to the specified location.
 
     :param state: The current game state.
     :param location: tuple of target position, e.g, (x, y)
@@ -156,7 +156,7 @@ def attack(state, target):
 
 def attack_closest(state):
     """
-    Generate a move object to attack the closest other, if that is a valid move.
+    Generate a move object to attack the closest other player, if that is a valid move.
     Otherwise, return None.
 
     :param state: The current game state.
@@ -169,3 +169,14 @@ def attack_closest(state):
     target = util.argmin_dict(others_distances)
 
     return attack(state, target)
+
+
+def attack_myself(state):
+    """
+    Generate a move object to attack yourself.
+
+    :param state: The current game state.
+    :returns: A move object (dict).
+
+    """
+    return attack(state, state['current_player'])

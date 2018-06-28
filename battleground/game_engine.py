@@ -1,7 +1,8 @@
 
 class GameEngine(object):
-    """This is an interface for the game engine class.
-    An the engine for a specific game
+    """
+    This is an interface for the game engine class.
+    An engine for a specific game
     should implement these functions.
 
     """
@@ -13,13 +14,15 @@ class GameEngine(object):
 
     def get_game_name(self):
         """
-        :returns: the type of the current game.
+        :returns: (str) the type of the current game.
 
         """
         return self.type
 
     def get_state(self):
-        """get the current state of the game to be passed to an agent
+        """
+        Get the current state of the game.
+
         :returns: the current game state.
 
         """
@@ -27,30 +30,34 @@ class GameEngine(object):
 
     def get_save_state(self):
         """
-        :returns: the state of the game as it should be saved in the database
+        :returns: the state of the game as it should be saved in the database.
 
         """
         raise NotImplementedError()
 
     def get_current_player(self):
-        """This will be used by the game runner to determine which player should
+        """
+        This is used by the game runner to determine which player should
         make the next move
 
-        :returns: index of players list of GameRunner
+        :returns: (int) index of the current player in the players list of the GameRunner
 
         """
         raise NotImplementedError()
 
     def reset(self):
-        """Initialize the game to the starting point."""
+        """
+        Initialize the game to the starting point.
+        """
         raise NotImplementedError()
 
     def move(self, move):
-        """Do a move on behalf of the current player.
-        This function is called by the game runner with a move for the
+        """
+        Resolve a move in the game engine on behalf of the current player.
+        This function is called by the game runner, taking the agent's chosen move of the
         current player.
 
-        :param move: the move returned by the current player.
+        :param move: the move returned by the agent of the current player.
 
         """
         raise NotImplementedError()

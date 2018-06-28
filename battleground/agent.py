@@ -9,13 +9,14 @@ class Agent(object):
         self.set_memory(None)
 
     def move(self, state):
-        """Main entrypoint for the agent class, agent logic goes here.
-        This function is called by the game runner when it is this
+        """
+        Main entry point for the agent class, agent logic goes here.
+        This function is called by the game runner when it's this
         agent's turn to make a move.
 
-        :param state: The current game state.
+        :param state: the current game state.
 
-        :returns: A valid move.
+        :returns: a valid move.
 
         """
         raise NotImplementedError()
@@ -25,19 +26,18 @@ class Agent(object):
         This function is called by the game engine every time an update to
         the game state is available. (Even on other player's turns.)
 
-        :param state: The current game state.
+        :param state: the current game state.
 
         """
         pass
 
     def get_memory(self, default=None):
         """
-        This function can be used by an agent to get it's persistent memory.
+        This function can be used by an agent to get its persistent memory.
         This function is also used by site runner to get the agent's memory
         at the end of a game and store it in the database.
 
-        :param default:  (Default value = None) If agent memory is not set,
-            return the default value.
+        :param default: if the agent memory is not set, return the default value (None).
 
         :returns: the persistent memory of the agent.
 
@@ -45,12 +45,13 @@ class Agent(object):
         return default if self._data is None else self._data
 
     def set_memory(self, data):
-        """Set the persistent memory of the agent.
+        """
+        Set the persistent memory of the agent.
         This function should be called by the agent if the persistent memory
         needs to be updated.
         This function is also called by the site runner at the start of a game.
 
-        :param data: The data to save.
+        :param data: the data to save.
 
         """
         self._data = data
