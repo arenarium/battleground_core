@@ -59,7 +59,7 @@ def test_run_session():
         CONFIG_DATA_FILE, save=False, game_delay=0)
     assert len(scores) > 0
 
-    for key, score in scores.items():
+    for score in scores.values():
         assert score >= 0
 
 

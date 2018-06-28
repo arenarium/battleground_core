@@ -11,13 +11,13 @@ from .utils.collections_ import DefaultOrderedDict
 
 
 def get_win_rate(names, scores):
-    d = DefaultOrderedDict(lambda: 0)
+    rate = DefaultOrderedDict(lambda: 0)
     for score in scores:
         for name, points in zip(names, score):
-            d[name] += int((points == max(score) and points != min(score)))
-    for key, value in d.items():
-        d[key] /= len(scores)
-    return d
+            rate[name] += int((points == max(score) and points != min(score)))
+    for key in rate.keys():
+        rate[key] /= len(scores)
+    return rate
 
 
 def parse_config(config):

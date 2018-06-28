@@ -1,6 +1,5 @@
 import copy
 import random
-import math
 
 
 class Gladiator(object):

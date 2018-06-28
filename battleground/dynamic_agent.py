@@ -88,7 +88,7 @@ class DynamicAgent(agent.Agent):
 
         agent_class = None
         agent_module = importlib.import_module(self.local_path)
-        for name, obj in inspect.getmembers(agent_module):
+        for _, obj in inspect.getmembers(agent_module):
             if inspect.isclass(obj) and issubclass(obj, agent.Agent):
                 agent_class = obj
 

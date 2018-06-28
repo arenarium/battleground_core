@@ -176,7 +176,7 @@ class ArenaGameEngine(GameEngine):
                           }
                          ]
         """
-        gladiator = self.gladiators[gladiator_index]
+        # gladiator = self.gladiators[gladiator_index]
         options = []
         # add options for "stay"
         # speed = gladiator.get_speed()
