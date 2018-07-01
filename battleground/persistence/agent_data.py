@@ -1,4 +1,5 @@
 from .game_data import get_db_handle
+from battleground.utils import trueskill2
 import bson
 
 
@@ -126,53 +127,91 @@ def load_agent_data(agent_id, key, db_handle=None):
     return None
 
 
-def save_game_result(agent_id,
+def save_game_result(agent_ids,
                      game_id,
                      game_type,
-                     score,
-                     win,
+                     scores,
                      time,
                      db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
-    collection = db_handle.agents
+    collection_a = db_handle.agents
+    collection_r = db_handle.results
 
-    if not isinstance(agent_id, bson.ObjectId):
-        agent_id = bson.ObjectId(str(agent_id))
+    # save results and get agents
+    agents = []
+    for index, agent_id in enumerate(agent_ids):
+        # save to results table (used to search results by player/agent)
+        score = scores[index]
+        win = max(scores) == score and min(scores) != score
+        result = {
+            'agent_id': str(agent_id),
+            'game_id': str(game_id),
+            'game_type': game_type,
+            'score': score,
+            'win': win,
+            'time': time
+        }
+        collection_r.save(result)
 
-    result = list(collection.find({"_id": agent_id}))
-    if result:
-        agent = result[0]
-    else:
-        raise Exception("agent not found: {}".format(agent_id))
+        # get agents
+        if not isinstance(agent_id, bson.ObjectId):
+            agent_id = bson.ObjectId(str(agent_id))
+        agent_db_entry = list(collection_a.find({"_id": agent_id}))
+        if agent_db_entry:
+            agent = agent_db_entry[0]
+        else:
+            raise Exception("agent not found: {}".format(agent_id))
+        agents.append(agent)
 
-    if "results" in agent:
-        num_games = agent["results"]["num_games"]
-        avg_score = agent["results"]["avg_score"]
-        agent["results"]["num_games"] += 1
-        agent["results"]["avg_score"] = (avg_score * num_games + score) / (num_games + 1)
-        if win:
-            agent["results"]["num_wins"] += 1
-    else:
-        agent["results"] = {}
-        agent["results"]["num_games"] = 1
-        agent["results"]["avg_score"] = score
-        agent["results"]["num_wins"] = 1 if win else 0
+    agents = update_ratings(agents, scores)
 
-    collection.save(agent)
+    # save agents
+    for agent in agents:
+        collection_a.save(agent)
 
-    # now save to results table (used to search results by player/agent)
-    collection = db_handle.results
 
-    result = {
-        'agent_id': str(agent_id),
-        'game_id': str(game_id),
-        'game_type': game_type,
-        'score': score,
-        'win': win,
-        'time': time
-    }
-    collection.save(result)
+def update_ratings(agents, scores):
+    """
+    A ranking system based on TrueSkill(TM)
+    :param agents: list of DB agents
+    :param scores: list of scores
+    :return: updated list of DB agents
+    """
+    # get ratings or initialize new ones in a free-for-all
+    ratings = []
+    for agent in agents:
+        if "results" in agents:
+            ratings.append((trueskill2.Rating(**agent["results"]["rating"]),))
+        else:
+            ratings.append((trueskill2.Rating(),))
+    # lower rank is better
+    ranks = [(0,) if score else (1,) for score in scores]
+    new_ratings = trueskill2.rate(ratings, ranks=ranks, scores=scores)
+
+    for index, agent in enumerate(agents):
+        score = scores[index]
+        win = max(scores) == score and min(scores) != score
+        rank = trueskill2.expose(new_ratings[index][0])
+        rating = {"mu": new_ratings[index][0].mu,
+                  "sigma": new_ratings[index][0].sigma}
+        if "results" in agent:
+            num_games = agent["results"]["num_games"]
+            avg_score = agent["results"]["avg_score"]
+            agent["results"]["num_games"] += 1
+            agent["results"]["avg_score"] = (avg_score * num_games + score) / (num_games + 1)
+            agent["results"]["rank"] = rank
+            agent["results"]["rating"] = rating
+            if win:
+                agent["results"]["num_wins"] += 1
+        else:
+            agent["results"] = {}
+            agent["results"]["num_games"] = 1
+            agent["results"]["avg_score"] = score
+            agent["results"]["rank"] = rank
+            agent["results"]["rating"] = rating
+            agent["results"]["num_wins"] = 1 if win else 0
+    return agents
 
 
 def load_agent_results(agent_id, limit=10, db_handle=None):
@@ -181,7 +220,7 @@ def load_agent_results(agent_id, limit=10, db_handle=None):
     collection = db_handle.results
 
     result = collection.find({"agent_id": str(agent_id)})
-    result = result.sort('time', -1).limit(limit)
+    result = result.sort("time", -1).limit(limit)
     return list(result)
 
 
@@ -196,6 +235,6 @@ def load_game_results(game_type, db_handle=None):
     for agent in result:
         if "results" in agent:
             win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
-            stats.append((str(agent['_id']), agent["owner"], agent["name"], win_rate))
+            stats.append((str(agent["_id"]), agent["owner"], agent["name"], win_rate))
     sorted_stats = sorted(stats, key=lambda x: x[-1], reverse=True)
     return sorted_stats
