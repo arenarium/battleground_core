@@ -8,7 +8,7 @@ def generate_players_config_from_db(game_type, num_players):
     agent_ids = agent_data.get_agents(game_type=game_type,
                                       has_file=True,
                                       fields=['owner', 'name'])
-    print(agent_ids)
+    # print(agent_ids)
     players = random.sample(agent_ids,
                             num_players)
     config = []

@@ -18,10 +18,11 @@ def add_default_players():
         with open(local_path, 'r') as file:
             code = file.read()
 
-        agent_data.save_agent_code(owner=player['owner'],
-                                   name=player['name'],
-                                   game_type=player['game_type'][0],
-                                   code=code)
+        for game_type in player['game_type']:
+            agent_data.save_agent_code(owner=player['owner'],
+                                       name=player['name'],
+                                       game_type=game_type,
+                                       code=code)
 
 
 if __name__ == '__main__':
