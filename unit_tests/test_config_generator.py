@@ -10,7 +10,7 @@ DEFAULT_REGISTERED_AGENT_PATH = os.path.join(DEFAULT_CONFIG_PATH, "registered_pl
 def test_get_dynamic_players():
     game_type = "basic_game"
     players = config_generator.generate_players_config_from_file(
-        file_path=DEFAULT_REGISTERED_AGENT_PATH,
+        DEFAULT_REGISTERED_AGENT_PATH,
         game_type=game_type,
         number_of_players=5)
 
@@ -22,7 +22,7 @@ def test_get_dynamic_players():
 
 def test_get_game_config():
     game_config = config_generator.generate_dynamic_config(
-        file_path=DEFAULT_REGISTERED_GAME_PATH,
+        DEFAULT_REGISTERED_GAME_PATH,
         players=DEFAULT_REGISTERED_AGENT_PATH
     )
 

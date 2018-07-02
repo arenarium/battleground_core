@@ -1,6 +1,7 @@
 from .persistence import agent_data
 import random
 import json
+import os.path
 
 
 def generate_players_config_from_db(game_type, num_players):
@@ -49,9 +50,26 @@ def generate_players_config_from_file(file_path, game_type=None, number_of_playe
     return players
 
 
-def generate_dynamic_config(file_path, game_delay=None, players=None, game_type=None):
-    with open(file_path, 'r') as conf:
-        registered_games = json.load(conf)
+def generate_dynamic_config(registered_games_spec,
+                            game_delay=None,
+                            players=None,
+                            game_type=None,
+                            num_players=3,
+                            move_delay=0,
+                            max_turns=1000,
+                            num_games=3):
+
+    # check if path to file or list of dicts
+    try:
+        if os.path.exists(registered_games_spec):
+            with open(registered_games_spec, 'r') as conf:
+                registered_games = json.load(conf)
+    except Exception as e:
+        try:
+            assert 'type' in registered_games_spec[0]
+            registered_games = registered_games_spec
+        except Exception as e:
+            raise Exception('Could not interpred games spec: '+str(e))
 
     if game_type is None:
         game_spec = random.choice(registered_games)
@@ -61,20 +79,20 @@ def generate_dynamic_config(file_path, game_delay=None, players=None, game_type=
         game_spec = registered_games[game_type]
 
     if players is None:
-        players = generate_players_config_from_db(game_spec["type"], 3)
+        players = generate_players_config_from_db(game_spec["type"], num_players)
     elif isinstance(players, list):
         players = players
     else:
         players = generate_players_config_from_file(game_type=game_spec["type"],
-                                                    number_of_players=3,
+                                                    number_of_players=num_players,
                                                     file_path=players)
 
     config = {
         "game": game_spec,
         "players": players,
-        "num_games": 3,
-        "max_turns": 1000,
-        "move_delay": 0.1,
+        "num_games": num_games,
+        "max_turns": max_turns,
+        "move_delay": move_delay,
         "game_delay": game_delay,
     }
 

@@ -10,9 +10,12 @@ def states_to_test():
     agents, engine = start_session(config_file, save=False, run=False)
     game_state = engine.get_state()
 
-    attack_options = [o for o in game_state['move_options']
-                      if 'type' in o and 'targets' in o
-                         and o['type'] == 'attack' and o['targets'] != [game_state['current_player']]]
+    attack_options = []
+
+    for option in game_state['move_options']:
+        if 'type' in option and 'targets' in option:
+            if option['type'] == 'attack' and option['targets'] != [game_state['current_player']]:
+                attack_options.append(option)
 
     if len(attack_options) == 0:
         other = building_blocks.closest_other(game_state)
