@@ -1,6 +1,8 @@
 import pytest
 from battleground.persistence import game_data
 import random
+from datetime import datetime, timedelta
+import time
 
 
 @pytest.fixture(scope="module")
@@ -98,6 +100,38 @@ def test_game_list_selector(db_handle):
     data = game_data.get_games_list(db_handle=db_handle, game_type="test_game")
     assert data.count() > 0
     assert len(str(data[0]["_id"])) == 24
+
+
+def test_purge_games(db_handle):
+
+    date = datetime.utcnow()
+
+    ids_to_purge = game_data.get_ids_to_purge_(date, db_handle)
+    assert len(ids_to_purge) > 0
+
+    lengths = []
+    for id in ids_to_purge:
+        game_states = game_data.load_game_history(id, db_handle)
+        lengths.append(len(game_states))
+
+    assert any([x > 0 for x in lengths])
+
+    # this should do nothing because all states were made in the last few seconds
+    game_data.purge_game_data(date=date - timedelta(hours=1), db_handle=db_handle)
+    new_ids_to_purge = game_data.get_ids_to_purge_(date, db_handle)
+
+    assert new_ids_to_purge == ids_to_purge
+
+    # this should remove all games
+    game_data.purge_game_data(date=date, db_handle=db_handle)
+
+    for id in ids_to_purge:
+        game_states = game_data.load_game_history(id, db_handle)
+        assert len(game_states) == 0
+
+    ids_to_purge = game_data.get_ids_to_purge_(date, db_handle)
+
+    assert len(ids_to_purge) == 0
 
 
 if __name__ == "__main__":
