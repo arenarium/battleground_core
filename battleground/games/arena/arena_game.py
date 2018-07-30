@@ -31,59 +31,7 @@ class ArenaGameEngine(GameEngine):
             self.type
         """
         super().__init__(num_players=num_players, type=type)
-        self.dungeon = None
-
-        # init gladiators from exsisting game state, if provided
-        if state is not None \
-                and "gladiators" in state:
-            stats = state["gladiators"]
-        else:
-            stats = []
-        self.gladiators = [self.gladiator_class(**g)
-                           for g in stats[0:num_players]]
-
-        # create new players if number of specified players > existing players
-        if len(stats) < num_players:
-            for _ in range(0, num_players - len(stats)):
-                new_stats = self.init_new_gladiator_stats(self.gladiators)
-                self.gladiators.append(self.gladiator_class(**new_stats))
-
-        # init dungeon
-        if state is not None and "dungeon" in state:
-            dungeon_stats = state["dungeon"]
-        else:
-            dungeon_stats = self.init_new_dungeon_stats(self.gladiators)
-        self.dungeon = self.dungeon_class(**dungeon_stats)
-
-        # init event_queue
-        if state is not None and "queue" in state:
-            self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
-        else:
-            self.event_queue = [(g.get_initiative(),  # + util.noise(),
-                                 self._init_event(g))
-                                for g in self.gladiators]
-            # shuffle list to guarantee no advantage of one player over another
-            # by always being first (at equal initiative)
-            random.shuffle(self.event_queue)
-            # sort by initiative
-            self.event_queue = sorted(self.event_queue, key=lambda event: event[0])
-
-        # init scores
-        if state is not None \
-                and "scores" in state:
-            self.scores = state["scores"]
-        else:
-            self.scores = {i: 0 for i in range(num_players)}
-
-        self.message = []
-
-        # init state
-        self.state = {"gladiators": self.gladiators,
-                      "dungeon": self.dungeon,
-                      "queue": self.event_queue,
-                      "scores": self.scores,
-                      "message": self.message
-                      }
+        self.reset(state)
 
     def init_new_gladiator_stats(self, *args, **kwargs):
         """
@@ -140,25 +88,80 @@ class ArenaGameEngine(GameEngine):
         else:
             return self.event_queue[0][1].owner
 
-    def reset(self):
+    def reset(self, state=None):
         """
         Initialize the game to the starting point
         :return: None
         """
-        for glad in self.gladiators:
-            glad.reset()
-        self.dungeon.reset()
-        self.event_queue = sorted([(g.get_initiative(),  # + util.noise(),
-                                    self._init_event(g))
-                                   for g in self.gladiators],
-                                  key=lambda event: event[0])
-        self.scores = {i: 0 for i in range(len(self.gladiators))}
+
+        self.dungeon = None
+
+        # init gladiators from exsisting game state, if provided
+        if state is not None \
+                and "gladiators" in state:
+            stats = state["gladiators"]
+        else:
+            stats = []
+        self.gladiators = [self.gladiator_class(**g)
+                           for g in stats[0:self.num_players]]
+
+        # create new players if number of specified players > existing players
+        if len(stats) < self.num_players:
+            for _ in range(0, self.num_players - len(stats)):
+                new_stats = self.init_new_gladiator_stats(self.gladiators)
+                self.gladiators.append(self.gladiator_class(**new_stats))
+
+        # init dungeon
+        if state is not None and "dungeon" in state:
+            dungeon_stats = state["dungeon"]
+        else:
+            dungeon_stats = self.init_new_dungeon_stats(self.gladiators)
+        self.dungeon = self.dungeon_class(**dungeon_stats)
+
+        # init event_queue
+        if state is not None and "queue" in state:
+            self.event_queue = [(t, self._init_event(e)) for t, e in state["queue"]]
+        else:
+            self.event_queue = [(g.get_initiative(),  # + util.noise(),
+                                 self._init_event(g))
+                                for g in self.gladiators]
+            # shuffle list to guarantee no advantage of one player over another
+            # by always being first (at equal initiative)
+            random.shuffle(self.event_queue)
+            # sort by initiative
+            self.event_queue = sorted(self.event_queue, key=lambda event: event[0])
+
+        # init scores
+        if state is not None \
+                and "scores" in state:
+            self.scores = state["scores"]
+        else:
+            self.scores = {i: 0 for i in range(self.num_players)}
+
+        self.message = []
+
+        # init state
         self.state = {"gladiators": self.gladiators,
                       "dungeon": self.dungeon,
                       "queue": self.event_queue,
                       "scores": self.scores,
                       "message": self.message
                       }
+
+        # for glad in self.gladiators:
+        #     glad.reset()
+        # self.dungeon.reset()
+        # self.event_queue = sorted([(g.get_initiative(),  # + util.noise(),
+        #                             self._init_event(g))
+        #                            for g in self.gladiators],
+        #                           key=lambda event: event[0])
+        # self.scores = {i: 0 for i in range(len(self.gladiators))}
+        # self.state = {"gladiators": self.gladiators,
+        #               "dungeon": self.dungeon,
+        #               "queue": self.event_queue,
+        #               "scores": self.scores,
+        #               "message": self.message
+        #               }
         return None
 
     def get_move_options(self, gladiator_index):
