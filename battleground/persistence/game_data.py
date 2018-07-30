@@ -152,7 +152,7 @@ def get_ids_to_purge_(date=None, db_handle=None):
 
     ids_to_purge = []
     for game in games_list:
-        print(game)
+        # print(game)
         game_time = datetime.datetime.strptime(game['utc_time'], "%Y-%m-%d %H:%M:%S.%f")
         if game_time < date:
             ids_to_purge.append(game['_id'])
@@ -162,9 +162,10 @@ def get_ids_to_purge_(date=None, db_handle=None):
 
 def purge_game_data(date=None, db_handle=None):
 
-    ids_to_purge = get_ids_to_purge_(date, db_handle)
+    if db_handle is None:
+        db_handle = get_db_handle()
 
-    # print(ids_to_purge)
+    ids_to_purge = get_ids_to_purge_(date, db_handle)
 
     collection = db_handle.games
     collection.remove({'_id': {'$in': ids_to_purge}})
