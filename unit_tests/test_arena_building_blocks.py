@@ -105,3 +105,23 @@ def test_random_walk(states_to_test):
         move = building_blocks.random_walk(state)
         assert 'type' in move
         assert move['type'] == 'move'
+
+
+def test_my_health(states_to_test):
+    for state in states_to_test:
+        my_health = state['gladiators'][state['current_player']]['cur_hp']
+        assert building_blocks.my_hitpoints(state) == my_health
+
+
+def test_others_health(states_to_test):
+    for state in states_to_test:
+        others_health = building_blocks.others_hitpoints(state)
+        assert len(others_health) == len(state['gladiators']) - 1
+
+
+def test_move_away(states_to_test):
+    for state in states_to_test:
+        nearest_enemy_location = building_blocks.closest_other_location(state)
+        move = building_blocks.move_toward(state, nearest_enemy_location)
+
+        assert isinstance(move, dict)
