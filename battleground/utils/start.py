@@ -64,7 +64,7 @@ def go():
             i += 1
             if args.dynamic:
                 print("running new dynamic config ...")
-                delay = 20 if args.d else 0
+                delay = 10 if args.d else 0
                 players = None if args.use_db else default_player_file_path
 
                 # relative paths can be local or in de default config folder
