@@ -1,5 +1,5 @@
 from .game_data import get_db_handle
-from battleground.utils import trueskill2
+from battleground.utils import bg_trueskill
 import bson
 
 
@@ -182,17 +182,17 @@ def update_ratings(agents, scores):
     ratings = []
     for agent in agents:
         if "results" in agents:
-            ratings.append((trueskill2.Rating(**agent["results"]["rating"]),))
+            ratings.append((bg_trueskill.Rating(**agent["results"]["rating"]),))
         else:
-            ratings.append((trueskill2.Rating(),))
+            ratings.append((bg_trueskill.Rating(),))
     # lower rank is better
     ranks = [(0,) if score else (1,) for score in scores]
-    new_ratings = trueskill2.rate(ratings, ranks=ranks, scores=scores)
+    new_ratings = bg_trueskill.rate(ratings, ranks=ranks, scores=scores)
 
     for index, agent in enumerate(agents):
         score = scores[index]
         win = max(scores) == score and min(scores) != score
-        rank = trueskill2.expose(new_ratings[index][0])
+        rank = bg_trueskill.expose(new_ratings[index][0])
         rating = {"mu": new_ratings[index][0].mu,
                   "sigma": new_ratings[index][0].sigma}
         if "results" in agent:
@@ -234,7 +234,8 @@ def load_game_results(game_type, db_handle=None):
 
     for agent in result:
         if "results" in agent:
-            win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
-            stats.append((str(agent["_id"]), agent["owner"], agent["name"], win_rate))
+            # win_rate = agent["results"]["num_wins"] / agent["results"]["num_games"]
+            rank = agent["results"]["rank"]
+            stats.append((str(agent["_id"]), agent["owner"], agent["name"], rank))
     sorted_stats = sorted(stats, key=lambda x: x[-1], reverse=True)
     return sorted_stats
