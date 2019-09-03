@@ -30,7 +30,7 @@ def test_play():
         players[str(agent_id)] = config_temp
 
     game_config = generate_dynamic_config(
-        file_path=start.DEFAULT_REGISTERED_GAME_PATH,
+        start.DEFAULT_REGISTERED_GAME_PATH,
         game_delay=None,
         game_type="basic_game_50",
         players=list(players.values()))

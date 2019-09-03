@@ -10,5 +10,28 @@
                          ]
             },
     "settings":{}
+  },
+  {
+    "name": "Arena Game (Small)",
+    "type": "arena_game_small",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position"
+                         ]
+            },
+    "settings":{"dungeon_size": [[0, 3], [0, 3]]}
+  },
+  {
+    "name": "Arena Game (Boosts)",
+    "type": "arena_game_boosts",
+    "local_path": "battleground.games.arena.arena_game",
+    "class_name": "ArenaGameEngine",
+    "mods":{"builder_path": "battleground.games.arena.mods.mod_builder",
+            "mod_paths":["battleground.games.arena.mods.position",
+                         "battleground.games.arena.mods.boosts"
+                         ]
+            },
+    "settings":{}
   }
 ]

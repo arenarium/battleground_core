@@ -10,7 +10,6 @@ before_script:
 script: docker run --network=host battleground/battleground pytest unit_tests
 after_success:
 - chmod +x ./deploy_scripts/*.sh
-- chmod 600 deploy_key
 - test $TRAVIS_BRANCH = "master" &&
   test $TRAVIS_PULL_REQUEST = "false" &&
   ./deploy_scripts/do_deploy.sh

@@ -74,7 +74,8 @@ def test_attacker(agents_and_engines):
 
     if len(attack_options) == 0:
         attack_options = {'type': 'attack', 'targets': [target]}
-        game_state['gladiators'][target]['pos'] = add_tuples(game_state['gladiators'][me]['pos'], (1, 0))
+        my_position = game_state['gladiators'][me]['pos']
+        game_state['gladiators'][target]['pos'] = add_tuples(my_position, (1, 0))
         game_state['move_options'].append(attack_options)
     else:
         attack_options = attack_options[0]

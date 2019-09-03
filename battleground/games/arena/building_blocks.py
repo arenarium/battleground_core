@@ -53,7 +53,7 @@ def closest_other_location(state):
     return locations[target]
 
 
-def others(state):
+def others(state, alive=True):
     """
     Get a dictionary of other players.
 
@@ -63,6 +63,10 @@ def others(state):
     me = state['current_player']
     all_players = state['gladiators']
     others = {i: g for i, g in enumerate(all_players) if i != me}
+
+    if alive:
+        others = {i: g for i, g in others.items() if g['cur_hp'] > 0}
+
     return others
 
 
@@ -105,12 +109,16 @@ def distances(reference_location, locations):
     return distances_
 
 
-def move_toward(state, location):
+def move_relative(state, location, towards):
     """
-    Generate move that takes you most directly to the specified location.
+    Generate move that takes you most directly towards or away from
+    the specified location.
+
+    shorthand functions move_toward and move_away are available.
 
     :param state: The current game state.
     :param location: tuple of target position, e.g, (x, y)
+    :param towards: bool, move towards location if true, away otherwise
 
     :returns: A move object (dict).
 
@@ -128,9 +136,39 @@ def move_toward(state, location):
 
     distances_ = distances(location, target_locations)
 
-    target_index = np.argmin(distances_)
+    if towards:
+        target_index = np.argmin(distances_)
+    else:
+        target_index = np.argmax(distances_)
 
     return move_options[target_index]
+
+
+def move_toward(state, location):
+    """
+    Generate move that takes you most directly to the specified location.
+
+    :param state: The current game state.
+    :param location: tuple of target position, e.g, (x, y)
+
+    :returns: A move object (dict).
+
+    """
+    return move_relative(state, location, True)
+
+
+def move_away(state, location):
+    """
+    Generate move that takes you most quickly away from the specified location.
+
+    :param state: The current game state.
+    :param location: tuple of target position, e.g, (x, y)
+
+    :returns: A move object (dict).
+
+    """
+
+    return move_relative(state, location, False)
 
 
 def attack(state, target):
@@ -180,3 +218,27 @@ def attack_myself(state):
 
     """
     return attack(state, state['current_player'])
+
+
+def my_hitpoints(state):
+    """
+    Return current health (hitpoints) of the player.
+
+    :param state: The current game state.
+    :returns: int.
+
+    """
+    return state['gladiators'][state['current_player']]['cur_hp']
+
+
+def others_hitpoints(state):
+    """
+    Return current health (hitpoints) of other players.
+
+    :param state: The current game state.
+    :returns: dict(id: int).
+
+    """
+    others_ = others(state)
+
+    return {i: g['cur_hp'] for i, g in others_.items()}

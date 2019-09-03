@@ -4,6 +4,8 @@ from battleground import site_runner
 from battleground.config_generator import generate_dynamic_config
 from battleground.utils import init_db, populate_db_core_agents
 import sys
+from battleground.persistence import game_data
+from datetime import datetime, timedelta
 
 DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 DEFAULT_REGISTERED_GAME_PATH = os.path.join(DEFAULT_CONFIG_PATH, "registered_games.json")
@@ -39,9 +41,13 @@ def go():
     parser.add_argument('-d', action='store_true')
     parser.add_argument('--use_db', action='store_true')
     parser.add_argument('--init', action='store_true')
+    parser.add_argument('--purge', action='store_true')
     parser.add_argument('--count', type=int, default=1)
     parser.add_argument('--no_save', action='store_true')
     args = parser.parse_args()
+
+    if args.purge:
+        game_data.purge_game_data(date=datetime.utcnow() - timedelta(days=14))
 
     if args.init:
         print('Creating indices...')
@@ -58,7 +64,7 @@ def go():
             i += 1
             if args.dynamic:
                 print("running new dynamic config ...")
-                delay = 60 if args.d else 0
+                delay = 10 if args.d else 0
                 players = None if args.use_db else default_player_file_path
 
                 # relative paths can be local or in de default config folder

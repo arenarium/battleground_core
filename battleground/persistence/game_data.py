@@ -142,3 +142,34 @@ def get_games_list(game_type=None, db_handle=None):
                                  filter={"game_type": game_type})
 
     return result
+
+
+def get_ids_to_purge_(date=None, db_handle=None):
+
+    if db_handle is None:
+        db_handle = get_db_handle()
+
+    games_list = get_games_list(db_handle=db_handle)
+
+    ids_to_purge = []
+    for game in games_list:
+        # print(game)
+        game_time = datetime.datetime.strptime(game['utc_time'], "%Y-%m-%d %H:%M:%S.%f")
+        if game_time < date:
+            ids_to_purge.append(game['_id'])
+
+    return ids_to_purge
+
+
+def purge_game_data(date=None, db_handle=None):
+
+    if db_handle is None:
+        db_handle = get_db_handle()
+
+    ids_to_purge = get_ids_to_purge_(date, db_handle)
+
+    collection = db_handle.games
+    collection.remove({'_id': {'$in': ids_to_purge}})
+
+    collection = db_handle.game_states
+    collection.remove({'game_id': {'$in': ids_to_purge}})

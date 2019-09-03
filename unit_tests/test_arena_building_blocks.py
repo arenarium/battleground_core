@@ -10,9 +10,12 @@ def states_to_test():
     agents, engine = start_session(config_file, save=False, run=False)
     game_state = engine.get_state()
 
-    attack_options = [o for o in game_state['move_options']
-                      if 'type' in o and 'targets' in o
-                         and o['type'] == 'attack' and o['targets'] != [game_state['current_player']]]
+    attack_options = []
+
+    for option in game_state['move_options']:
+        if 'type' in option and 'targets' in option:
+            if option['type'] == 'attack' and option['targets'] != [game_state['current_player']]:
+                attack_options.append(option)
 
     if len(attack_options) == 0:
         other = building_blocks.closest_other(game_state)
@@ -102,3 +105,23 @@ def test_random_walk(states_to_test):
         move = building_blocks.random_walk(state)
         assert 'type' in move
         assert move['type'] == 'move'
+
+
+def test_my_health(states_to_test):
+    for state in states_to_test:
+        my_health = state['gladiators'][state['current_player']]['cur_hp']
+        assert building_blocks.my_hitpoints(state) == my_health
+
+
+def test_others_health(states_to_test):
+    for state in states_to_test:
+        others_health = building_blocks.others_hitpoints(state)
+        assert len(others_health) == len(state['gladiators']) - 1
+
+
+def test_move_away(states_to_test):
+    for state in states_to_test:
+        nearest_enemy_location = building_blocks.closest_other_location(state)
+        move = building_blocks.move_toward(state, nearest_enemy_location)
+
+        assert isinstance(move, dict)

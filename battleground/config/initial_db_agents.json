@@ -1,6 +1,6 @@
 {
   "Random Mover":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Random Mover",
     "local_path":"battleground.games.arena.agents.arena_agent",
@@ -9,7 +9,7 @@
     "settings":{}
   },
   "Gladiator 1":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Gladiator 1",
     "local_path":"battleground.games.arena.agents.arena_agent",
@@ -18,7 +18,7 @@
     "settings":{}
   },
   "Random Walker":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Random Walker",
     "local_path":"battleground.games.arena.agents.random_walker",
@@ -27,7 +27,7 @@
     "settings":{}
   },
   "Caesar So-So":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Caesar So-So",
     "local_path":"battleground.games.arena.agents.random_walker",
@@ -36,7 +36,7 @@
     "settings":{}
   },
   "Random Attacker":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Random Attacker",
     "local_path":"battleground.games.arena.agents.attacker",
@@ -45,7 +45,7 @@
     "settings":{}
   },
   "Gladius Minimus":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Gladius Minimus",
     "local_path":"battleground.games.arena.agents.attacker",
@@ -54,7 +54,7 @@
     "settings":{}
   },
   "Aggro Attacker":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Aggro Attacker",
     "local_path":"battleground.games.arena.agents.aggressive_attacker",
@@ -63,7 +63,7 @@
     "settings":{}
   },
   "Gladius Maximus":{
-    "game_type":["arena_game_pos"],
+    "game_type":["arena_game_pos", "arena_game_boosts", "arena_game_small"],
     "owner":"core",
     "name":"Gladius Maximus",
     "local_path":"battleground.games.arena.agents.aggressive_attacker",
