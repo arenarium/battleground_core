@@ -79,13 +79,11 @@ class GameRunner(object):
             # save game states and player stats to the DB.
             game_id = game_data.save_game_history(self.game_engine.get_game_name(),
                                                   self.game_states)
-            for index, agent_id in enumerate(self.agent_ids):
-                score = scores[index]
-                agent_data.save_game_result(agent_id, game_id,
-                                            self.game_engine.type,
-                                            score,
-                                            max(scores) == score and min(scores) != score,
-                                            datetime.utcnow())
+            agent_data.save_game_result(agent_ids=self.agent_ids,
+                                        game_id=game_id,
+                                        game_type=self.game_engine.type,
+                                        scores=scores,
+                                        time=datetime.utcnow())
 
         return scores
 

@@ -81,7 +81,8 @@ def test_game_list(db_handle):
     """get list of games"""
 
     data = game_data.get_games_list(db_handle=db_handle)
-    assert data.count() > 0
+    data = list(data)
+    assert len(data) > 0
     assert len(str(data[0]["_id"])) == 24
 
     for doc in data:
@@ -95,10 +96,12 @@ def test_game_list_selector(db_handle):
     data = game_data.get_games_list(
         db_handle=db_handle,
         game_type="teskdsajhasde")
-    assert data.count() == 0
+    data = list(data)
+    assert len(data) == 0
 
     data = game_data.get_games_list(db_handle=db_handle, game_type="test_game")
-    assert data.count() > 0
+    data = list(data)
+    assert len(data) > 0
     assert len(str(data[0]["_id"])) == 24
 
 

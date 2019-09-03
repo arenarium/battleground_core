@@ -109,7 +109,7 @@ def load_game_history(game_id, db_handle=None):
 
     result = collection.find({"game_id": game_id})
     data = result[:]
-    states_in_sequence = [None] * result.count()
+    states_in_sequence = dict()
 
     # now decode some of the values that are json strings
     for loaded_doc in data:
@@ -121,6 +121,7 @@ def load_game_history(game_id, db_handle=None):
             else:
                 output_doc[data_key] = loaded_doc[data_key]
         states_in_sequence[output_doc["sequence"]] = output_doc
+    states_in_sequence = [states_in_sequence[key] for key in range(len(states_in_sequence))]
     return states_in_sequence
 
 
@@ -168,7 +169,7 @@ def purge_game_data(date=None, db_handle=None):
     ids_to_purge = get_ids_to_purge_(date, db_handle)
 
     collection = db_handle.games
-    collection.remove({'_id': {'$in': ids_to_purge}})
+    collection.delete_many({'_id': {'$in': ids_to_purge}})
 
     collection = db_handle.game_states
-    collection.remove({'game_id': {'$in': ids_to_purge}})
+    collection.delete_many({'game_id': {'$in': ids_to_purge}})

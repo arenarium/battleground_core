@@ -81,17 +81,18 @@ def test_save_game_result(db_handle):
     just test that function runs without errors
     """
 
-    score = 123
+    scores = [123 for _ in range(10)]
     for i in range(10):
-        win = i % 2
         game_id = i
-        agent_name = name + str(i % 3)
-        agent_id = agent_data.get_agent_id(owner, agent_name, game_type, db_handle=db_handle)
-        agent_data.save_game_result(agent_id,
+        agent_ids = []
+        for i in range(10):
+            agent_name = name + str(i % 3)
+            agent_id = agent_data.get_agent_id(owner, agent_name, game_type, db_handle=db_handle)
+            agent_ids.append(agent_id)
+        agent_data.save_game_result(agent_ids,
                                     game_id,
                                     game_type,
-                                    score,
-                                    win,
+                                    scores,
                                     datetime.utcnow(),
                                     db_handle=db_handle)
         time.sleep(.01)
