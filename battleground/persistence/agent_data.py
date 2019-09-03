@@ -73,7 +73,7 @@ def get_agent_id(owner, name, game_type, db_handle=None):
     if db_handle is None:
         db_handle = get_db_handle("agents")
 
-    if "agents" not in db_handle.collection_names():
+    if "agents" not in db_handle.list_collection_names():
         agent_id = insert_new_agent(owner, name, game_type, db_handle)
     else:
         collection = db_handle.agents
@@ -152,7 +152,7 @@ def save_game_result(agent_ids,
             'win': win,
             'time': time
         }
-        collection_r.save(result)
+        collection_r.insert_one(result)
 
         # get agents
         if not isinstance(agent_id, bson.ObjectId):
@@ -168,7 +168,7 @@ def save_game_result(agent_ids,
 
     # save agents
     for agent in agents:
-        collection_a.save(agent)
+        collection_a.update_one({'_id': agent['_id']}, {'$set': agent})
 
 
 def update_ratings(agents, scores):
