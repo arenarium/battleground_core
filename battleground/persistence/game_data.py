@@ -169,7 +169,7 @@ def purge_game_data(date=None, db_handle=None):
     ids_to_purge = get_ids_to_purge_(date, db_handle)
 
     collection = db_handle.games
-    collection.remove({'_id': {'$in': ids_to_purge}})
+    collection.delete_many({'_id': {'$in': ids_to_purge}})
 
     collection = db_handle.game_states
-    collection.remove({'game_id': {'$in': ids_to_purge}})
+    collection.delete_many({'game_id': {'$in': ids_to_purge}})
