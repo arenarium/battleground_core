@@ -16,7 +16,7 @@ idna==2.8
 importlib-metadata==0.20
 jsonschema==3.0.2
 more-itertools==7.2.0
-numpy==1.17.1
+numpy==1.22.0
 packaging==19.1
 paramiko==2.6.0
 pathlib2==2.3.4
